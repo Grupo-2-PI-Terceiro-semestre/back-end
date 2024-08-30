@@ -1,0 +1,13 @@
+package sptech.school.order_hub.enuns;
+
+public enum Categoria {
+    CABELEIREIRO_E_BARBEARIA,
+    ESTETICA_E_BELEZA,
+    MANUCURE,
+    PEDICURE,
+    TRATAMENTOS_CORPORAIS,
+    SPA_E_RELAXAMENTO,
+    TRATAMENTOS_ESPECIAIS,
+    BELEZA_E_ESTILO,
+    CUIDADOS_COM_O_CORPO
+}
