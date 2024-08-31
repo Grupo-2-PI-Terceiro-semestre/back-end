@@ -32,8 +32,8 @@ public class ServicoController {
     return ResponseEntity.status(404).build();
     }
 
-    @GetMapping("/{fkEmpresa}")
-    public ResponseEntity<List<Servico>> findServicesEnterprise(@PathVariable Integer fkEmpresa) {
+    @GetMapping("/empresa/{fkEmpresa}")
+    public ResponseEntity<List<Servico>> findServicesEnterprise(@PathVariable int fkEmpresa) {
         List<Servico> servicosEncontrados = this.repository.findByFkEmpresa(fkEmpresa);
         if (servicosEncontrados.isEmpty()){
             return ResponseEntity.status(204).build();
@@ -43,8 +43,8 @@ public class ServicoController {
 
 
 
-    @GetMapping("/{fkCategoria}")
-    public ResponseEntity<List<Servico>> fkCategoriafindAServicesProfessional(@PathVariable Integer fkCategoria) {
+    @GetMapping("/categoria/{fkCategoria}")
+    public ResponseEntity<List<Servico>> fkCategoriafindAServicesProfessional(@PathVariable int fkCategoria) {
         List<Servico> servicosEncontrados = this.repository.findByFkCategoria(fkCategoria);
         if (servicosEncontrados.isEmpty()){
             return ResponseEntity.status(204).build();
@@ -70,6 +70,7 @@ public class ServicoController {
     public ResponseEntity<Void> deleteById(@PathVariable int idServico
     ){
         if (this.repository.existsById(idServico)){
+            repository.deleteById(idServico);
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(404).build();
