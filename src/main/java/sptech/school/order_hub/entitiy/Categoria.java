@@ -1,54 +1,45 @@
 package sptech.school.order_hub.entitiy;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Categoria {
 
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String nome;
+    private Integer idCategoria;
+    private String nomeCategoria;
 
-    public Categoria(Integer id, String nome) {
-        this.id = id;
-        this.nome = nome;
-    }
-
-    public Categoria() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "categoria_na_empresa",
+            joinColumns = @JoinColumn(name = "fkCategoria"),
+            inverseJoinColumns = @JoinColumn(name = "fkEmpresa")
+    )
+    private Set<Empresa> empresas = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Categoria categoria = (Categoria) o;
-        return Objects.equals(id, categoria.id) && Objects.equals(nome, categoria.nome);
+        return Objects.equals(idCategoria, categoria.idCategoria) && Objects.equals(nomeCategoria, categoria.nomeCategoria) && Objects.equals(empresas, categoria.empresas);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(idCategoria);
     }
 }

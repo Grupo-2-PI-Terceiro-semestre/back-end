@@ -1,6 +1,6 @@
 package sptech.school.order_hub.enuns;
 
-public enum Categoria {
+public enum CategoriaEnum {
     CABELEIREIRO_E_BARBEARIA,
     ESTETICA_E_BELEZA,
     MANUCURE,

@@ -16,7 +16,7 @@ public class GeoController {
 
     @GetMapping("/multipla")
     public ResponseEntity<String> buscarGeoLocalizacaoProxima(@RequestParam String cep){
-        return ResponseEntity.status(200).body(service.getCoordinates(cep));
+        return ResponseEntity.status(200).body(service.getCepInfo(cep));
     }
 
 }
