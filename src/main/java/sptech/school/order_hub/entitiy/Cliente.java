@@ -9,31 +9,35 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class Categoria {
+public class Cliente {
 
     @Getter
     @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCategoria;
-    private String nomeCategoria;
+    private Integer id;
 
+    private String nomeCliente;
+    private LocalDate dataNascimento;
+    private String cpf;
+    private Integer fkUsuario;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Categoria categoria = (Categoria) o;
-        return Objects.equals(idCategoria, categoria.idCategoria) && Objects.equals(nomeCategoria, categoria.nomeCategoria);
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(id, cliente.id) && Objects.equals(nomeCliente, cliente.nomeCliente) && Objects.equals(dataNascimento, cliente.dataNascimento) && Objects.equals(cpf, cliente.cpf) && Objects.equals(fkUsuario, cliente.fkUsuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(idCategoria);
+        return Objects.hashCode(id);
     }
 }

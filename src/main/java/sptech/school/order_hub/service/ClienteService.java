@@ -1,8 +1,5 @@
 package sptech.school.order_hub.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,35 +9,26 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class GeoService {
+public class ClienteService {
 
-    @Value("${client.fid}")
-    private String clientFid;
-
-    @Value("${client.id}")
-    private String clientId;
-
-    @Value("${client.url.hash}")
-    private String clientUrlHash;
-
-    private static final String CLIENT_ENDPOINT = "https://jonathanaparecido80-034c9cc7727f92bf.api.findcep.com";
+    private static final String RANDOM_USER_API_ENDPOINT = "https://randomuser.me/api/";
     private final RestTemplate restTemplate;
 
-    public GeoService(RestTemplate restTemplate) {
+    public ClienteService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public String getCepInfo(String cep) {
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(CLIENT_ENDPOINT)
-                .path("https://randomuser.me/api/");
+    public String getRandomUser() {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(RANDOM_USER_API_ENDPOINT);
 
-        String finalUrl = uriBuilder.buildAndExpand(cep).toUriString();
+        String finalUrl = uriBuilder.toUriString();
         System.out.println("URL gerada: " + finalUrl);
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                    uriBuilder.buildAndExpand(cep).toUriString(),
+                    finalUrl,
                     HttpMethod.GET,
+                    null,
                     String.class
             );
             return response.getBody();

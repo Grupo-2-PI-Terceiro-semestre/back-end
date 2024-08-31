@@ -19,19 +19,12 @@ public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEmpresa;
-    @Getter
     private String nomeEmpresa;
-    private String email;
+    private String emailEmpresa;
     private String cnpj;
     private String telefone;
 
-    @ManyToMany
-    @JoinTable(
-            name = "categoria_na_empresa",
-            joinColumns = @JoinColumn(name = "fkEmpresa"),
-            inverseJoinColumns = @JoinColumn(name = "fkCategoria")
-    )
-    private Set<Categoria> categorias = new HashSet<>();
+    private Integer fkAssinante;
 
     @Lob
     private byte[] imagem;
@@ -41,7 +34,7 @@ public class Empresa {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Empresa empresa = (Empresa) o;
-        return idEmpresa == empresa.idEmpresa && Objects.equals(nomeEmpresa, empresa.nomeEmpresa) && Objects.equals(email, empresa.email) && Objects.equals(cnpj, empresa.cnpj) && Objects.equals(telefone, empresa.telefone) && Objects.equals(categorias, empresa.categorias) && Objects.deepEquals(imagem, empresa.imagem);
+        return idEmpresa == empresa.idEmpresa && Objects.equals(nomeEmpresa, empresa.nomeEmpresa) && Objects.equals(emailEmpresa, empresa.emailEmpresa) && Objects.equals(cnpj, empresa.cnpj) && Objects.equals(telefone, empresa.telefone) && Objects.equals(fkAssinante, empresa.fkAssinante) && Objects.deepEquals(imagem, empresa.imagem);
     }
 
     @Override

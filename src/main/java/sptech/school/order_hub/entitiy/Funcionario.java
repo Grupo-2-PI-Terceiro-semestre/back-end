@@ -14,26 +14,30 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Categoria {
+public class Funcionario {
 
     @Getter
     @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCategoria;
-    private String nomeCategoria;
+    private Integer idFuncionario;
+    private String nomeFuncionario;
+    private String cargo;
 
+    private Integer fkEmpresa;
+    private Integer fkGestor;
+    private Integer fkUsuario;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Categoria categoria = (Categoria) o;
-        return Objects.equals(idCategoria, categoria.idCategoria) && Objects.equals(nomeCategoria, categoria.nomeCategoria);
+        Funcionario that = (Funcionario) o;
+        return Objects.equals(idFuncionario, that.idFuncionario) && Objects.equals(nomeFuncionario, that.nomeFuncionario) && Objects.equals(cargo, that.cargo) && Objects.equals(fkEmpresa, that.fkEmpresa) && Objects.equals(fkGestor, that.fkGestor) && Objects.equals(fkUsuario, that.fkUsuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(idCategoria);
+        return Objects.hashCode(idFuncionario);
     }
 }
