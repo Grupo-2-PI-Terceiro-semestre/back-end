@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sptech.school.order_hub.enuns.Categoria;
+import sptech.school.order_hub.entitiy.Categoria; // Altere esta linha
 import sptech.school.order_hub.repository.CategoriaRepository;
 
 import java.util.List;
