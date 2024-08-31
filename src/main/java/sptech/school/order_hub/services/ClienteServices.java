@@ -18,9 +18,12 @@ public class ClienteServices {
         this.restTemplate = restTemplate;
     }
 
-
     public ResponseEntity<String> findByUserRandomApi() {
         return getRandomUser(null, null, null);
+    }
+
+    public ResponseEntity<String> findByQuantityUser(Integer results) {
+        return getRandomUser(results, null, null);
     }
 
     public ResponseEntity<String> findByGanderUserRandomApi(String gender) {
@@ -34,19 +37,12 @@ public class ClienteServices {
         return null;
     }
 
-    public ResponseEntity<String> findByQuantityUser(Integer results) {
-        return getRandomUser(results, null, null);
-    }
-
     public ResponseEntity<String> findByNatUser(String nat) {
         return getRandomUser(null, null, nat);
     }
 
-
     private ResponseEntity<String> getRandomUser(Integer results, String gender, String nat) {
-
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(RANDOM_USER_API_ENDPOINT);
-
         if (results != null) {
             if (results < 1 || results > 10) {
                 return ResponseEntity
