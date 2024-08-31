@@ -37,19 +37,25 @@ Este projeto é uma aplicação backend desenvolvida em Java com o objetivo de g
     git clone https://github.com/Grupo-2-PI-Terceiro-semestre/back-end.git
     ``
 
-2**Configure o banco de dados**
+2. **Configure o banco de dados**
 
    O projeto já inclui um arquivo `docker-compose-mysql.yml` na raiz, que configura um banco de dados MySQL. Para iniciar o banco de dados, execute:
 
-    docker-compose-mysql up -d
+       docker-compose-mysql up -d
 
    Este comando iniciará um contêiner MySQL e criará um banco de dados chamado `orderhub` com as credenciais especificadas.
 
 
-3**Compile e inicie o projeto**
 
-    mvn clean install
-    mvn spring-boot:run
+   **Nota:** Após a primeira execução da aplicação, que irá criar o banco de dados e as tabelas necessárias, é importante alterar a configuração `spring.jpa.hibernate.ddl-auto` para `none`. Isso evita que o Hibernate tente criar ou atualizar o esquema do banco de dados em execuções subsequentes, prevenindo a perda acidental de dados e garantindo que o esquema do banco de dados seja gerenciado de maneira adequada. A configuração para produção deve ser ajustada para:
+
+       application.properties
+       spring.jpa.hibernate.ddl-auto=none
+
+3. **Compile e inicie o projeto**
+
+       mvn clean install
+       mvn spring-boot:run
 
 ## Modelagem
 ![Logo](/DER%20-%20V1.svg)
