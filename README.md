@@ -41,7 +41,7 @@ Este projeto é uma aplicação backend desenvolvida em Java com o objetivo de g
 
    O projeto já inclui um arquivo `docker-compose-mysql.yml` na raiz, que configura um banco de dados MySQL. Para iniciar o banco de dados, execute:
 
-       docker-compose-mysql up -d
+       docker-compose up -d
 
    Este comando iniciará um contêiner MySQL e criará um banco de dados chamado `orderhub` com as credenciais especificadas.
 
