@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +16,7 @@ public class Empresa {
     @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idEmpresa;
+    private Integer idEmpresa;
     private String nomeEmpresa;
     private String emailEmpresa;
     private String cnpj;
@@ -40,5 +38,61 @@ public class Empresa {
     @Override
     public int hashCode() {
         return Objects.hashCode(idEmpresa);
+    }
+
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    public void setIdEmpresa(Integer idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public String getNomeEmpresa() {
+        return nomeEmpresa;
+    }
+
+    public void setNomeEmpresa(String nomeEmpresa) {
+        this.nomeEmpresa = nomeEmpresa;
+    }
+
+    public String getEmailEmpresa() {
+        return emailEmpresa;
+    }
+
+    public void setEmailEmpresa(String emailEmpresa) {
+        this.emailEmpresa = emailEmpresa;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public Integer getFkAssinante() {
+        return fkAssinante;
+    }
+
+    public void setFkAssinante(Integer fkAssinante) {
+        this.fkAssinante = fkAssinante;
+    }
+
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
     }
 }
