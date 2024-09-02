@@ -14,9 +14,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Endereco {
-    @Getter
-    @Setter
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int idEndereco;

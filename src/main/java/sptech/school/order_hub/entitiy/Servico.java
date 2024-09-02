@@ -10,13 +10,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Servico {
 
-    @Getter
-    @Setter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idServico;

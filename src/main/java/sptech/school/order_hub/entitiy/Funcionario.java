@@ -11,13 +11,13 @@ import lombok.Setter;
 
 import java.util.Objects;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Getter
+@Setter
 public class Funcionario {
 
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFuncionario;
