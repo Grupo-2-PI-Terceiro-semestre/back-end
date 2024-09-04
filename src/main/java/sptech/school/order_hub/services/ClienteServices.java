@@ -1,5 +1,10 @@
 package sptech.school.order_hub.services;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.apache.tomcat.util.json.JSONFilter;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.entitiy.Cliente;
+
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ClienteServices {
@@ -30,11 +42,43 @@ public class ClienteServices {
         return getRandomUser(null, gender, null);
     }
 
-    public ResponseEntity<String> findByQuantityUserOrder(Integer results) {
+    public ResponseEntity<Cliente[]> findByQuantityUserOrder(Integer results, String nat) {
+        ResponseEntity<String> response = getRandomUser(results, null, nat);
 
-        // TODO: IMPLEMENTAR LOGICA DE NEGOCIO PARA ORDENAR O RESULTADO
+        Cliente[] clientes = new Cliente[results];
+        try {
+            JSONObject json = new JSONObject(response.getBody());
 
-        return null;
+            JSONArray resultsArray = json.getJSONArray("results");
+
+            for (int i = 0; i < resultsArray.length(); i++) {
+
+                Cliente cliente = new Cliente();
+
+                JSONObject user = resultsArray.getJSONObject(i);
+
+                JSONObject nameObject = user.getJSONObject("name");
+                JSONObject dataObject = user.getJSONObject("dob");
+                JSONObject documentObject = user.getJSONObject("id");
+
+                String dateString = dataObject.optString("date", "default date");
+                String firstName = nameObject.optString("first", "default name");
+                String document = documentObject.optString("value", "default value");
+                OffsetDateTime dateOfBirth = OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+                cliente.setId((int) (Math.random() * 10000));
+                cliente.setNomeCliente(firstName);
+                cliente.setDataNascimento(dateOfBirth.toLocalDate());
+                cliente.setCpf(document);
+
+                clientes[i] = cliente;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error processing JSON: " + e.getMessage());
+        }
+
+        return ResponseEntity.status(200).body(clientes);
     }
 
     public ResponseEntity<String> findByNatUser(String nat) {

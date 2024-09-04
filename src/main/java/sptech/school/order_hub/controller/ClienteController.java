@@ -3,7 +3,10 @@ package sptech.school.order_hub.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/clientes")
@@ -37,7 +40,7 @@ public class ClienteController {
     }
 
     @GetMapping("api/externo/random/order/{results}")
-    public ResponseEntity<String> findByQuantityUserOrder(@PathVariable Integer results) {
-        return service.findByQuantityUserOrder(results);
+    public ResponseEntity<Cliente[]> findByQuantityUserOrder(@PathVariable Integer results, @RequestParam String nat) {
+        return service.findByQuantityUserOrder(results, nat);
     }
 }
