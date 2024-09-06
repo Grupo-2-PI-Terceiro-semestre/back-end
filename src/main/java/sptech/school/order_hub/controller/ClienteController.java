@@ -43,4 +43,9 @@ public class ClienteController {
     public ResponseEntity<Cliente[]> findByQuantityUserOrder(@PathVariable Integer results, @RequestParam String nat) {
         return service.findByQuantityUserOrder(results, nat);
     }
+
+    @PostMapping("api/externo/pesquisa-binaria")
+    public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody Cliente cliente) {
+        return service.pesquisaBinaria(cliente);
+    }
 }
