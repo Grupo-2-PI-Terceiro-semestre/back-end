@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.EmpresaRepository;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class EmpresaController {
     }
 
     @GetMapping("/{idEmpresa}")
-    public ResponseEntity<Empresa> findById(@PathVariable Integer id) {
-        Optional<Empresa> empresaId = this.repository.findById(id);
+    public ResponseEntity<Empresa> findById(@PathVariable Integer idEmpresa) {
+        Optional<Empresa> empresaId = this.repository.findById(idEmpresa);
 
         if (empresaId.isPresent()) {
             Empresa empresa = empresaId.get();
@@ -49,9 +50,9 @@ public class EmpresaController {
     }
 
     @DeleteMapping("/{idEmpresa}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        if (this.repository.existsById(id)) {
-            repository.deleteById(id);
+    public ResponseEntity<Void> deleteById(@PathVariable Integer idEmpresa) {
+        if (this.repository.existsById(idEmpresa)) {
+            repository.deleteById(idEmpresa);
             return ResponseEntity.status(204).build();
         }
 
@@ -59,14 +60,23 @@ public class EmpresaController {
     }
 
     @PutMapping("/{idEmpresa}")
-    public ResponseEntity<Empresa> updateById(@PathVariable Integer id, @RequestBody Empresa empresaParaAtualizar) {
-        if (repository.existsById(id)) {
-            empresaParaAtualizar.setIdEmpresa(id);
-            Empresa empresaAtualizada = repository.save(empresaParaAtualizar);
+    public ResponseEntity<Empresa> updateById(@PathVariable Integer idEmpresa, @RequestBody Empresa empresaParaAtualizar) {
 
-            return ResponseEntity.status(200).body(empresaAtualizada);
+        Optional<Empresa> empresaBanco = repository.findById(idEmpresa);
+
+        empresaParaAtualizar.setIdEmpresa(null);
+        if (empresaBanco.isPresent()) {
+            empresaBanco.get().setIdEmpresa(idEmpresa);
+            empresaBanco.get().setNomeEmpresa(empresaParaAtualizar.getNomeEmpresa());
+            empresaBanco.get().setEmailEmpresa(empresaParaAtualizar.getEmailEmpresa());
+            empresaBanco.get().setCnpj(empresaParaAtualizar.getCnpj());
+            empresaBanco.get().setTelefone(empresaParaAtualizar.getTelefone());
+            empresaBanco.get().setFkAssinante(empresaParaAtualizar.getFkAssinante());
+            empresaBanco.get().setImagem(empresaParaAtualizar.getImagem());
+
+            return ResponseEntity.status(200).body(repository.save(empresaBanco.get()));
         }
 
-        return ResponseEntity.status(400).build();
+        return ResponseEntity.status(404).build();
     }
 }

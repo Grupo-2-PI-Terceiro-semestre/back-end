@@ -41,7 +41,7 @@ public class ServicoController {
             servicoBanco.get().setDescricao(servicoParaAtualizar.getDescricao());
             servicoBanco.get().setFkEmpresa(servicoParaAtualizar.getFkEmpresa());
             servicoBanco.get().setFkCategoria(servicoParaAtualizar.getFkCategoria());
-            return ResponseEntity.status(200).body(servicoBanco.get());
+            return ResponseEntity.status(200).body(repository.save(servicoBanco.get()));
         }
 
         return ResponseEntity.status(404).build();
