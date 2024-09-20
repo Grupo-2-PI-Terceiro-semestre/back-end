@@ -1,4 +1,4 @@
-package sptech.school.order_hub.controller;
+package sptech.school.order_hub.controller.categoria;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,99 +1,63 @@
 package sptech.school.order_hub.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.hibernate.validator.constraints.br.CNPJ;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
+@Table(name = "EMPRESA")
 public class Empresa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idEmpresa;
+
+    @NotBlank
+    @NotNull
     private String nomeEmpresa;
+
     private String emailEmpresa;
+
+    @CNPJ
     private String cnpj;
+
+    @NotNull
     private String telefone;
 
-    private Integer fkAssinante;
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
+    private List<Usuario> usuarios = new ArrayList<>();;
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
+    private List<Cliente> clientes = new ArrayList<>();;
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    private List<EmpresaTemCategoria> empresaTemCategorias = new ArrayList<>();;
+
+    @OneToOne
+    private Endereco endereco;
 
     @Lob
     private byte[] imagem;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Empresa empresa = (Empresa) o;
-        return idEmpresa == empresa.idEmpresa && Objects.equals(nomeEmpresa, empresa.nomeEmpresa) && Objects.equals(emailEmpresa, empresa.emailEmpresa) && Objects.equals(cnpj, empresa.cnpj) && Objects.equals(telefone, empresa.telefone) && Objects.equals(fkAssinante, empresa.fkAssinante) && Objects.deepEquals(imagem, empresa.imagem);
+    public void addUsuario(Usuario usuario) {
+        this.usuarios.add(usuario);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(idEmpresa);
-    }
-
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(Integer idEmpresa) {
-        this.idEmpresa = idEmpresa;
-    }
-
-    public String getNomeEmpresa() {
-        return nomeEmpresa;
-    }
-
-    public void setNomeEmpresa(String nomeEmpresa) {
-        this.nomeEmpresa = nomeEmpresa;
-    }
-
-    public String getEmailEmpresa() {
-        return emailEmpresa;
-    }
-
-    public void setEmailEmpresa(String emailEmpresa) {
-        this.emailEmpresa = emailEmpresa;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public Integer getFkAssinante() {
-        return fkAssinante;
-    }
-
-    public void setFkAssinante(Integer fkAssinante) {
-        this.fkAssinante = fkAssinante;
-    }
-
-    public byte[] getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(byte[] imagem) {
-        this.imagem = imagem;
+    public void addCliente(Cliente cliente) {
+        this.clientes.add(cliente);
     }
 }

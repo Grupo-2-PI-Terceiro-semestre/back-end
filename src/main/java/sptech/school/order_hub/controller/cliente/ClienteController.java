@@ -1,12 +1,10 @@
-package sptech.school.order_hub.controller;
+package sptech.school.order_hub.controller.cliente;
 
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/clientes")

@@ -63,10 +63,10 @@ public class ClienteServices {
                 String document = documentObject.optString("value", "default value");
                 OffsetDateTime dateOfBirth = OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
-                cliente.setId((int) (Math.random() * 10000));
-                cliente.setNomeCliente(firstName);
+                cliente.setIdPessoa((int) (Math.random() * 10000));
+                cliente.setNomePessoa(firstName);
                 cliente.setDataNascimento(dateOfBirth.toLocalDate());
-                cliente.setCpf(document);
+                cliente.setEmailPessoa(document);
 
                 clientes[i] = cliente;
             }

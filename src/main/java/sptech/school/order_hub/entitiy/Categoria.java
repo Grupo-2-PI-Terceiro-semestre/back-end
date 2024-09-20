@@ -1,40 +1,25 @@
 package sptech.school.order_hub.entitiy;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.Objects;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
+@Table(name = "CATEGORIA")
 public class Categoria {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCategoria;
-    private String nomeCategoria;
 
+    private String nome;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Categoria categoria = (Categoria) o;
-        return Objects.equals(idCategoria, categoria.idCategoria) && Objects.equals(nomeCategoria, categoria.nomeCategoria);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(idCategoria);
-    }
+    @OneToMany(mappedBy = "categoriaServico")
+    private Set<EmpresaTemCategoria> empresaTemCategorias;
 }
