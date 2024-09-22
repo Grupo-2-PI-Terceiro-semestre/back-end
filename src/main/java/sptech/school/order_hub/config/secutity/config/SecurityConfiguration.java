@@ -40,6 +40,7 @@ public class SecurityConfiguration {
                         authorize -> authorize
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())  // Use o bean direto
