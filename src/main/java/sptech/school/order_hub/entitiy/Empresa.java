@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor

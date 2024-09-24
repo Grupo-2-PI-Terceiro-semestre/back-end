@@ -14,6 +14,7 @@ import sptech.school.order_hub.config.secutity.config.TokenServices;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.CadastroResponseDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -39,26 +40,30 @@ public class UsuarioServices {
 
     @Autowired
     TokenServices tokenServices;
+
     @Autowired
     private EmpresaRepository empresaRepository;
 
+    @Autowired
+    private EmpresaServices empresaServices;
 
-    public ResponseEntity<AuthResponseDTO> autenticar(AuthRequestDTO authRequestDTO) throws AuthenticationException {
+
+    public ResponseEntity<AuthResponseDTO> autenticar(Usuario usuario) throws AuthenticationException {
 
         UsernamePasswordAuthenticationToken authToken;
 
-        if (authRequestDTO.firebaseUid() == null) {
-            authToken = new UsernamePasswordAuthenticationToken(authRequestDTO.emailPessoa(), authRequestDTO.senha());
+        if (usuario.getFirebaseUid() == null) {
+            authToken = new UsernamePasswordAuthenticationToken(usuario.getEmailPessoa(), usuario.getSenha());
         } else {
-            authToken = new UsernamePasswordAuthenticationToken(authRequestDTO.emailPessoa(), authRequestDTO.firebaseUid());
+            authToken = new UsernamePasswordAuthenticationToken(usuario.getEmailPessoa(), usuario.getFirebaseUid());
         }
 
         Authentication authentication = authenticationManager.authenticate(authToken);
 
         String token = tokenServices.generateToken((Usuario) authentication.getPrincipal());
 
-        Usuario usuario = (Usuario) authentication.getPrincipal();
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuario.getIdPessoa(), usuario.getNomePessoa(), usuario.getTiposDeUsuario());
+        Usuario usuarioAutenticado = (Usuario) authentication.getPrincipal();
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuarioAutenticado.getIdPessoa(), usuarioAutenticado.getNomePessoa(), usuarioAutenticado.getTiposDeUsuario(), usuarioAutenticado.getEmpresa());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -89,10 +94,28 @@ public class UsuarioServices {
         }
     }
 
+
+    public CadastroResponseDTO create(Usuario usuario) {
+
+        if (repository.existsByEmailPessoa(usuario.getEmailPessoa())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
+        }
+        try {
+            if (usuario.getPassword() != null) {
+                usuario.setSenha(passwordEncoder.encode(usuario.getPassword()));
+            } else {
+                usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
+            }
+            repository.save(usuario);
+            return CadastroResponseDTO.toEntity(usuario);
+        } catch (Exception e) {
+            throw new UserCreationException("Erro ao cadastrar o usuário: " + e.getMessage(), e);
+        }
+    }
+
     public List<Usuario> findAllByEmpresa(Integer idEmpresa) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = empresaServices.findById(idEmpresa);
 
         List<Usuario> usuarios = repository.findAllByEmpresa(empresa);
 
@@ -147,9 +170,7 @@ public class UsuarioServices {
         if (repository.existsByEmailPessoaAndCpf(usuario.getEmailPessoa(), usuario.getCpf())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
         }
-
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = empresaServices.findById(idEmpresa);
 
         usuario.setIdPessoa(null);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));

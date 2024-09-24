@@ -23,10 +23,12 @@ public class EmpresaServices {
     EmpresaRepository repository;
 
     @Autowired
-    EnderecoRepository enderecoRepository;
+    EnderecoService enderecoService;
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+
     @Autowired
     private EmpresaRepository empresaRepository;
 
@@ -49,7 +51,8 @@ public class EmpresaServices {
     }
 
     public Empresa findById(Integer idEmpresa) {
-        return null;
+        return this.repository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 
 
@@ -57,7 +60,7 @@ public class EmpresaServices {
         Usuario usuario = usuarioRepository.findById(empresaDTO.idPessoa())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
 
-        Endereco endereco = createEndereco(empresaDTO);
+        Endereco endereco = enderecoService.create(empresaDTO.endereco());
 
         Empresa empresa = new Empresa();
         empresa.setNomeEmpresa(empresaDTO.nomeEmpresa());
@@ -73,18 +76,6 @@ public class EmpresaServices {
 
         usuarioRepository.save(usuario);
         return empresa;
-    }
-
-    private Endereco createEndereco(EmpresaDTO empresaDTO) {
-        Endereco endereco = new Endereco();
-        endereco.setLogradouro(empresaDTO.endereco().logradouro());
-        endereco.setBairro(empresaDTO.endereco().bairro());
-        endereco.setCidade(empresaDTO.endereco().cidade());
-        endereco.setEstado(empresaDTO.endereco().estado());
-        endereco.setCep(empresaDTO.endereco().cep());
-        endereco.setNumero(empresaDTO.endereco().numero());
-        endereco.setComplemento(empresaDTO.endereco().complemento());
-        return enderecoRepository.save(endereco);
     }
 
     public List<Empresa> listar() {

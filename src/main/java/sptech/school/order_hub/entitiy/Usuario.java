@@ -3,10 +3,8 @@ package sptech.school.order_hub.entitiy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@SuperBuilder
 @Table(name = "USUARIOS")
 public class Usuario extends Pessoa implements UserDetails {
 
@@ -55,6 +54,9 @@ public class Usuario extends Pessoa implements UserDetails {
 
     @Override
     public String getPassword() {
+        if (this.senha == null || this.senha.isEmpty()) {
+            return this.firebaseUid;
+        }
         return this.senha;
     }
 
