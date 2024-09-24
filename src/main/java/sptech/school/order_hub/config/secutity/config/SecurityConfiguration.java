@@ -30,6 +30,11 @@ public class SecurityConfiguration {
     @Autowired
     private SecurityFilter securityFilter;
 
+    private static final String[] WHITE_LIST_URL = { "/v2/api-docs", "/v3/api-docs",
+            "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
+            "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
+            "/api/test/**", "/authenticate" };
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,7 +45,7 @@ public class SecurityConfiguration {
                         authorize -> authorize
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
-                                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                                .requestMatchers(WHITE_LIST_URL).permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())  // Use o bean direto
