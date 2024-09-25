@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
+import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EmpresaDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
@@ -56,26 +58,27 @@ public class EmpresaServices {
     }
 
 
-    public Empresa create(EmpresaDTO empresaDTO) {
-        Usuario usuario = usuarioRepository.findById(empresaDTO.idPessoa())
+    public CadastroEmpresaResponseDTO create(Empresa empresa, Integer idPessoa) {
+
+        Usuario usuario = usuarioRepository.findById(idPessoa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
 
-        Endereco endereco = enderecoService.create(empresaDTO.endereco());
+        Endereco endereco = enderecoService.create(empresa.getEndereco());
 
-        Empresa empresa = new Empresa();
-        empresa.setNomeEmpresa(empresaDTO.nomeEmpresa());
-        empresa.setEmailEmpresa(empresaDTO.emailEmpresa());
-        empresa.setCnpj(empresaDTO.cnpj());
-        empresa.setTelefone(empresaDTO.telefone());
-        empresa.setEndereco(endereco);
-        empresa.addUsuario(usuario);
+        Empresa empresaCriada = new Empresa();
+        empresaCriada.setNomeEmpresa(empresa.getNomeEmpresa());
+        empresaCriada.setEmailEmpresa(empresa.getEmailEmpresa());
+        empresaCriada.setCnpj(empresa.getCnpj());
+        empresaCriada.setTelefone(empresa.getTelefone());
+        empresaCriada.setEndereco(endereco);
+        empresaCriada.addUsuario(usuario);
 
-        usuario.setEmpresa(empresa);
+        usuario.setEmpresa(empresaCriada);
 
-        empresaRepository.save(empresa);
+        empresaRepository.save(empresaCriada);
 
         usuarioRepository.save(usuario);
-        return empresa;
+        return CadastroEmpresaResponseDTO.from(empresaCriada);
     }
 
     public List<Empresa> listar() {

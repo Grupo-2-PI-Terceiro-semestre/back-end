@@ -12,15 +12,11 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository repository;
 
-    public Endereco create(EnderecoDTO enderecoDTO) {
-        Endereco endereco = new Endereco();
-        endereco.setLogradouro(enderecoDTO.logradouro());
-        endereco.setBairro(enderecoDTO.bairro());
-        endereco.setCidade(enderecoDTO.cidade());
-        endereco.setEstado(enderecoDTO.estado());
-        endereco.setCep(enderecoDTO.cep());
-        endereco.setNumero(enderecoDTO.numero());
-        endereco.setComplemento(enderecoDTO.complemento());
+    public Endereco create(Endereco endereco) {
+
+        if (endereco == null) {
+            throw new IllegalArgumentException("Endereco não pode ser nulo");
+        }
         return repository.save(endereco);
     }
 }

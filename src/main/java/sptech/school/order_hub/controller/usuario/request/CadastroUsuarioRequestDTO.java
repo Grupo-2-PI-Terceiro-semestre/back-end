@@ -1,10 +1,9 @@
 package sptech.school.order_hub.controller.usuario.request;
 
-import jakarta.validation.constraints.NotBlank;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.enuns.TipoUsuario;
 
-public record CadastroRequestDTO(
+public record CadastroUsuarioRequestDTO(
         String nomePessoa,
 
         String emailPessoa,

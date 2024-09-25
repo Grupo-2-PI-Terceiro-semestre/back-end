@@ -33,13 +33,13 @@ public class Usuario extends Pessoa implements UserDetails {
     @JoinColumn(name = "agenda_id")
     private Agenda agenda;
 
-    @NotNull
     private TipoUsuario tiposDeUsuario;
 
     private Boolean representante;
 
-    @CPF
     private String cpf;
+
+    private String funcao;
 
     private String firebaseUid;
 

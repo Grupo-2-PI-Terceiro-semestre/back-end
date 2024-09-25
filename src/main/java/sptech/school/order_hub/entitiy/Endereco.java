@@ -11,6 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 @Table(name = "ENDERECO")
 public class Endereco {
 

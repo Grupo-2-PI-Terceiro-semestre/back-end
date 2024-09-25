@@ -4,7 +4,7 @@ import lombok.Builder;
 import sptech.school.order_hub.entitiy.Usuario;
 
 @Builder
-public record CadastroResponseDTO(
+public record CadastroUsuarioResponseDTO(
         String nomePessoa,
         String emailPessoa,
         String tiposDeUsuario,
@@ -12,8 +12,8 @@ public record CadastroResponseDTO(
         String firebaseUid
 ) {
 
-    public static CadastroResponseDTO toEntity(Usuario usuario) {
-        return CadastroResponseDTO.builder()
+    public static CadastroUsuarioResponseDTO toEntity(Usuario usuario) {
+        return CadastroUsuarioResponseDTO.builder()
                 .nomePessoa(usuario.getNomePessoa())
                 .emailPessoa(usuario.getEmailPessoa())
                 .tiposDeUsuario(usuario.getTiposDeUsuario().name())

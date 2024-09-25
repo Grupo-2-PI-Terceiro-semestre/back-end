@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @Table(name = "EMPRESA")
+@Builder
 public class Empresa {
 
     @Id

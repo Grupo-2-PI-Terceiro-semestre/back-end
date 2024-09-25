@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
-import sptech.school.order_hub.controller.usuario.request.CadastroRequestDTO;
+import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.CadastroResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.services.UsuarioServices;
@@ -33,7 +33,7 @@ public class UsuarioController {
     }
 
     @PostMapping()
-    public ResponseEntity<CadastroResponseDTO> create(@RequestBody CadastroRequestDTO usuario) {
+    public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.services.create(usuario.toEntity()));
     }
 

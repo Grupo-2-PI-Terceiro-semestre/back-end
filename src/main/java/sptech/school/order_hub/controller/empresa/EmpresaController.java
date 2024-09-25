@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
+import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EmpresaDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.services.EmpresaServices;
@@ -19,8 +21,8 @@ public class EmpresaController {
     private EmpresaServices empresaService;
 
     @PostMapping
-    public ResponseEntity<Empresa> create(@Valid @RequestBody EmpresaDTO empresaDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.create(empresaDTO));
+    public ResponseEntity<CadastroEmpresaResponseDTO> create(@Valid @RequestBody CadastroEmpresaRequestDTO empresaDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.create(empresaDTO.toEntity(), empresaDTO.idPessoa()));
     }
 
     @GetMapping

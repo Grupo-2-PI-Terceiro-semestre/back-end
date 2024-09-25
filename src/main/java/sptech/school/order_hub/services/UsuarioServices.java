@@ -11,10 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config.secutity.config.TokenServices;
-import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
-import sptech.school.order_hub.controller.usuario.request.CadastroRequestDTO;
+import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.CadastroResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -71,7 +70,7 @@ public class UsuarioServices {
         return new ResponseEntity<>(authResponseDTO, headers, HttpStatus.OK);
     }
 
-    public Usuario create(CadastroRequestDTO usuarioDTO) {
+    public Usuario create(CadastroUsuarioRequestDTO usuarioDTO) {
 
         Usuario usuario = new Usuario();
 
@@ -95,7 +94,7 @@ public class UsuarioServices {
     }
 
 
-    public CadastroResponseDTO create(Usuario usuario) {
+    public CadastroUsuarioResponseDTO create(Usuario usuario) {
 
         if (repository.existsByEmailPessoa(usuario.getEmailPessoa())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
@@ -107,7 +106,7 @@ public class UsuarioServices {
                 usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
             }
             repository.save(usuario);
-            return CadastroResponseDTO.toEntity(usuario);
+            return CadastroUsuarioResponseDTO.toEntity(usuario);
         } catch (Exception e) {
             throw new UserCreationException("Erro ao cadastrar o usuário: " + e.getMessage(), e);
         }
