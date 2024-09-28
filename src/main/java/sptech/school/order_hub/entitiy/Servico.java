@@ -32,9 +32,7 @@ public class Servico {
     @Size(max = 255)
     private String descricao;
 
-
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "fkCategoriaServico")
-    private EmpresaTemCategoria empresaTemCategoria;
+    @JoinColumn(name = "id_empresa")
+    private Empresa empresa;
 }
