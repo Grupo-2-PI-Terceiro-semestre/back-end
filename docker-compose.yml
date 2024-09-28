@@ -5,7 +5,7 @@ services:
     image: mysql:8.0
     container_name: mysql_orderhub
     environment:
-      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_ROOT_PASSWORD: 123
       MYSQL_DATABASE: orderhub
       MYSQL_USER: orderhub
       MYSQL_PASSWORD: 123
