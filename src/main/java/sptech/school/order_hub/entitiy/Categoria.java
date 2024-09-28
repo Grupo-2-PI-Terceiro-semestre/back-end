@@ -1,9 +1,11 @@
 package sptech.school.order_hub.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 @Table(name = "CATEGORIA")
 public class Categoria {
 
@@ -20,6 +23,12 @@ public class Categoria {
 
     private String nome;
 
-    @OneToMany(mappedBy = "categoriaServico")
-    private Set<EmpresaTemCategoria> empresaTemCategorias;
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
+    private List<Empresa> empresas = new ArrayList<>();
+
+    public void addEmpresa(Empresa empresa) {
+        this.empresas.add(empresa);
+    }
+
 }
