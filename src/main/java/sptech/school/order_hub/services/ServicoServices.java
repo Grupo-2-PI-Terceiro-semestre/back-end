@@ -2,10 +2,9 @@ package sptech.school.order_hub.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sptech.school.order_hub.entitiy.EmpresaTemCategoria;
+import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.ServicoRepository;
@@ -24,14 +23,14 @@ public class ServicoServices {
     private ServicoRepository servicoRepository;
 
 
-    public Servico createServico(Servico servicoParaCadastrar) {
-        Integer empresId = servicoParaCadastrar.getEmpresaTemCategoria().getEmpresa().getIdEmpresa();
-        boolean empresaExiste = empresaRepository.existsById(empresId);
+    public Servico createServico(Servico servicoParaCadastrar, Integer empresId) {
+        Empresa empresa = empresaRepository.findById(empresId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
-        if (!empresaExiste) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada.");
-        }
+        empresa.addServico(servicoParaCadastrar);
+
         servicoParaCadastrar.setIdServico(null);
+
         return servicoRepository.save(servicoParaCadastrar);
     }
 
@@ -43,9 +42,8 @@ public class ServicoServices {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço não encontrado.");
     }
 
-    public List<Servico> findByCategoria(EmpresaTemCategoria empresaTemCategoria) {
-
-        List<Servico> servicosEncontrados = servicoRepository.findByEmpresaTemCategoria(empresaTemCategoria);
+    public List<Servico> findByCategoria(String nomeServico) {
+        List<Servico> servicosEncontrados = servicoRepository.findByNomeServicoLike(nomeServico);
 
         if (servicosEncontrados.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum serviço encontrado para esta categoria.");
