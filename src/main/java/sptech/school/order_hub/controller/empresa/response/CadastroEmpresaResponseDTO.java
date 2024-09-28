@@ -1,11 +1,7 @@
 package sptech.school.order_hub.controller.empresa.response;
 
 import lombok.Builder;
-import sptech.school.order_hub.dtos.EnderecoDTO;
-import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Empresa;
-
-import java.util.List;
 
 @Builder
 public record CadastroEmpresaResponseDTO(

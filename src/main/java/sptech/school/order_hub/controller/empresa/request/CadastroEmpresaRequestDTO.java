@@ -2,9 +2,9 @@ package sptech.school.order_hub.controller.empresa.request;
 
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CNPJ;
+import sptech.school.order_hub.dtos.CategoriaDTO;
 import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Usuario;
 
 public record CadastroEmpresaRequestDTO(
         String nomeEmpresa,
@@ -14,6 +14,7 @@ public record CadastroEmpresaRequestDTO(
         String cnpj,
         String telefone,
         EnderecoDTO endereco,
+        CategoriaDTO categoria,
         Integer idPessoa
 ) {
 
@@ -24,6 +25,7 @@ public record CadastroEmpresaRequestDTO(
                         .cnpj(cnpj)
                         .telefone(telefone)
                         .endereco(endereco.toEntity())
+                        .categoria(categoria.toEntity())
                         .build();
         }
 }
