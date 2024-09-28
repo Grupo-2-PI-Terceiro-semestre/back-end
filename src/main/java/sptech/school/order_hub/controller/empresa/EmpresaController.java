@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
+import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EmpresaDTO;
 import sptech.school.order_hub.entitiy.Empresa;
@@ -25,9 +27,9 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(empresaService.create(empresaDTO.toEntity(), empresaDTO.idPessoa()));
     }
 
-    @GetMapping
-    public ResponseEntity<List<Empresa>> listar() {
-        return ResponseEntity.status(HttpStatus.OK).body(empresaService.listar());
+    @GetMapping("/buscar")
+    public ResponseEntity<List<BuscarEmpresaResponseDTO>> listarEmpresaPeloNome(@Valid @RequestParam BuscarEmpresaRequestDTO termo) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.listarEmpresaPeloNome(termo));
     }
 
     @GetMapping("/{idEmpresa}")
