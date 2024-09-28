@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Integer> {
 
-    List<Servico> findByFkEmpresa(Integer fkEmpresa);
-
-    List<Servico> findByFkCategoria(Integer fkCategoria);
+    List<Servico> findByNomeServicoLike(String nomeServico);
 }

@@ -1,8 +1,5 @@
 package sptech.school.order_hub.services;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import org.apache.tomcat.util.json.JSONFilter;
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
@@ -16,12 +13,12 @@ import sptech.school.order_hub.entitiy.Cliente;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ClienteServices {
+    private Cliente[] clientes;
 
     private static final String RANDOM_USER_API_ENDPOINT = "https://randomuser.me/api/";
     private final RestTemplate restTemplate;
@@ -45,7 +42,7 @@ public class ClienteServices {
     public ResponseEntity<Cliente[]> findByQuantityUserOrder(Integer results, String nat) {
         ResponseEntity<String> response = getRandomUser(results, null, nat);
 
-        Cliente[] clientes = new Cliente[results];
+        this.clientes = new Cliente[results];
         try {
             JSONObject json = new JSONObject(response.getBody());
 
@@ -66,10 +63,10 @@ public class ClienteServices {
                 String document = documentObject.optString("value", "default value");
                 OffsetDateTime dateOfBirth = OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
-                cliente.setId((int) (Math.random() * 10000));
-                cliente.setNomeCliente(firstName);
+                cliente.setIdPessoa((int) (Math.random() * 10000));
+                cliente.setNomePessoa(firstName);
                 cliente.setDataNascimento(dateOfBirth.toLocalDate());
-                cliente.setCpf(document);
+                cliente.setEmailPessoa(document);
 
                 clientes[i] = cliente;
             }
@@ -77,6 +74,8 @@ public class ClienteServices {
         } catch (Exception e) {
             System.err.println("Error processing JSON: " + e.getMessage());
         }
+
+        selectionSortOtimizado(clientes);
 
         return ResponseEntity.status(200).body(clientes);
     }
@@ -128,5 +127,65 @@ public class ClienteServices {
         } catch (HttpClientErrorException e) {
             throw e;
         }
+    }
+
+    private static Period calcularPeriodo(LocalDate dataNascimento, LocalDate dataAtual) {
+        if (dataNascimento != null && dataAtual != null) {
+            return Period.between(dataNascimento, dataAtual);
+        } else {
+            return Period.ZERO;
+        }
+    }
+
+    private static int compararIdades(Cliente cliente1, Cliente cliente2) {
+        Period idadeCliente1 = calcularPeriodo(cliente1.getDataNascimento(), LocalDate.now());
+        Period idadeCliente2 = calcularPeriodo(cliente2.getDataNascimento(), LocalDate.now());
+
+
+        if (idadeCliente1.getYears() != idadeCliente2.getYears()) {
+            return Integer.compare(idadeCliente1.getYears(), idadeCliente2.getYears());
+        } else if (idadeCliente1.getMonths() != idadeCliente2.getMonths()) {
+            return Integer.compare(idadeCliente1.getMonths(), idadeCliente2.getMonths());
+        } else {
+            return Integer.compare(idadeCliente1.getDays(), idadeCliente2.getDays());
+        }
+    }
+
+    private static void selectionSortOtimizado(Cliente[] clientes) {
+        for (int i = 0; i < clientes.length - 1; i++) {
+            int indiceMenor = i;
+            for (int j = i + 1; j < clientes.length; j++) {
+                if (compararIdades(clientes[j], clientes[indiceMenor]) < 0) {
+                    indiceMenor = j;
+                }
+            }
+            Cliente aux = clientes[i];
+            clientes[i] = clientes[indiceMenor];
+            clientes[indiceMenor] = aux;
+        }
+    }
+
+    private static int pesquisaBinaria(Cliente cliente, Cliente[] vetorDeCliente) {
+        int inicio = 0;
+        int fim = vetorDeCliente.length - 1;
+        while (inicio <= fim) {
+            int meio = (inicio + fim) / 2;
+            int comparacao = compararIdades(cliente, vetorDeCliente[meio]);
+            if (comparacao == 0) {
+                return meio;
+            } else if (comparacao > 0) {
+                inicio = meio + 1;
+            } else {
+                fim = meio - 1;
+            }
+        }
+        return -1;
+    }
+
+    public ResponseEntity<Integer> pesquisaBinaria(Cliente cliente) {
+        if (pesquisaBinaria(cliente, clientes) == -1) {
+            return ResponseEntity.status(404).body(-1);
+        }
+        return ResponseEntity.status(200).body(pesquisaBinaria(cliente, clientes));
     }
 }
