@@ -45,6 +45,8 @@ public class SecurityConfiguration {
                         authorize -> authorize
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/api/v1/categorias").permitAll()
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
@@ -70,7 +72,7 @@ public class SecurityConfiguration {
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // ajuste a origem conforme necessário
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("authorization", "content-type", "xsrf-token"));
-        config.setExposedHeaders(Arrays.asList("xsrf-token"));
+        config.setExposedHeaders(Arrays.asList("authorization", "xsrf-token")); // Adicione o cabeçalho 'authorization' aqui
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
@@ -78,6 +80,8 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
+
 
     @Bean
     public CorsFilter corsFilter(UrlBasedCorsConfigurationSource source) {
