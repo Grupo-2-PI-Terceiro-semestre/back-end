@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,23 +39,31 @@ public class Empresa {
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
     @JsonManagedReference
-    private List<Usuario> usuarios = new ArrayList<>();;
+    private List<Usuario> usuarios = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
     @JsonManagedReference
-    private List<Cliente> clientes = new ArrayList<>();;
+    private List<Cliente> clientes = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
-    private List<EmpresaTemCategoria> empresaTemCategorias = new ArrayList<>();;
+    private List<Servico> servicos;
 
     @OneToOne
     private Endereco endereco;
 
-    @Lob
-    private byte[] imagem;
+    @ManyToOne
+    @JoinColumn(name = "idCategoria")
+    private Categoria categoria;
+
+
+    private UUID idImagem;
 
     public void addUsuario(Usuario usuario) {
         this.usuarios.add(usuario);
+    }
+
+    public void addServico(Servico servico) {
+        this.servicos.add(servico);
     }
 
     public void addCliente(Cliente cliente) {
