@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.entitiy.EmpresaTemCategoria;
+import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.ServicoRepository;
 import sptech.school.order_hub.services.ServicoServices;
@@ -31,16 +31,16 @@ public class ServicoController {
         return ResponseEntity.status(HttpStatus.OK).body(servicoAtualizado);
     }
 
-    @PostMapping
-    public ResponseEntity<Servico> create(@Valid @RequestBody Servico servicoParaCadastrar) {
-        Servico servicoCriado = servicoService.createServico(servicoParaCadastrar);
+    @PostMapping("/{idEmpresa}")
+    public ResponseEntity<Servico> create(@Valid @RequestBody Servico servicoParaCadastrar, @PathVariable int idEmpresa) {
+        Servico servicoCriado = servicoService.createServico(servicoParaCadastrar, idEmpresa);
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoCriado);
     }
 
 
     @GetMapping("/categoria")
-    public ResponseEntity<List<Servico>> findServicesByCategoria(@Valid @RequestBody EmpresaTemCategoria empresaTemCategoria) {
-        List<Servico> servicosEncontrados = servicoService.findByCategoria(empresaTemCategoria);
+    public ResponseEntity<List<Servico>> findServicesByCategoria(@Valid @RequestBody Categoria categoria) {
+        List<Servico> servicosEncontrados = servicoService.findByCategoria(categoria.getNome());
         return ResponseEntity.status(HttpStatus.OK).body(servicosEncontrados);
     }
 
