@@ -2,9 +2,7 @@ package sptech.school.order_hub.dtos;
 
 public record UsuarioDTO(
         int idUsuario,
-        String nome,
-        String email,
-        String senha,
+        String nomePessoa,
         String telefone,
         String cpf,
         String dataNascimento,

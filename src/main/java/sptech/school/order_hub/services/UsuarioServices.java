@@ -1,5 +1,6 @@
 package sptech.school.order_hub.services;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,9 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config.secutity.config.TokenServices;
+import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -22,29 +26,34 @@ import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
 import javax.naming.AuthenticationException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServices {
 
-    @Autowired
-    private UsuarioRepository repository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UsuarioRepository repository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final TokenServices tokenServices;
+    private final EmpresaRepository empresaRepository;
+    private final EmpresaServices empresaServices;
+    private final AgendamentoServices agendamentoServices;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    public UsuarioServices(UsuarioRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenServices tokenServices, EmpresaRepository empresaRepository, EmpresaServices empresaServices, AgendamentoServices agendamentoServices) {
 
-    @Autowired
-    TokenServices tokenServices;
-
-    @Autowired
-    private EmpresaRepository empresaRepository;
-
-    @Autowired
-    private EmpresaServices empresaServices;
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.tokenServices = tokenServices;
+        this.empresaRepository = empresaRepository;
+        this.empresaServices = empresaServices;
+        this.agendamentoServices = agendamentoServices;
+    }
 
 
     public ResponseEntity<AuthResponseDTO> autenticar(Usuario usuario) throws AuthenticationException {
@@ -62,7 +71,7 @@ public class UsuarioServices {
         String token = tokenServices.generateToken((Usuario) authentication.getPrincipal());
 
         Usuario usuarioAutenticado = (Usuario) authentication.getPrincipal();
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuarioAutenticado.getIdPessoa(), usuarioAutenticado.getNomePessoa(), usuarioAutenticado.getTiposDeUsuario(), usuarioAutenticado.getEmpresa());
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuarioAutenticado.getIdPessoa(), usuarioAutenticado.getNomePessoa(), usuarioAutenticado.getTiposDeUsuario(), usuarioAutenticado.getEmpresa().getIdEmpresa());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -112,9 +121,9 @@ public class UsuarioServices {
         }
     }
 
-    public List<Usuario> findAllByEmpresa(Integer idEmpresa) {
+    public List<BuscarColaboradoresResponseDTO> findAllByColaboradores(Integer idEmpresa, BuscarAgendamentoRequestDTO request) {
 
-        Empresa empresa = empresaServices.findById(idEmpresa);
+        Empresa empresa = empresaServices.buscarEmpresaEFuncionarios(idEmpresa);
 
         List<Usuario> usuarios = repository.findAllByEmpresa(empresa);
 
@@ -122,7 +131,13 @@ public class UsuarioServices {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         }
 
-        return usuarios;
+        return usuarios.stream()
+                .map(usuario -> {
+                    List<AgendamentoDTO> agendamentos = agendamentoServices.buscaAgendamento(request, usuario.getAgenda().getIdAgenda());
+
+                    return BuscarColaboradoresResponseDTO.from(usuario, agendamentos);
+                })
+                .collect(Collectors.toList());
     }
 
     public Usuario findById(Integer idUsuario) {
@@ -169,7 +184,7 @@ public class UsuarioServices {
         if (repository.existsByEmailPessoaAndCpf(usuario.getEmailPessoa(), usuario.getCpf())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
         }
-        Empresa empresa = empresaServices.findById(idEmpresa);
+        Empresa empresa = empresaServices.buscarEmpresaEFuncionarios(idEmpresa);
 
         usuario.setIdPessoa(null);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -185,5 +200,30 @@ public class UsuarioServices {
         return usuario;
     }
 
+    public void exportarAgendamentos(BuscarAgendamentoRequestDTO request, Integer idEmpresa, HttpServletResponse response) throws IOException {
+        List<BuscarColaboradoresResponseDTO> colaboradores = findAllByColaboradores(idEmpresa, request);
 
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"agendamentos.csv\"");
+
+        PrintWriter writer = response.getWriter();
+
+        writer.printf("| %-5S | %-30S | %-15S | %-30S | %-20S | %-20S | %-50S | %-20S |\n", "id", "nome funcionário", "função", "nome cliente", "telefone cliente", "nome serviço", "descrição serviço", "data hora serviço");
+
+        for (BuscarColaboradoresResponseDTO colaborador : colaboradores) {
+            for (AgendamentoDTO agendamento : colaborador.agendamentoDTOS()) {
+                writer.println(String.format("| %-5d | %-30s | %-15s | %-30s | %-20s | %-20s | %-50s | %-20s |",
+                        colaborador.idFuncionario(),
+                        colaborador.nomeFuncionario(),
+                        colaborador.funcao(),
+                        agendamento.cliente().nomePessoa(),
+                        agendamento.cliente().telefone(),
+                        agendamento.servico().nomeServico(),
+                        agendamento.servico().descricao(),
+                        agendamento.horaAgendamento().toString()
+                ));
+            }
+        }
+        writer.flush();
+    }
 }

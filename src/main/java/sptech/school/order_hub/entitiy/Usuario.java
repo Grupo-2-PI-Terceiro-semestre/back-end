@@ -1,5 +1,6 @@
 package sptech.school.order_hub.entitiy;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,16 +22,16 @@ import java.util.List;
 @Setter
 @SuperBuilder
 @Table(name = "USUARIOS")
+@JsonIgnoreProperties({"agenda"})
 public class Usuario extends Pessoa implements UserDetails {
 
     private String senha;
 
     @ManyToOne()
-    @JoinColumn(name = "endereco_id")
+    @JoinColumn(name = "fk_endereco")
     private Endereco endereco;
 
-    @OneToOne
-    @JoinColumn(name = "agenda_id")
+    @OneToOne(mappedBy = "usuario")
     private Agenda agenda;
 
     private TipoUsuario tiposDeUsuario;
@@ -39,7 +40,9 @@ public class Usuario extends Pessoa implements UserDetails {
 
     private String cpf;
 
-    private String funcao;
+    @ManyToOne
+    @JoinColumn(name = "fk_funcao")
+    private Funcao funcao;
 
     private String firebaseUid;
 
