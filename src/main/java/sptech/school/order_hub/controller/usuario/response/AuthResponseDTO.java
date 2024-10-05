@@ -7,6 +7,6 @@ public record AuthResponseDTO(
         Integer id,
         String nome,
         TipoUsuario tipoUsuario,
-        Empresa empresa
+        Integer idEmpresa
 ) {
 }
