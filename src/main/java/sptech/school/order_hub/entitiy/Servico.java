@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.sql.Time;
+import java.time.LocalTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -32,7 +35,11 @@ public class Servico {
     @Size(max = 255)
     private String descricao;
 
+    private String corReferenciaHex;
+
+    private LocalTime duracao;
+
     @ManyToOne
-    @JoinColumn(name = "id_empresa")
+    @JoinColumn(name = "fk_empresa")
     private Empresa empresa;
 }
