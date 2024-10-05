@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
+import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
-import sptech.school.order_hub.dtos.EmpresaDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.services.EmpresaServices;
 
@@ -28,14 +28,13 @@ public class EmpresaController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<BuscarEmpresaResponseDTO>> listarEmpresaPeloNome(@Valid @RequestParam BuscarEmpresaRequestDTO termo) {
+    public ResponseEntity<List<BuscarEmpresaServicoResponseDTO>> listarEmpresaPeloNome(@Valid @RequestParam BuscarEmpresaRequestDTO termo) {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.listarEmpresaPeloNome(termo));
     }
 
     @GetMapping("/{idEmpresa}")
-    public ResponseEntity<Empresa> findById(@PathVariable Integer idEmpresa) {
-        Empresa empresa = empresaService.findById(idEmpresa);
-        return ResponseEntity.status(HttpStatus.OK).body(empresa);
+    public ResponseEntity<BuscarEmpresaResponseDTO> findById(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.findById(idEmpresa));
     }
 
     @DeleteMapping("/{idEmpresa}")

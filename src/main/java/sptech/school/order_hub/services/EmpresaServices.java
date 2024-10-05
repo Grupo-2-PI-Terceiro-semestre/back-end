@@ -2,21 +2,17 @@ package sptech.school.order_hub.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
-import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
+import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
-import sptech.school.order_hub.dtos.EmpresaDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.repository.EmpresaRepository;
-import sptech.school.order_hub.repository.EnderecoRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
 import java.util.List;
@@ -57,8 +53,14 @@ public class EmpresaServices {
     public void deleteById(Integer idEmpresa) {
     }
 
-    public Empresa findById(Integer idEmpresa) {
-        return this.repository.findById(idEmpresa)
+    public BuscarEmpresaResponseDTO findById(Integer idEmpresa) {
+        Empresa empresa = repository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        return BuscarEmpresaResponseDTO.from(empresa);
+    }
+
+    public Empresa buscarEmpresaEFuncionarios(Integer idEmpresa) {
+        return  repository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 
@@ -97,7 +99,7 @@ public class EmpresaServices {
         return CadastroEmpresaResponseDTO.from(empresaCriada);
     }
 
-    public List<BuscarEmpresaResponseDTO> listarEmpresaPeloNome(BuscarEmpresaRequestDTO input) {
+    public List<BuscarEmpresaServicoResponseDTO> listarEmpresaPeloNome(BuscarEmpresaRequestDTO input) {
 
         List<Empresa> empresas = repository.findByNomeEmpresaOrServico(input.termo(), input.termo());
 
@@ -106,11 +108,11 @@ public class EmpresaServices {
         }
 
         return empresas.stream()
-                .map(empresa -> BuscarEmpresaResponseDTO.from(
+                .map(empresa -> BuscarEmpresaServicoResponseDTO.from(
                         empresa.getIdEmpresa(),
                         empresa.getNomeEmpresa(),
                         empresa.getEndereco(),
-                        empresa.getIdImagem(),
+                        empresa.getUrlImagem(),
                         empresa.getServicos())
                 )
                 .collect(Collectors.toList());

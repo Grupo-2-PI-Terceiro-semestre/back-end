@@ -1,29 +1,23 @@
 package sptech.school.order_hub.controller.empresa.response;
 
-import sptech.school.order_hub.entitiy.Endereco;
-import sptech.school.order_hub.entitiy.Servico;
+import lombok.Builder;
+import sptech.school.order_hub.entitiy.Empresa;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+@Builder
 public record BuscarEmpresaResponseDTO(
-        Integer idEmpresa,
         String nomeEmpresa,
-        String bairro,
-        String cidade,
-        UUID idImagem,
-        List<String> servicos
+        String emailEmpresa,
+        String telefone,
+        String urlLogo
 ) {
 
-
-    public static BuscarEmpresaResponseDTO from(Integer idEmpresa, String nomeEmpresa, Endereco endereco, UUID idImagem, List<Servico> servicos) {
-
-
-        List<String> nomesServicos = servicos.stream()
-                .map(Servico::getNomeServico)
-                .collect(Collectors.toList());
-
-        return new BuscarEmpresaResponseDTO(idEmpresa, nomeEmpresa, endereco.getBairro(), endereco.getCidade(), idImagem, nomesServicos);
+    public static BuscarEmpresaResponseDTO from(Empresa empresa) {
+        return BuscarEmpresaResponseDTO.builder()
+                .nomeEmpresa(empresa.getNomeEmpresa())
+                .emailEmpresa(empresa.getEmailEmpresa())
+                .telefone(empresa.getTelefone())
+                .urlLogo(empresa.getUrlImagem())
+                .build();
     }
+
 }

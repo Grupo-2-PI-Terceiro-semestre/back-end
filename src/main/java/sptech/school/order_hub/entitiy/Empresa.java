@@ -48,15 +48,15 @@ public class Empresa {
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
     private List<Servico> servicos;
 
+    @JoinColumn(name = "fk_endereco")
     @OneToOne
     private Endereco endereco;
 
     @ManyToOne
-    @JoinColumn(name = "idCategoria")
+    @JoinColumn(name = "fk_categoria")
     private Categoria categoria;
 
-
-    private UUID idImagem;
+    private String urlImagem;
 
     public void addUsuario(Usuario usuario) {
         this.usuarios.add(usuario);
