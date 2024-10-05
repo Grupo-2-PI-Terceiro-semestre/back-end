@@ -40,7 +40,7 @@ public abstract class Pessoa {
     private String numeroTelefone;
 
     @ManyToOne
-    @JoinColumn(name = "empresa_id")
+    @JoinColumn(name = "fk_empresa")
     @JsonBackReference
     private Empresa empresa;
 
