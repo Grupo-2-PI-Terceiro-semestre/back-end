@@ -8,7 +8,7 @@ spring:
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
       properties:
         hibernate:
           dialect: org.hibernate.dialect.SQLServerDialect
