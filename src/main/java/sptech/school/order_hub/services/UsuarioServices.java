@@ -208,11 +208,11 @@ public class UsuarioServices {
 
         PrintWriter writer = response.getWriter();
 
-        writer.printf("| %-5S | %-30S | %-15S | %-30S | %-20S | %-20S | %-50S | %-20S |\n", "id", "nome funcionário", "função", "nome cliente", "telefone cliente", "nome serviço", "descrição serviço", "data hora serviço");
+        writer.printf("%S,%S,%S,%S,%S,%S,%S,%S\n", "id", "nome funcionário", "função", "nome cliente", "telefone cliente", "nome serviço", "descrição serviço", "data hora serviço");
 
         for (BuscarColaboradoresResponseDTO colaborador : colaboradores) {
             for (AgendamentoDTO agendamento : colaborador.agendamentoDTOS()) {
-                writer.println(String.format("| %-5d | %-30s | %-15s | %-30s | %-20s | %-20s | %-50s | %-20s |",
+                writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s",
                         colaborador.idFuncionario(),
                         colaborador.nomeFuncionario(),
                         colaborador.funcao(),

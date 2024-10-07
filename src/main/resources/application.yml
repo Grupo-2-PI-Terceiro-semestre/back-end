@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: order-hub
+  datasource:
+    url: jdbc:sqlserver://servidor-orderhub.database.windows.net:1433;databaseName=bd-projeto-orderhub
+    username: admin-orderhub
+    password: Order123@
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.SQLServerDialect
+          format_sql: true
+    show-sql: true
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  secret: orderhub
+  expiration-hour: 2
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
