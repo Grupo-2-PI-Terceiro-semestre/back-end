@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -69,5 +70,21 @@ public class ServicoServices {
             servicoRepository.deleteById(idServico);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço não encontrado.");
         }
+    }
+
+    public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa) {
+
+        Empresa empresa = empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+
+        List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa);
+
+        if (servicos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum serviço encontrado para esta empresa.");
+        }
+
+        return servicos.stream()
+                .map(BuscarServicosDTO::from)
+                .toList();
     }
 }
