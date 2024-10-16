@@ -1,42 +1,83 @@
 package sptech.school.order_hub.services;
 
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoDinamicoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.entitiy.Agenda;
 import sptech.school.order_hub.entitiy.Agendamento;
-import sptech.school.order_hub.repository.AgendamentoRepository;
+import sptech.school.order_hub.enuns.StatusAgendamento;
+import sptech.school.order_hub.repository.*;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AgendamentoServices {
 
 
     private final AgendamentoRepository repository;
+    private final AgendaRepository agendaRepository;
 
-    public AgendamentoServices(AgendamentoRepository repository) {
+    public AgendamentoServices(AgendamentoRepository repository, AgendaRepository agendaRepository) {
         this.repository = repository;
+        this.agendaRepository = agendaRepository;
     }
 
 
-    public List<AgendamentoDTO> buscaAgendamento(BuscarAgendamentoRequestDTO request, Integer idAgenda) {
+    public List<AgendamentoDTO> buscaAgendamento(BuscarAgendamentoRequestDTO request, Integer idAgenda, Boolean dadosCompletos) {
 
         LocalDateTime startOfDay = request.dataAgendamento().atStartOfDay();
         LocalDateTime endOfDay = request.dataAgendamento().atTime(LocalTime.MAX);
 
-        List<Agendamento> agendamentos = repository.BuscarAgendamento(idAgenda, startOfDay, endOfDay);
+        List<Agendamento> agendamentos = null;
+        if(dadosCompletos){
+            agendamentos = repository.BuscarAgendamentoCompleto(idAgenda, startOfDay, endOfDay);
+
+        }else{
+        agendamentos = repository.BuscarAgendamento(idAgenda, startOfDay, endOfDay);
+        }
 
         return agendamentos.stream()
                 .map(AgendamentoDTO::from)
                 .toList();
+    }
+
+
+    public AgendamentoDTO atualizarAgendamentoParcial(AtualizarAgendamentoDinamicoRequestDTO requestDTO) {
+        Agendamento agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+
+        Agenda agenda = agendaRepository.findById(requestDTO.idAgenda())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+
+        Optional.ofNullable(requestDTO.horaAgendamento())
+                .ifPresent(agendamento::setDataHora);
+
+        agendamento.setAgenda(agenda);
+
+        Agendamento agendamentoAtualizado = repository.save(agendamento);
+
+        return AgendamentoDTO.from(agendamentoAtualizado);
+    }
+
+    public AgendamentoDTO cancelarAgendamento(Integer idAgendamento) {
+
+        Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+
+        agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
+
+        Agendamento agendamentoCancelado = repository.save(agendamento);
+
+        return AgendamentoDTO.from(agendamentoCancelado);
     }
 }
