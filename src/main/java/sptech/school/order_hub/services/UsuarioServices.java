@@ -121,7 +121,7 @@ public class UsuarioServices {
         }
     }
 
-    public List<BuscarColaboradoresResponseDTO> findAllByColaboradores(Integer idEmpresa, BuscarAgendamentoRequestDTO request) {
+    public List<BuscarColaboradoresResponseDTO> findAllByColaboradores(Integer idEmpresa, BuscarAgendamentoRequestDTO request, Boolean dadosCoompletos) {
 
         Empresa empresa = empresaServices.buscarEmpresaEFuncionarios(idEmpresa);
 
@@ -133,7 +133,7 @@ public class UsuarioServices {
 
         return usuarios.stream()
                 .map(usuario -> {
-                    List<AgendamentoDTO> agendamentos = agendamentoServices.buscaAgendamento(request, usuario.getAgenda().getIdAgenda());
+                    List<AgendamentoDTO> agendamentos = agendamentoServices.buscaAgendamento(request, usuario.getAgenda().getIdAgenda(), dadosCoompletos);
 
                     return BuscarColaboradoresResponseDTO.from(usuario, agendamentos);
                 })
@@ -201,18 +201,18 @@ public class UsuarioServices {
     }
 
     public void exportarAgendamentos(BuscarAgendamentoRequestDTO request, Integer idEmpresa, HttpServletResponse response) throws IOException {
-        List<BuscarColaboradoresResponseDTO> colaboradores = findAllByColaboradores(idEmpresa, request);
+        List<BuscarColaboradoresResponseDTO> colaboradores = findAllByColaboradores(idEmpresa, request, true);
 
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"agendamentos.csv\"");
 
         PrintWriter writer = response.getWriter();
 
-        writer.printf("%S,%S,%S,%S,%S,%S,%S,%S\n", "id", "nome funcionário", "função", "nome cliente", "telefone cliente", "nome serviço", "descrição serviço", "data hora serviço");
+        writer.printf("%S,%S,%S,%S,%S,%S,%S,%S,%S\n", "id", "nome funcionário", "função", "nome cliente", "telefone cliente", "nome serviço", "descrição serviço", "status do agendamento", "data hora serviço");
 
         for (BuscarColaboradoresResponseDTO colaborador : colaboradores) {
             for (AgendamentoDTO agendamento : colaborador.agendamentoDTOS()) {
-                writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s",
+                writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s",
                         colaborador.idFuncionario(),
                         colaborador.nomeFuncionario(),
                         colaborador.funcao(),
@@ -220,6 +220,7 @@ public class UsuarioServices {
                         agendamento.cliente().telefone(),
                         agendamento.servico().nomeServico(),
                         agendamento.servico().descricao(),
+                        agendamento.statusAgendamento(),
                         agendamento.horaAgendamento().toString()
                 ));
             }

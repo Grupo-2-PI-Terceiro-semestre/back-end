@@ -2,9 +2,9 @@ spring:
   application:
     name: order-hub
   datasource:
-    url: jdbc:sqlserver://servidor-orderhub.database.windows.net:1433;databaseName=bd-projeto-orderhub
-    username: admin-orderhub
-    password: Order123@
+    url: ${URL_DATABASE:jdbc:sqlserver://servidor-orderhub.database.windows.net:1433;databaseName=bd-projeto-orderhub}
+    username: ${USER_NAME:admin-orderhub}
+    password: ${PASSWORD:Order123@}
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
@@ -18,8 +18,8 @@ spring:
     allow-bean-definition-overriding: true
 
 jwt:
-  secret: orderhub
-  expiration-hour: 2
+  secret: ${JWT_SERCRET:orderhub}
+  expiration-hour: ${EXPIRATION_TOKEN:2}
 
 
 logging:

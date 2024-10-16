@@ -8,13 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.repository.ClienteRepository;
+import sptech.school.order_hub.repository.EmpresaRepository;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteServices {
@@ -23,8 +30,13 @@ public class ClienteServices {
     private static final String RANDOM_USER_API_ENDPOINT = "https://randomuser.me/api/";
     private final RestTemplate restTemplate;
 
-    public ClienteServices(RestTemplate restTemplate) {
+    private final ClienteRepository clienteRepository;
+    private final EmpresaRepository empresaRepository;
+
+    public ClienteServices(RestTemplate restTemplate, ClienteRepository clienteRepository, EmpresaRepository empresaRepository) {
         this.restTemplate = restTemplate;
+        this.clienteRepository = clienteRepository;
+        this.empresaRepository = empresaRepository;
     }
 
     public ResponseEntity<String> findByUserRandomApi() {
@@ -37,6 +49,19 @@ public class ClienteServices {
 
     public ResponseEntity<String> findByGanderUserRandomApi(String gender) {
         return getRandomUser(null, gender, null);
+    }
+
+
+    public List<BuscarClientesResponseDTO> buscarClientes(Integer idEmpresa) {
+
+        Optional<Empresa> empresa = empresaRepository.findById(idEmpresa);
+
+        if (empresa.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe");
+        }
+        return clienteRepository.findAllByEmpresa(empresa.get()).stream()
+                .map(BuscarClientesResponseDTO::fromEntity)
+                .toList();
     }
 
     public ResponseEntity<Cliente[]> findByQuantityUserOrder(Integer results, String nat) {
