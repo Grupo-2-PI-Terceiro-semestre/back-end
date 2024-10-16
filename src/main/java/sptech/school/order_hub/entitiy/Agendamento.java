@@ -1,16 +1,17 @@
 package sptech.school.order_hub.entitiy;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
+import sptech.school.order_hub.enuns.StatusAgendamento;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -35,4 +36,11 @@ public class Agendamento {
     @JoinColumn(name = "fk_servico")
     @ManyToOne
     private Servico servico;
+
+    @Enumerated(EnumType.STRING)
+    private StatusAgendamento statusAgendamento;
+
+    public String getStatusAgendamento() {
+        return statusAgendamento.toString();
+    }
 }
