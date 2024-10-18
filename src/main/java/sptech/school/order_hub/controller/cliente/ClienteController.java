@@ -1,10 +1,14 @@
 package sptech.school.order_hub.controller.cliente;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/clientes")
@@ -45,5 +49,10 @@ public class ClienteController {
     @PostMapping("api/externo/pesquisa-binaria")
     public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody Cliente cliente) {
         return service.pesquisaBinaria(cliente);
+    }
+
+    @GetMapping("empresa/{idEmpresa}")
+    public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.buscarClientes(idEmpresa));
     }
 }

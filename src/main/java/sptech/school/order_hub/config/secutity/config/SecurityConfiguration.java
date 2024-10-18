@@ -1,5 +1,6 @@
 package sptech.school.order_hub.config.secutity.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,6 +39,9 @@ public class SecurityConfiguration {
             "/api/test/**"
     };
 
+    @Value("${origins.url}")
+    private String origins;
+
     public SecurityConfiguration(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
     }
@@ -75,7 +79,7 @@ public class SecurityConfiguration {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // ajuste a origem conforme necessário
+        config.setAllowedOrigins(Arrays.asList(origins));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("authorization", "content-type", "xsrf-token"));
         config.setExposedHeaders(Arrays.asList("authorization", "xsrf-token")); // Adicione o cabeçalho 'authorization' aqui

@@ -55,7 +55,7 @@ public class UsuarioController {
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarColaboradoresResponseDTO>> finfAll(@PathVariable Integer idEmpresa, @RequestParam LocalDate dataAgendamento) {
         var request = BuscarAgendamentoRequestDTO.of(dataAgendamento);
-        return ResponseEntity.status(HttpStatus.OK).body(this.services.findAllByColaboradores(idEmpresa, request));
+        return ResponseEntity.status(HttpStatus.OK).body(this.services.findAllByColaboradores(idEmpresa, request, false));
     }
 
 
