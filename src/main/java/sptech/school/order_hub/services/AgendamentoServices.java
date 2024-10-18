@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoDinamicoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
+import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.entitiy.Agenda;
 import sptech.school.order_hub.entitiy.Agendamento;
@@ -80,4 +81,19 @@ public class AgendamentoServices {
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
+
+    public ReceitaMensalResponseDTO buscarReceitaMensal(Integer idEmpresa, Integer mes) {
+        List<Object[]> result = repository.ReceitaMensal(idEmpresa, mes);
+
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita não encontrada");
+        }
+
+        Object[] row = result.get(0);
+        Double totalReceita = (Double) row[0];
+        Double comparativoReceita = (Double) row[1];
+
+        return new ReceitaMensalResponseDTO(totalReceita, comparativoReceita);
+    }
+
 }
