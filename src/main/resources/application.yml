@@ -31,8 +31,5 @@ server:
     include-message: always
     include-binding-errors: always
 
-origins:
-  url: ${ORIGINS_URL:http://localhost:5173}
-
 
 
