@@ -32,7 +32,7 @@ server:
     include-binding-errors: always
 
 origins:
-  url: ${ORIGINS_URL:http://localhost:5173}
+  url: ${ORIGINS_URL:http://52.177.147.98:80}
 
 
 
