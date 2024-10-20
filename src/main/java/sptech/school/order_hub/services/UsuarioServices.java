@@ -109,8 +109,8 @@ public class UsuarioServices {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
         }
         try {
-            if (usuario.getPassword() != null) {
-                usuario.setSenha(passwordEncoder.encode(usuario.getPassword()));
+            if (usuario.getFirebaseUid() == null) {
+                usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
             } else {
                 usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
             }
