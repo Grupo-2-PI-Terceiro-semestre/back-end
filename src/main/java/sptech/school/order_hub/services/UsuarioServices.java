@@ -71,7 +71,7 @@ public class UsuarioServices {
         String token = tokenServices.generateToken((Usuario) authentication.getPrincipal());
 
         Usuario usuarioAutenticado = (Usuario) authentication.getPrincipal();
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuarioAutenticado.getIdPessoa(), usuarioAutenticado.getNomePessoa(), usuarioAutenticado.getTiposDeUsuario(), usuarioAutenticado.getEmpresa().getIdEmpresa());
+        AuthResponseDTO authResponseDTO = AuthResponseDTO.from(usuarioAutenticado);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
