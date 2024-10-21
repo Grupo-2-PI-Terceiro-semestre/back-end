@@ -1,6 +1,5 @@
 package sptech.school.order_hub.config.secutity.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,7 +38,6 @@ public class SecurityConfiguration {
             "/api/test/**"
     };
 
-
     public SecurityConfiguration(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
     }
@@ -77,17 +75,18 @@ public class SecurityConfiguration {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://52.177.147.98:80"));
+        config.addAllowedOrigin("*");
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("authorization", "content-type", "xsrf-token"));
-        config.setExposedHeaders(Arrays.asList("authorization", "xsrf-token")); // Adicione o cabeçalho 'authorization' aqui
-        config.setAllowCredentials(true);
+        config.setExposedHeaders(Arrays.asList("authorization", "xsrf-token"));
+        config.setAllowCredentials(false); // Obrigatório para uso com "*"
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
     @Bean
     public CorsFilter corsFilter(UrlBasedCorsConfigurationSource source) {

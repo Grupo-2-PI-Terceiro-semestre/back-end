@@ -71,7 +71,7 @@ public class UsuarioServices {
         String token = tokenServices.generateToken((Usuario) authentication.getPrincipal());
 
         Usuario usuarioAutenticado = (Usuario) authentication.getPrincipal();
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(usuarioAutenticado.getIdPessoa(), usuarioAutenticado.getNomePessoa(), usuarioAutenticado.getTiposDeUsuario(), usuarioAutenticado.getEmpresa().getIdEmpresa());
+        AuthResponseDTO authResponseDTO = AuthResponseDTO.from(usuarioAutenticado);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -109,8 +109,8 @@ public class UsuarioServices {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
         }
         try {
-            if (usuario.getPassword() != null) {
-                usuario.setSenha(passwordEncoder.encode(usuario.getPassword()));
+            if (usuario.getFirebaseUid() == null) {
+                usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
             } else {
                 usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
             }
