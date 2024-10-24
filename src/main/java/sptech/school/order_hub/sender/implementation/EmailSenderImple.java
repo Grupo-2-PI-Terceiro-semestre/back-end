@@ -6,7 +6,8 @@ public class EmailSenderImple implements MessageSender {
 
 
     @Override
-    public void sendNotification(String destinatario, String assunto, String corpo) {
+    public void sendNotification(String destinatario, String acao) {
 
+        System.out.println("Email enviado para: " + destinatario + " com a mensagem: " + acao);
     }
 }
