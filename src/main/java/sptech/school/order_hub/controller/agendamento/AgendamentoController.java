@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoDinamicoRequestDTO;
+import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.services.AgendamentoServices;
@@ -18,6 +19,11 @@ public class AgendamentoController {
 
     public AgendamentoController(AgendamentoServices agendamentoServices) {
         this.agendamentoServices = agendamentoServices;
+    }
+
+    @PostMapping
+    public ResponseEntity<AgendamentoDTO> criarAgendamento(@RequestBody CriarAgendamentoRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.criarAgendamento(requestDTO));
     }
 
     @PutMapping()
