@@ -213,4 +213,9 @@ public class ClienteServices {
         }
         return ResponseEntity.status(200).body(pesquisaBinaria(cliente, clientes));
     }
+
+    public Cliente findById(Integer integer) {
+        return clienteRepository.findById(integer)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+    }
 }
