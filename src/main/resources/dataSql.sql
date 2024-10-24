@@ -35,7 +35,7 @@ INSERT INTO usuarios (data_nascimento, fk_empresa, fk_endereco,  representante, 
 VALUES (NULL, 1, 1,  0, 1, '12345678902', 'jose.silva@example.com', '', 1, 'M', 'José da Silva', NULL, '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO usuarios (data_nascimento, fk_empresa, fk_endereco,  representante, tipos_de_usuario, cpf, email_pessoa, firebase_uid, fk_funcao, genero, nome_pessoa, numero_telefone, senha)
-VALUES (NULL, 1, 1,  0, 1, '12345678902', 'felipe.silva@example.com', '', 1, 'M', 'José da Silva', NULL, '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
+VALUES (NULL, 1, 1,  0, 1, '12345678902', 'felipe.silva@example.com', '', 1, 'M', 'Felipe da Silva', NULL, '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO cliente ( fk_empresa, data_nascimento, email_pessoa, genero, nome_pessoa, numero_telefone)
 VALUES (1, '1990-02-02', 'felipe@gmail.com', 'M', 'Felipe', '11999999999');
