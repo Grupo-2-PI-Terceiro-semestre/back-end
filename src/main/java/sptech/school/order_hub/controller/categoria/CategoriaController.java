@@ -1,5 +1,7 @@
 package sptech.school.order_hub.controller.categoria;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ public class CategoriaController {
     @Autowired
     private CategoriaServices services;
 
+    @Operation(summary = "Listar todas as categorias", description = "Lista todas as categorias")
+    @ApiResponse(responseCode = "200", description = "Categorias listadas com sucesso")
     @GetMapping
     public ResponseEntity<List<CategoriasResponseDTO>> findAll() {
         return ResponseEntity.ok(services.findAll());

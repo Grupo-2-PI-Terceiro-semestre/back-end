@@ -1,4 +1,4 @@
-package sptech.school.order_hub.config.secutity.exeption;
+package sptech.school.order_hub.config.security.exeption;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
