@@ -1,4 +1,4 @@
-package sptech.school.order_hub.config.secutity.config;
+package sptech.school.order_hub.config.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import sptech.school.order_hub.config.secutity.exeption.CustomAccessDeniedHandler;
-import sptech.school.order_hub.config.secutity.exeption.CustomAuthenticationEntryPoint;
+import sptech.school.order_hub.config.security.exeption.CustomAccessDeniedHandler;
+import sptech.school.order_hub.config.security.exeption.CustomAuthenticationEntryPoint;
 
 import java.util.Arrays;
 

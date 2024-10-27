@@ -1,4 +1,4 @@
-package sptech.school.order_hub.config.secutity.config;
+package sptech.school.order_hub.config.security.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

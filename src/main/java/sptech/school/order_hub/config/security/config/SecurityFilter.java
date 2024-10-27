@@ -1,4 +1,4 @@
-package sptech.school.order_hub.config.secutity.config;
+package sptech.school.order_hub.config.security.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

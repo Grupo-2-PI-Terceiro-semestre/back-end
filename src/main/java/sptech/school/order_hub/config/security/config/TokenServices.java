@@ -1,4 +1,4 @@
-package sptech.school.order_hub.config.secutity.config;
+package sptech.school.order_hub.config.security.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
