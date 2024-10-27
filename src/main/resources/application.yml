@@ -13,18 +13,19 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.SQLServerDialect
           format_sql: true
-    show-sql: true
+    show-sql: false
   main:
     allow-bean-definition-overriding: true
 
 jwt:
   secret: ${JWT_SERCRET:orderhub}
-  expiration-hour: ${EXPIRATION_TOKEN:2}
-
+  expiration-hour: ${EXPIRATION_TOKEN:168}
 
 logging:
   level:
     org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    root: ERROR
 
 server:
   error:
