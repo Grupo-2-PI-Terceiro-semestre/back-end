@@ -14,7 +14,7 @@ public class NotificacaoObserver implements Observer {
     }
 
     @Override
-    public void update(String message) {
-        messageSender.sendNotification(destinatario, message);
+    public void update(String acao) {
+        messageSender.sendNotification(destinatario, acao);
     }
 }
