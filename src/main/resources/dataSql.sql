@@ -43,6 +43,9 @@ VALUES (1, '1990-02-02', 'felipe@gmail.com', 'M', 'Felipe', '11999999999');
 INSERT INTO cliente ( fk_empresa, data_nascimento, email_pessoa, genero, nome_pessoa, numero_telefone)
 VALUES (1, '1990-02-02', 'jose@gmail.com', 'M', 'José', '11999999999');
 
+INSERT INTO cliente ( fk_empresa, data_nascimento, email_pessoa, genero, nome_pessoa, numero_telefone)
+VALUES (1, '1990-02-02', 'jonathanaparecido80@gmail.com', 'M', 'Jonathan', '11959411933');
+
 INSERT INTO agenda(fk_usuario)
 VALUES (1);
 
