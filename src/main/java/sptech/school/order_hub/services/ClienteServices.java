@@ -191,20 +191,24 @@ public class ClienteServices {
     }
 
     private static int pesquisaBinaria(Cliente cliente, Cliente[] vetorDeCliente) {
-        int inicio = 0;
-        int fim = vetorDeCliente.length - 1;
-        while (inicio <= fim) {
-            int meio = (inicio + fim) / 2;
-            int comparacao = compararIdades(cliente, vetorDeCliente[meio]);
-            if (comparacao == 0) {
-                return meio;
-            } else if (comparacao > 0) {
-                inicio = meio + 1;
-            } else {
-                fim = meio - 1;
-            }
+        return pesquisaBinariaRec(cliente, vetorDeCliente, 0, vetorDeCliente.length - 1);
+    }
+
+    private static int pesquisaBinariaRec(Cliente cliente, Cliente[] vetorDeCliente, int inicio, int fim) {
+        if (inicio > fim) {
+            return -1;
         }
-        return -1;
+
+        int meio = (inicio + fim) / 2;
+        int comparacao = compararIdades(cliente, vetorDeCliente[meio]);
+
+        if (comparacao == 0) {
+            return meio;
+        } else if (comparacao > 0) {
+            return pesquisaBinariaRec(cliente, vetorDeCliente, meio + 1, fim);
+        } else {
+            return pesquisaBinariaRec(cliente, vetorDeCliente, inicio, meio - 1);
+        }
     }
 
     public ResponseEntity<Integer> pesquisaBinaria(Cliente cliente) {
