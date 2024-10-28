@@ -1,5 +1,7 @@
 package sptech.school.order_hub.controller.servico;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import sptech.school.order_hub.services.ServicoServices;
 
 import java.util.List;
 
+@Tag(name = "Servico", description = "Controller de serviços")
 @RestController
 @RequestMapping("api/v1/servicos")
 public class ServicoController {
@@ -24,6 +27,7 @@ public class ServicoController {
     private ServicoServices servicoService;
 
 
+    @Operation(summary = "Atualiza um serviço", description = "Atualiza um serviço")
     @PutMapping("/{idServico}")
     public ResponseEntity<Servico> updateById(
             @PathVariable int idServico,
@@ -32,12 +36,14 @@ public class ServicoController {
         return ResponseEntity.status(HttpStatus.OK).body(servicoAtualizado);
     }
 
+    @Operation(summary = "Cadastrar um serviço", description = "Cadastra um serviço")
     @PostMapping("/{idEmpresa}")
     public ResponseEntity<Servico> create(@Valid @RequestBody Servico servicoParaCadastrar, @PathVariable int idEmpresa) {
         Servico servicoCriado = servicoService.createServico(servicoParaCadastrar, idEmpresa);
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoCriado);
     }
 
+    @Operation(summary = "Buscar serviços de uma empresa", description = "Busca os serviços de uma empresa")
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa) {
         List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa);
@@ -45,18 +51,21 @@ public class ServicoController {
     }
 
 
+    @Operation(summary = "Buscar serviços por categoria", description = "Busca os serviços por categoria")
     @GetMapping("/categoria")
     public ResponseEntity<List<Servico>> findServicesByCategoria(@Valid @RequestBody Categoria categoria) {
         List<Servico> servicosEncontrados = servicoService.findByCategoria(categoria.getNome());
         return ResponseEntity.status(HttpStatus.OK).body(servicosEncontrados);
     }
 
+    @Operation(summary = "Buscar serviço por id", description = "Busca um serviço por id")
     @GetMapping("/{idServico}")
     public ResponseEntity<Servico> findById(@Valid @PathVariable int idServico) {
         return ResponseEntity.status(HttpStatus.OK).body(servicoService.findById(idServico));
     }
 
 
+    @Operation(summary = "Deletar um serviço", description = "Deleta um serviço")
     @DeleteMapping("/{idServico}")
     public ResponseEntity<Void> deleteById(@Valid @PathVariable int idServico
     ) {
@@ -64,7 +73,7 @@ public class ServicoController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
+    @Operation(summary = "Listar todos os serviços", description = "Lista todos os serviços")
     @GetMapping
     public ResponseEntity<List<Servico>> listar() {
         List<Servico> todosServicos = this.repository.findAll();

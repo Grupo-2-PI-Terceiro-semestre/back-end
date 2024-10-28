@@ -79,7 +79,7 @@ public class SecurityConfiguration {
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("authorization", "content-type", "xsrf-token"));
         config.setExposedHeaders(Arrays.asList("authorization", "xsrf-token"));
-        config.setAllowCredentials(false); // Obrigatório para uso com "*"
+        config.setAllowCredentials(false);
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
