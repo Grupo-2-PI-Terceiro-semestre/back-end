@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+@Tag(name = "Usuario", description = "Controller de usuários")
 @RestController
 @RequestMapping("api/v1/usuarios")
 public class UsuarioController {
 
     @Autowired
     private UsuarioServices services;
+
 
     @Operation(
             summary = "Realiza login e retorna token de autenticação",
@@ -56,6 +59,7 @@ public class UsuarioController {
                     @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
             }
     )
+    @Tag(name = "Autenticação", description = "Autenticação de usuários")
     @PostMapping("/auth/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequestDTO) {
         try {
@@ -65,21 +69,25 @@ public class UsuarioController {
         }
     }
 
+   @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
     @PostMapping()
     public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.services.create(usuario.toEntity()));
     }
 
+    @Operation(summary = "Cadastrar um endereço para um usuário", description = "Cadastra um endereço para um usuário")
     @PostMapping("/endereco/{idUsuario}")
     public ResponseEntity<Usuario> createEndereco(@RequestBody Endereco endereco, @PathVariable Integer idUsuario) {
         return ResponseEntity.status(HttpStatus.OK).body(this.services.createEndereco(endereco, idUsuario));
     }
 
+    @Operation(summary = "Cadastrar um usuário com uma empresa", description = "Cadastra um usuário com uma empresa")
     @PostMapping("/empresa/{idEmpresa}")
     public ResponseEntity<Usuario> createWithEmpresa(@RequestBody Usuario usuario, @PathVariable Integer idEmpresa) {
         return ResponseEntity.status(HttpStatus.OK).body(this.services.createWithEmpresa(usuario, idEmpresa));
     }
 
+    @Operation(summary = "Buscar todos os usuários", description = "Busca todos os usuários")
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarColaboradoresResponseDTO>> finfAll(@PathVariable Integer idEmpresa, @RequestParam LocalDate dataAgendamento) {
         var request = BuscarAgendamentoRequestDTO.of(dataAgendamento);
@@ -87,6 +95,7 @@ public class UsuarioController {
     }
 
 
+    @Operation(summary = "Exportar agendamentos", description = "Exporta os agendamentos de uma empresa")
     @GetMapping("/agendamentos/exportar/{idEmpresa}")
     public void exportarAgendamentos(@PathVariable Integer idEmpresa, @RequestParam LocalDate dataAgendamento, HttpServletResponse response) {
         try {
@@ -97,16 +106,19 @@ public class UsuarioController {
         }
     }
 
+    @Operation(summary = "Buscar um usuário por id", description = "Busca um usuário")
     @GetMapping("/{idUsuario}")
     public ResponseEntity<Usuario> findById(@PathVariable Integer idUsuario) {
         return ResponseEntity.status(HttpStatus.OK).body(this.services.findById(idUsuario));
     }
 
+    @Operation(summary = "Atualizar um usuário", description = "Atualiza um usuário")
     @PutMapping("{id}")
     public ResponseEntity<Usuario> update(@PathVariable Integer id, @RequestBody Usuario usuarioAtualizar) {
         return ResponseEntity.status(HttpStatus.OK).body(this.services.update(id, usuarioAtualizar));
     }
 
+    @Operation(summary = "Deletar um usuário", description = "Deleta um usuário")
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         this.services.deleteById(id);

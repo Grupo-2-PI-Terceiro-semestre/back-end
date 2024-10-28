@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResp
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.services.AgendamentoServices;
 
+@Tag(name = "Agendamento", description = "Controller de agendamentos")
 @RestController
 @RequestMapping("api/v1/agendamentos")
 public class AgendamentoController {
