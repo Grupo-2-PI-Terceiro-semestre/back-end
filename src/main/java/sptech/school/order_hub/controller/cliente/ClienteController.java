@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
 
@@ -71,8 +72,8 @@ public class ClienteController {
     }
 
     @PostMapping("api/externo/pesquisa-binaria")
-    public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody Cliente cliente) {
-        return service.pesquisaBinaria(cliente);
+    public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody ClienteDTO cliente) {
+        return service.pesquisaBinaria(ClienteDTO.toEntity(cliente));
     }
 
     @Operation(summary = "Buscar todos os clientes de uma empresa", description = "Busca todos os clientes de uma empresa")

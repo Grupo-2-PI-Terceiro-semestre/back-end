@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.repository.ClienteRepository;
@@ -212,6 +213,7 @@ public class ClienteServices {
     }
 
     public ResponseEntity<Integer> pesquisaBinaria(Cliente cliente) {
+
         if (pesquisaBinaria(cliente, clientes) == -1) {
             return ResponseEntity.status(404).body(-1);
         }
