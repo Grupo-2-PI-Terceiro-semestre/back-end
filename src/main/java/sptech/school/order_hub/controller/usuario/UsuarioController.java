@@ -1,6 +1,11 @@
 package sptech.school.order_hub.controller.usuario;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +33,29 @@ public class UsuarioController {
     @Autowired
     private UsuarioServices services;
 
+    @Operation(
+            summary = "Realiza login e retorna token de autenticação",
+            description = "Este endpoint autentica um usuário e retorna um token JWT para acesso.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Credenciais de login",
+                    content = @Content(
+                            schema = @Schema(implementation = AuthRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Exemplo de login",
+                                    value = """
+                                            {
+                                              "emailPessoa": "felipe.silva@example.com",
+                                              "senha": "senhaSecreta1"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Login bem-sucedido"),
+                    @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+            }
+    )
     @PostMapping("/auth/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequestDTO) {
         try {
