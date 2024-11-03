@@ -55,8 +55,44 @@ public class UsuarioController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Login bem-sucedido"),
-                    @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Login bem-sucedido",
+                            content = @Content(schema = @Schema(implementation = AuthResponseDTO.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Erro de validação nas credenciais",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Exemplo de erro 400",
+                                            value = "\"Validation error: Email ou senha inválidos.\""
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Credenciais inválidas ou não autenticadas",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Exemplo de erro 401",
+                                            value = "\"Erro de autenticação: Usuário ou senha incorretos.\""
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Acesso negado (forbidden)",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            name = "Exemplo de erro 403",
+                                            value = "\"Forbidden: Acesso não autorizado.\""
+                                    )
+                            )
+                    ),
             }
     )
     @Tag(name = "Autenticação", description = "Autenticação de usuários")
@@ -65,11 +101,13 @@ public class UsuarioController {
         try {
             return services.autenticar(authRequestDTO.toEntity());
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
     }
 
-   @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
+
+    @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
     @PostMapping()
     public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.services.create(usuario.toEntity()));
