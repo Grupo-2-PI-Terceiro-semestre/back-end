@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
@@ -81,8 +82,12 @@ public class ClienteController {
                     @ExampleObject(name = "Exemplo 1", value = "[{\"id\": 1, \"nome\": \"Cliente 1\", \"telefone\": \"1234567890\", \"email\": \"cliente1@example.com\"}]"),
                     @ExampleObject(name = "Exemplo 1", value = "[{\"id\": 2, \"nome\": \"Cliente 2\", \"telefone\": \"1234567890\", \"email\": \"cliente2@example.com\"}]"),
             }))
-    @GetMapping("empresa/{idEmpresa}")
-    public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable Integer idEmpresa) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.buscarClientes(idEmpresa));
+
+    @PostMapping("empresa/{idEmpresa}")
+    public ResponseEntity<BuscarClientesResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
+                                                                    @RequestBody BuscarClienteRequestDto request) {
+        var output = service.buscarClientes(idEmpresa, request);
+        var responseDto = BuscarClientesResponseDTO.fromEntity(output);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
