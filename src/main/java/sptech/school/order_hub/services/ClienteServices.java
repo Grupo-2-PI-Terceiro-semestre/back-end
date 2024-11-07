@@ -2,6 +2,7 @@ package sptech.school.order_hub.services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +11,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
 
@@ -53,16 +56,27 @@ public class ClienteServices {
     }
 
 
-    public List<BuscarClientesResponseDTO> buscarClientes(Integer idEmpresa) {
+    public Paginacao<Cliente> buscarClientes(Integer idEmpresa, BuscarClienteRequestDto request) {
+
+        var pagina = PageRequest.of(request.pagina(), request.tamanho());
 
         Optional<Empresa> empresa = empresaRepository.findById(idEmpresa);
 
         if (empresa.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe");
         }
-        return clienteRepository.findAllByEmpresa(empresa.get()).stream()
-                .map(BuscarClientesResponseDTO::fromEntity)
-                .toList();
+
+        // Obtém a página de clientes com base na empresa
+        var page = clienteRepository.findAllByEmpresaOrderByIdPessoaAsc(empresa.get(), pagina);
+
+        // Coleta os itens da página como uma lista de Cliente
+        List<Cliente> itens = page.getContent();
+
+        return new Paginacao<>(
+                itens,
+                page.getTotalElements(),
+                page.isLast()
+        );
     }
 
     public ResponseEntity<Cliente[]> findByQuantityUserOrder(Integer results, String nat) {
