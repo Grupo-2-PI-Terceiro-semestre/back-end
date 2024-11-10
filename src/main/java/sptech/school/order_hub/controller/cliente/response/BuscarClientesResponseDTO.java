@@ -2,40 +2,17 @@ package sptech.school.order_hub.controller.cliente.response;
 
 import lombok.Builder;
 import sptech.school.order_hub.entitiy.Cliente;
-import sptech.school.order_hub.entitiy.Paginacao;
-import java.util.stream.Collectors;
-
-import java.util.List;
 
 @Builder
 public record BuscarClientesResponseDTO(
-        List<ClienteDto> itens,
-        Long totalItens,
-        Boolean ultimaPagina
+        Integer idCliente,
+        String nomePessoa
 ) {
 
-    public static BuscarClientesResponseDTO fromEntity(Paginacao<Cliente> paginacao) {
-        List<ClienteDto> clienteDtos = paginacao.getItens().stream()
-                .map(cliente -> new ClienteDto(
-                        cliente.getIdPessoa(),
-                        cliente.getNomePessoa(),
-                        cliente.getEmailPessoa(),
-                        cliente.getNumeroTelefone()
-                ))
-                .collect(Collectors.toList());
-
+    public static BuscarClientesResponseDTO fromEntity(Cliente cliente) {
         return BuscarClientesResponseDTO.builder()
-                .itens(clienteDtos)
-                .totalItens(paginacao.getTamanhoTotalItens())
-                .ultimaPagina(paginacao.isUltimaPagina())
+                .idCliente(cliente.getIdPessoa())
+                .nomePessoa(cliente.getNomePessoa())
                 .build();
     }
-
-    public record ClienteDto(Integer idCliente,
-                             String nomePessoa,
-                             String email,
-                             String telefone) {
-
-    }
-
 }
