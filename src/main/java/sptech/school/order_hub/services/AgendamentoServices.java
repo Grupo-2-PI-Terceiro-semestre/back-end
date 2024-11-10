@@ -48,11 +48,11 @@ public class AgendamentoServices extends Subject {
         LocalDateTime endOfDay = request.dataAgendamento().atTime(LocalTime.MAX);
 
         List<Agendamento> agendamentos = null;
-        if(dadosCompletos){
+        if (dadosCompletos) {
             agendamentos = repository.BuscarAgendamentoCompleto(idAgenda, startOfDay, endOfDay);
 
-        }else{
-        agendamentos = repository.BuscarAgendamento(idAgenda, startOfDay, endOfDay);
+        } else {
+            agendamentos = repository.BuscarAgendamento(idAgenda, startOfDay, endOfDay);
         }
 
         return agendamentos.stream()
@@ -89,13 +89,13 @@ public class AgendamentoServices extends Subject {
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
-    public AgendamentoDTO cancelarAgendamento(Integer idAgendamento) {
+    public AgendamentoDTO cancelarAgendamento(final Integer idAgendamento, final StatusAgendamento status) {
 
         Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
 
-        agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
+        agendamento.setStatusAgendamento(status);
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
 

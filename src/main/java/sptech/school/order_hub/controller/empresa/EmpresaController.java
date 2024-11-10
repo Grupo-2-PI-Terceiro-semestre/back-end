@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import sptech.school.order_hub.services.EmpresaServices;
 
 import java.util.List;
 
+@Tag(name = "Empresa", description = "Controller de empresas")
 @RestController
 @RequestMapping("/api/v1/empresas")
 public class EmpresaController {

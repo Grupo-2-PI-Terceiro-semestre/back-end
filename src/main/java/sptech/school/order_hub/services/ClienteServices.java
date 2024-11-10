@@ -14,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.entitiy.Cliente;
-import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -24,7 +23,6 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClienteServices {
@@ -55,27 +53,16 @@ public class ClienteServices {
     }
 
 
-    public Paginacao<Cliente> buscarClientes(Integer idEmpresa, BuscarClienteRequestDto request) {
+    public Paginacao<Cliente> buscarClientesPaginado(final Integer idEmpresa, final BuscarClienteRequestDto request) {
 
-        var pagina = PageRequest.of(request.pagina(), request.tamanho());
+        final var pagina = PageRequest.of(request.pagina(), request.tamanho());
 
-        Optional<Empresa> empresa = empresaRepository.findById(idEmpresa);
+        final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
-        if (empresa.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe");
-        }
+        final var page = clienteRepository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
 
-        // Obtém a página de clientes com base na empresa
-        var page = clienteRepository.findAllByEmpresaOrderByIdPessoaAsc(empresa.get(), pagina);
-
-        // Coleta os itens da página como uma lista de Cliente
-        List<Cliente> itens = page.getContent();
-
-        return new Paginacao<>(
-                itens,
-                page.getTotalElements(),
-                page.isLast()
-        );
+        return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
 
     public ResponseEntity<Cliente[]> findByQuantityUserOrder(Integer results, String nat) {
@@ -226,6 +213,7 @@ public class ClienteServices {
     }
 
     public ResponseEntity<Integer> pesquisaBinaria(Cliente cliente) {
+
         if (pesquisaBinaria(cliente, clientes) == -1) {
             return ResponseEntity.status(404).body(-1);
         }
@@ -235,5 +223,18 @@ public class ClienteServices {
     public Cliente findById(Integer integer) {
         return clienteRepository.findById(integer)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+    }
+
+    public List<BuscarClientesResponseDTO> buscarClientes(final Integer idEmpresa) {
+
+        final var empresa = empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+
+        final var clientes = clienteRepository.findAllByEmpresa(empresa);
+
+        return clientes
+                .stream()
+                .map(BuscarClientesResponseDTO::fromEntity)
+                .toList();
     }
 }

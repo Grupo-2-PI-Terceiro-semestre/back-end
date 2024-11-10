@@ -5,16 +5,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
 
 import java.util.List;
 
+@Tag(name = "Cliente", description = "Controller de clientes")
 @RestController
 @RequestMapping("/api/v1/clientes")
 public class ClienteController {
@@ -32,7 +36,7 @@ public class ClienteController {
                     @ExampleObject(name = "Exemplo 1", value = "[{\"id\": 1, \"nome\": \"Cliente 1\", \"cpf\": \"12345678901\", \"telefone\": \"1234567890\"}]"),
                     @ExampleObject(name = "Exemplo 2", value = "[{\"id\": 2, \"nome\": \"Cliente 2\", \"cpf\": \"98765432109\", \"telefone\": \"0987654321\"}]")
             }))
-    @ApiResponse(responseCode = "204" , description = "Nenhum cliente encontrado")
+    @ApiResponse(responseCode = "204", description = "Nenhum cliente encontrado")
     @GetMapping("api/externo/random")
     public ResponseEntity<String> findByRandomUserApi() {
         return service.findByUserRandomApi();
@@ -72,8 +76,8 @@ public class ClienteController {
     }
 
     @PostMapping("api/externo/pesquisa-binaria")
-    public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody Cliente cliente) {
-        return service.pesquisaBinaria(cliente);
+    public ResponseEntity<Integer> resultPesquisaBinaria(@RequestBody ClienteDTO cliente) {
+        return service.pesquisaBinaria(ClienteDTO.toEntity(cliente));
     }
 
     @Operation(summary = "Buscar todos os clientes de uma empresa", description = "Busca todos os clientes de uma empresa")
@@ -84,10 +88,16 @@ public class ClienteController {
             }))
 
     @PostMapping("empresa/{idEmpresa}")
-    public ResponseEntity<BuscarClientesResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
-                                                                    @RequestBody BuscarClienteRequestDto request) {
-        var output = service.buscarClientes(idEmpresa, request);
-        var responseDto = BuscarClientesResponseDTO.fromEntity(output);
+    public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
+                                                                             @RequestBody BuscarClienteRequestDto request) {
+        var output = service.buscarClientesPaginado(idEmpresa, request);
+        var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("empresa/{idEmpresa}")
+    public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
+        final var output = service.buscarClientes(idEmpresa);
+        return ResponseEntity.status(HttpStatus.OK).body(output);
     }
 }

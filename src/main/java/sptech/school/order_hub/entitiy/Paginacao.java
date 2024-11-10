@@ -3,27 +3,16 @@ package sptech.school.order_hub.entitiy;
 
 import java.util.List;
 
-public class Paginacao <T>{
+public record Paginacao<T>(
 
-    private final List<T> itens;
-    private final long tamanhoTotalItens;
-    private final boolean ultimaPagina;
+        List<T> itens,
+        long tamanhoTotalItens,
+        boolean ultimaPagina) {
 
-    public Paginacao(List<T> itens, long tamanhoTotalItens, boolean ultimaPagina) {
-        this.itens = itens;
-        this.tamanhoTotalItens = tamanhoTotalItens;
-        this.ultimaPagina = ultimaPagina;
-    }
-
-    public List<T> getItens() {
-        return itens;
-    }
-
-    public long getTamanhoTotalItens() {
-        return tamanhoTotalItens;
-    }
-
-    public boolean isUltimaPagina() {
-        return ultimaPagina;
+    public static <T> Paginacao<T> of(
+            List<T> itens,
+            long tamanhoTotalItens,
+            boolean ultimaPagina) {
+        return new Paginacao<>(itens, tamanhoTotalItens, ultimaPagina);
     }
 }

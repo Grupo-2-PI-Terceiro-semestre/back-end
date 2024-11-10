@@ -6,11 +6,12 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 @Table(name = "CLIENTE")
 public class Cliente extends Pessoa {
