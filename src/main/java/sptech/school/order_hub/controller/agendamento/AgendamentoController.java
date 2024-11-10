@@ -15,6 +15,7 @@ import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamen
 import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
 
 @Tag(name = "Agendamento", description = "Controller de agendamentos")
@@ -66,6 +67,7 @@ public class AgendamentoController {
             @ApiResponse(responseCode = "500", description = "Erro interno")
 
     })
+
     @PutMapping()
     public ResponseEntity<AgendamentoDTO> atualizarAgendamento(@RequestBody AtualizarAgendamentoDinamicoRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.atualizarAgendamentoParcial(requestDTO));
@@ -84,8 +86,8 @@ public class AgendamentoController {
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado"),
     })
     @PutMapping("/{idAgendamento}")
-    public ResponseEntity<AgendamentoDTO> cancelarAgendamento(@PathVariable Integer idAgendamento) {
-        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.cancelarAgendamento(idAgendamento));
+    public ResponseEntity<AgendamentoDTO> cancelarAgendamento(@PathVariable Integer idAgendamento, @RequestParam String status) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.cancelarAgendamento(idAgendamento, StatusAgendamento.fromString(status)));
     }
 
     @Operation(summary = "Buscar Receita Mensal", description = "Busca a receita mensal de uma empresa")
@@ -104,6 +106,5 @@ public class AgendamentoController {
     public ResponseEntity<ReceitaMensalResponseDTO> buscarReceitaMensal(@PathVariable Integer idEmpresa, @RequestParam Integer mes) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaMensal(idEmpresa, mes));
     }
-
 
 }
