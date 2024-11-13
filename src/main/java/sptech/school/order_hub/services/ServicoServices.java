@@ -1,10 +1,15 @@
 package sptech.school.order_hub.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
+import sptech.school.order_hub.controller.servico.request.BuscarServicoRequestDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
+import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -72,12 +77,17 @@ public class ServicoServices {
         }
     }
 
-    public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa) {
+    public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa, BuscarServicoPaginadoDTO request) {
+
+        var pagina = PageRequest.of(request.pagina(), request.tamanho());
 
         Empresa empresa = empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
-        List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa);
+        var page = servicoRepository.findyServicoByEmpresaId(idEmpresa, pagina);
+
+        List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa, pagina);
+//        List<Servico> servicos = page.getContent();
 
         if (servicos.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum serviço encontrado para esta empresa.");

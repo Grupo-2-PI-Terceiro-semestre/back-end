@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
@@ -45,8 +46,9 @@ public class ServicoController {
 
     @Operation(summary = "Buscar serviços de uma empresa", description = "Busca os serviços de uma empresa")
     @GetMapping("/empresa/{idEmpresa}")
-    public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa) {
-        List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa);
+    public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa, @RequestBody BuscarServicoPaginadoDTO request) {
+
+        List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa, request);
         return ResponseEntity.status(HttpStatus.OK).body(servicosEncontrados);
     }
 
