@@ -9,6 +9,7 @@ import sptech.school.order_hub.enuns.TipoUsuario;
 public record AuthResponseDTO(
         Integer id,
         String nome,
+        String cpf,
         TipoUsuario tipoUsuario,
         Integer idEmpresa
 ) {
@@ -17,6 +18,7 @@ public record AuthResponseDTO(
         return AuthResponseDTO.builder()
                 .id(usuario.getIdPessoa())
                 .nome(usuario.getNomePessoa())
+                .cpf(usuario.getCpf())
                 .tipoUsuario(usuario.getTiposDeUsuario())
                 .idEmpresa(usuario.getEmpresa() != null ? usuario.getEmpresa().getIdEmpresa() : null)
                 .build();

@@ -8,6 +8,8 @@ import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDT
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
+import sptech.school.order_hub.dtos.EmpresaDTO;
+import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
@@ -116,5 +118,18 @@ public class EmpresaServices {
                         empresa.getServicos())
                 )
                 .collect(Collectors.toList());
+    }
+
+    public EnderecoDTO findEnderecoById(Integer idEmpresa) {
+
+        var empresa = empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+
+        return EnderecoDTO.fromEntity(empresa.getEndereco());
+
+    }
+
+    public EnderecoDTO updateEnderecoById(Integer idEmpresa, EnderecoDTO endereco) {
+        return null;
     }
 }

@@ -5,7 +5,7 @@ import sptech.school.order_hub.entitiy.Empresa;
 
 @Builder
 public record CadastroEmpresaResponseDTO(
-        int idEmpresa,
+        Integer idEmpresa,
         String nomeEmpresa,
         String emailEmpresa,
         String cnpj,

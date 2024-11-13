@@ -11,7 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoDinamicoRequestDTO;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
@@ -69,7 +70,12 @@ public class AgendamentoController {
     })
 
     @PutMapping()
-    public ResponseEntity<AgendamentoDTO> atualizarAgendamento(@RequestBody AtualizarAgendamentoDinamicoRequestDTO requestDTO) {
+    public ResponseEntity<AgendamentoDTO> atualizarAgendamento(@RequestBody AtualizarAgendamentoRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.atualizarAgendamento(requestDTO));
+    }
+
+    @PutMapping("/parcial")
+    public ResponseEntity<AgendamentoDTO> atualizarAgendamentoParcial(@RequestBody AtualizarAgendamentoParcialRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.atualizarAgendamentoParcial(requestDTO));
     }
 

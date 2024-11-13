@@ -5,13 +5,13 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record AtualizarAgendamentoDinamicoRequestDTO(
+public record AtualizarAgendamentoParcialRequestDTO(
         Integer idAgendamento,
         LocalDateTime horaAgendamento,
         Integer idAgenda
 ) {
-    public static AtualizarAgendamentoDinamicoRequestDTO from(Integer idAgendamento, LocalDateTime horaAgendamento, Integer idAgenda, Integer idCliente, Integer idServico, Integer idUsuario) {
-        return AtualizarAgendamentoDinamicoRequestDTO.builder()
+    public static AtualizarAgendamentoParcialRequestDTO from(Integer idAgendamento, LocalDateTime horaAgendamento, Integer idAgenda, Integer idCliente, Integer idServico, Integer idUsuario) {
+        return AtualizarAgendamentoParcialRequestDTO.builder()
                 .idAgendamento(idAgendamento)
                 .horaAgendamento(horaAgendamento)
                 .idAgenda(idAgenda)

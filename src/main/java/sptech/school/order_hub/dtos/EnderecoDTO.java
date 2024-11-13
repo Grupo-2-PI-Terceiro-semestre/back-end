@@ -5,9 +5,8 @@ import sptech.school.order_hub.entitiy.Endereco;
 public record EnderecoDTO(
         int idEndereco,
         String logradouro,
-        String bairro,
         String cidade,
-        String estado,
+        String uf,
         String cep,
         String numero,
         String complemento
@@ -17,12 +16,23 @@ public record EnderecoDTO(
         return Endereco.builder()
                 .idEndereco(idEndereco)
                 .logradouro(logradouro)
-                .bairro(bairro)
                 .cidade(cidade)
-                .estado(estado)
+                .cidade(uf)
                 .cep(cep)
                 .numero(numero)
                 .complemento(complemento)
                 .build();
+    }
+
+    public static EnderecoDTO fromEntity(Endereco endereco) {
+        return new EnderecoDTO(
+                endereco.getIdEndereco(),
+                endereco.getLogradouro(),
+                endereco.getCidade(),
+                endereco.getEstado(),
+                endereco.getCep(),
+                endereco.getNumero(),
+                endereco.getComplemento()
+        );
     }
 }
