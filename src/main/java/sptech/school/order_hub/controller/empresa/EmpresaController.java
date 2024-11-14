@@ -84,7 +84,7 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.findEnderecoById(idEmpresa));
     }
 
-    @PostMapping("/{idEmpresa}/endereco")
+    @PostMapping("/endereco/{idEmpresa}")
     public ResponseEntity<EnderecoDTO> updateEnderecoById(@PathVariable Integer idEmpresa, @RequestBody EnderecoDTO endereco) {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.updateEnderecoById(idEmpresa, endereco));
     }

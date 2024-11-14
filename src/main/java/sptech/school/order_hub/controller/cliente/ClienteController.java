@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
@@ -88,8 +90,7 @@ public class ClienteController {
             }))
 
     @PostMapping("empresa/{idEmpresa}")
-    public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
-                                                                             @RequestBody BuscarClienteRequestDto request) {
+    public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa, @RequestBody BuscarClienteRequestDto request) {
         var output = service.buscarClientesPaginado(idEmpresa, request);
         var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
