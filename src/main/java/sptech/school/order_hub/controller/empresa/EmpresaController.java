@@ -17,8 +17,8 @@ import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequest
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
-import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.EnderecoDTO;
+import sptech.school.order_hub.dtos.NotificacaoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.services.EmpresaServices;
 
@@ -78,6 +78,18 @@ public class EmpresaController {
     public ResponseEntity<BuscarEmpresaResponseDTO> findById(@PathVariable Integer idEmpresa) {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.findById(idEmpresa));
     }
+
+    @GetMapping("/{idEmpresa}/notificacao")
+    public ResponseEntity<NotificacaoDTO> findNotificacaoById(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.findNotificacaoById(idEmpresa));
+    }
+
+    @PostMapping("/{idEmpresa}/notificacao")
+    public ResponseEntity<NotificacaoDTO> createNotificacao(@PathVariable Integer idEmpresa, @RequestBody NotificacaoDTO notificacao) {
+        var request = NotificacaoDTO.toEntity(notificacao);
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.createNotificacao(idEmpresa, request));
+    }
+
 
     @GetMapping("/{idEmpresa}/endereco")
     public ResponseEntity<EnderecoDTO> findEnderecoById(@PathVariable Integer idEmpresa) {
