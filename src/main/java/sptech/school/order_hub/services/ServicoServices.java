@@ -11,6 +11,7 @@ import sptech.school.order_hub.controller.servico.request.BuscarServicoRequestDT
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.ServicoRepository;
@@ -77,17 +78,12 @@ public class ServicoServices {
         }
     }
 
-    public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa, BuscarServicoPaginadoDTO request) {
-
-        var pagina = PageRequest.of(request.pagina(), request.tamanho());
+    public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa) {
 
         Empresa empresa = empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
-        var page = servicoRepository.findyServicoByEmpresaId(idEmpresa, pagina);
-
-        List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa, pagina);
-//        List<Servico> servicos = page.getContent();
+        List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa);
 
         if (servicos.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum serviço encontrado para esta empresa.");
@@ -96,5 +92,18 @@ public class ServicoServices {
         return servicos.stream()
                 .map(BuscarServicosDTO::from)
                 .toList();
+    }
+
+
+    public Paginacao<Servico> buscarServicosPaginado(final Integer idEmpresa, final BuscarServicoPaginadoDTO request) {
+
+        final var pagina = PageRequest.of(request.pagina(), request.tamanho());
+
+        final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
+
+        final var page = servicoRepository.findAllByEmpresaOrderByIdServicoAsc(empresa, pagina);
+
+        return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
 }

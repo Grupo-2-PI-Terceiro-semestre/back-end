@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
+import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.ServicoRepository;
@@ -48,10 +49,19 @@ public class ServicoController {
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa, @RequestBody BuscarServicoPaginadoDTO request) {
 
-        List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa, request);
+        List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa);
         return ResponseEntity.status(HttpStatus.OK).body(servicosEncontrados);
     }
 
+    @GetMapping("empresa/paginado/{idEmpresa}")
+    public ResponseEntity<BuscarServicosPaginadosResponseDTO> buscarServicosPaginados(@PathVariable Integer idEmpresa,
+                                                                                      @RequestParam Integer pagina,
+                                                                                      @RequestParam Integer tamanho) {
+        var request = BuscarServicoPaginadoDTO.from(pagina,tamanho);
+        var output = servicoService.buscarServicosPaginado(idEmpresa,request);
+        var responseDto = BuscarServicosPaginadosResponseDTO.fromEntity(output);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 
     @Operation(summary = "Buscar serviços por categoria", description = "Busca os serviços por categoria")
     @GetMapping("/categoria")
