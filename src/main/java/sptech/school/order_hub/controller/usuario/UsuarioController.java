@@ -13,10 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
+import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
+import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
+import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.BuscarUsuariosPaginadosResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -161,5 +165,14 @@ public class UsuarioController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         this.services.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("empresa/paginado/{idEmpresa}")
+    public ResponseEntity<BuscarUsuariosPaginadosResponseDTO> buscarUsuariosPaginados(@PathVariable Integer idEmpresa,
+                                                                                          @RequestBody BuscarUsuarioPaginadoDTO request) {
+//        var request = BuscarServicoPaginadoDTO.from(pagina,tamanho);
+        var output = services.buscarUsuariosPaginado(idEmpresa, request);
+        var responseDto = BuscarUsuariosPaginadosResponseDTO.fromEntity(output);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
