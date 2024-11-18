@@ -87,13 +87,28 @@ public class ClienteController {
                     @ExampleObject(name = "Exemplo 1", value = "[{\"id\": 2, \"nome\": \"Cliente 2\", \"telefone\": \"1234567890\", \"email\": \"cliente2@example.com\"}]"),
             }))
 
-    @PostMapping("empresa/{idEmpresa}")
+//    @PostMapping("empresa/{idEmpresa}")
+//    public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
+//                                                                             @RequestParam Integer pagina,
+//                                                                             @RequestParam Integer tamanho,
+//                                                                             ) {
+//
+//        var request = BuscarClienteRequestDto.from(tamanho, pagina);
+//        var output = service.buscarClientesPaginado(idEmpresa, request);
+//        var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
+//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+//    }
+
+
+    @PostMapping("empresa/paginado/{idEmpresa}")
     public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
-                                                                             @RequestBody BuscarClienteRequestDto request) {
+                                                                             @RequestBody BuscarClienteRequestDto request
+    ) {
         var output = service.buscarClientesPaginado(idEmpresa, request);
         var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
 
     @GetMapping("empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
