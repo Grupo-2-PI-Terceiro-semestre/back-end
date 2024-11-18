@@ -8,6 +8,7 @@ public record BuscarEmpresaResponseDTO(
         String nomeEmpresa,
         String emailEmpresa,
         String telefone,
+        String cnpj,
         String urlLogo
 ) {
 
@@ -16,6 +17,7 @@ public record BuscarEmpresaResponseDTO(
                 .nomeEmpresa(empresa.getNomeEmpresa())
                 .emailEmpresa(empresa.getEmailEmpresa())
                 .telefone(empresa.getTelefone())
+                .cnpj(empresa.getCnpj())
                 .urlLogo(empresa.getUrlImagem())
                 .build();
     }

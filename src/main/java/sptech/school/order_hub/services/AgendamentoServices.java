@@ -4,7 +4,8 @@ package sptech.school.order_hub.services;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoDinamicoRequestDTO;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
@@ -70,7 +71,7 @@ public class AgendamentoServices extends Subject {
     }
 
 
-    public AgendamentoDTO atualizarAgendamentoParcial(AtualizarAgendamentoDinamicoRequestDTO requestDTO) {
+    public AgendamentoDTO atualizarAgendamentoParcial(AtualizarAgendamentoParcialRequestDTO requestDTO) {
         Agendamento agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
@@ -85,6 +86,32 @@ public class AgendamentoServices extends Subject {
         agendamento.setAgenda(agenda);
 
         Agendamento agendamentoAtualizado = repository.save(agendamento);
+
+        return AgendamentoDTO.from(agendamentoAtualizado);
+    }
+
+    public AgendamentoDTO atualizarAgendamento(AtualizarAgendamentoRequestDTO requestDTO) {
+
+        final var agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+
+        final var agenda = agendaRepository.findById(requestDTO.idAgenda())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+
+        final var servico = servicoServices.findById(requestDTO.idServico());
+        final var cliente = clienteServices.findById(requestDTO.idCliente());
+
+        Optional.ofNullable(requestDTO.dataAgendamento())
+                .ifPresent(agendamento::setDataHora);
+
+
+        agendamento.setCliente(cliente);
+        agendamento.setServico(servico);
+        agendamento.setAgenda(agenda);
+
+        final var  agendamentoAtualizado = repository.save(agendamento);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
@@ -145,4 +172,6 @@ public class AgendamentoServices extends Subject {
 
         notifyObservers(acao);
     }
+
+
 }

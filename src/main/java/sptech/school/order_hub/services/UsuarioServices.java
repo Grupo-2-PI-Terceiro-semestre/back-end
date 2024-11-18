@@ -1,6 +1,7 @@
 package sptech.school.order_hub.services;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config.security.config.TokenServices;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
+import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
+import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
@@ -226,4 +229,53 @@ public class UsuarioServices {
         }
         writer.flush();
     }
+
+    @Transactional
+    public PerfilAtualizadoDTO atualizarEmpresaCliente(AtualizarPerfilClienteEmpresaRequestDTO request) {
+
+        // Busca o usuário pelo ID e lança exceção se não encontrado
+        Usuario usuario = repository.findById(request.usuario().idPessoa())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+
+        Optional<Empresa> empresaOpt = empresaRepository.findById(request.empresa().idEmpresa());
+
+        if (request.usuario().nome() != null) {
+            usuario.setNomePessoa(request.usuario().nome());
+        }
+        if (request.usuario().cpf() != null) {
+            usuario.setCpf(request.usuario().cpf());
+        }
+
+        Usuario userAtualizado = repository.save(usuario);
+
+        Empresa empresaAtualizada = null;
+        if (empresaOpt.isPresent()) {
+            Empresa empresa = empresaOpt.get();
+
+            // Atualiza apenas os dados enviados para a empresa
+            if (request.empresa().nomeEmpresa() != null) {
+                empresa.setNomeEmpresa(request.empresa().nomeEmpresa());
+            }
+            if (request.empresa().cnpj() != null) {
+                empresa.setCnpj(request.empresa().cnpj());
+            }
+            if (request.empresa().telefone() != null) {
+                empresa.setTelefone(request.empresa().telefone());
+            }
+
+            empresaAtualizada = empresaRepository.save(empresa);
+        } else {
+            Empresa novaEmpresa = new Empresa();
+
+            novaEmpresa.setNomeEmpresa(request.empresa().nomeEmpresa());
+            novaEmpresa.setCnpj(request.empresa().cnpj());
+            novaEmpresa.setTelefone(request.empresa().telefone());
+            novaEmpresa.addUsuario(usuario);
+
+            empresaAtualizada = empresaRepository.save(novaEmpresa);
+        }
+
+        return PerfilAtualizadoDTO.toPerfil(userAtualizado, empresaAtualizada);
+    }
+
 }
