@@ -12,6 +12,8 @@ spring:
       properties:
         hibernate:
           format_sql: true
+          # Logar as queries do Hibernate
+          show_sql: true
     show-sql: false
   main:
     allow-bean-definition-overriding: true
@@ -19,24 +21,27 @@ spring:
 jwt:
   secret: ${JWT_SERCRET:orderhub}
   expiration-hour: ${EXPIRATION_TOKEN:168}
+
 logging:
   level:
     org:
       springframework:
-        security: DEBUG
-        org.springframework.web: DEBUG
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql: TRACE
-    root: ERROR
+        security: DEBUG  # Para depuração de segurança
+        org.springframework.web: DEBUG  # Para depuração das requisições web
+    hibernate:
+      SQL: DEBUG  # Para logar as queries SQL executadas pelo Hibernate
+      type:
+        descriptor:
+          sql: TRACE  # Para logar detalhes dos parâmetros da query
+    root: INFO  # Define o nível de log global (pode ser DEBUG ou INFO, dependendo do seu caso)
 
-
+  # Definindo os padrões de log mais detalhados
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # Personalizando o formato dos logs no console
+    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # Personalizando o formato dos logs nos arquivos
 
 server:
   error:
-    include-message: always
-    include-binding-errors: always
-
+    include-message: always  # Incluir mensagens nos erros
+    include-binding-errors: always  # Incluir erros de binding na resposta
 
