@@ -9,11 +9,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
+import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
-import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
@@ -89,9 +90,23 @@ public class ClienteController {
                     @ExampleObject(name = "Exemplo 1", value = "[{\"id\": 2, \"nome\": \"Cliente 2\", \"telefone\": \"1234567890\", \"email\": \"cliente2@example.com\"}]"),
             }))
 
+//    @PostMapping("empresa/{idEmpresa}")
+//    public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
+//                                                                             @RequestParam Integer pagina,
+//                                                                             @RequestParam Integer tamanho,
+//                                                                             ) {
+//
+//        var request = BuscarClienteRequestDto.from(tamanho, pagina);
+//        var output = service.buscarClientesPaginado(idEmpresa, request);
+//        var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
+//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+//    }
+
+
     @PostMapping("empresa/paginado/{idEmpresa}")
     public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
-                                                                             @RequestBody BuscarClienteRequestDto request) {
+                                                                             @RequestBody BuscarClienteRequestDto request
+    ) {
         var output = service.buscarClientesPaginado(idEmpresa, request);
         var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -102,5 +117,10 @@ public class ClienteController {
     public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
         final var output = service.buscarClientes(idEmpresa);
         return ResponseEntity.status(HttpStatus.OK).body(output);
+    }
+
+    @PostMapping
+    public ResponseEntity<ClienteDTO> criarCliente(@RequestBody CriarClienteRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.criarCliente(requestDTO));
     }
 }

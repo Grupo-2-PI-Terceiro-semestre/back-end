@@ -2,6 +2,7 @@ package sptech.school.order_hub.services;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import sptech.school.order_hub.config.security.config.TokenServices;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
+import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
@@ -22,6 +24,7 @@ import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioRespon
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Endereco;
+import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.exception.UserCreationException;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -278,4 +281,17 @@ public class UsuarioServices {
         return PerfilAtualizadoDTO.toPerfil(userAtualizado, empresaAtualizada);
     }
 
+
+
+    public Paginacao<Usuario> buscarUsuariosPaginado(final Integer idEmpresa, final BuscarUsuarioPaginadoDTO request) {
+
+        final var pagina = PageRequest.of(request.pagina(), request.tamanho());
+
+        final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
+
+        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+
+        return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
+    }
 }
