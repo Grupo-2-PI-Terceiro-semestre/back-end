@@ -4,6 +4,7 @@ package sptech.school.order_hub.services;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
@@ -17,7 +18,8 @@ import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.observer.NotificacaoObserver;
 import sptech.school.order_hub.observer.Subject;
-import sptech.school.order_hub.repository.*;
+import sptech.school.order_hub.repository.AgendaRepository;
+import sptech.school.order_hub.repository.AgendamentoRepository;
 import sptech.school.order_hub.sender.implementation.EmailSenderImple;
 import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class AgendamentoServices extends Subject {
@@ -34,6 +37,9 @@ public class AgendamentoServices extends Subject {
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
     private final ClienteServices clienteServices;
+
+    private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+
 
     public AgendamentoServices(AgendamentoRepository repository, AgendaRepository agendaRepository, ServicoServices servicoServices, ClienteServices clienteServices) {
         this.repository = repository;
@@ -87,6 +93,8 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoAtualizado = repository.save(agendamento);
 
+        tigerEvent(agendamentoAtualizado);
+
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
@@ -111,7 +119,9 @@ public class AgendamentoServices extends Subject {
         agendamento.setServico(servico);
         agendamento.setAgenda(agenda);
 
-        final var  agendamentoAtualizado = repository.save(agendamento);
+        final var agendamentoAtualizado = repository.save(agendamento);
+
+        tigerEvent(agendamentoAtualizado);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
@@ -125,6 +135,8 @@ public class AgendamentoServices extends Subject {
         agendamento.setStatusAgendamento(status);
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
+
+        tigerEvent(agendamentoCancelado);
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
@@ -162,7 +174,37 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCriado = repository.save(agendamento);
 
+        tigerEvent(agendamentoCriado);
+
         return AgendamentoDTO.from(agendamentoCriado);
+    }
+
+    private void tigerEvent(Agendamento agendamento) {
+
+        boolean refrash;
+        if (agendamento == null) {
+            refrash = false;
+        } else {
+            refrash = agendamento.getDataHora().toLocalDate().isEqual(LocalDateTime.now().toLocalDate());
+        }
+
+
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("refrash")
+                        .data(refrash));
+            } catch (Exception e) {
+                emitter.complete();
+                emitters.remove(emitter);
+            }
+        }
+    }
+
+    public void addEmitter(SseEmitter emitter) {
+        emitters.add(emitter);
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        emitter.onTimeout(() -> emitters.remove(emitter));
     }
 
     private void notificarObservers(Cliente destinatario, String acao) {
