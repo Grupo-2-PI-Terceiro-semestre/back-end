@@ -48,7 +48,7 @@ public class ServicoController {
 
     @Operation(summary = "Buscar serviços de uma empresa", description = "Busca os serviços de uma empresa")
     @GetMapping("/empresa/{idEmpresa}")
-    public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa, @RequestBody BuscarServicoPaginadoDTO request) {
+    public ResponseEntity<List<BuscarServicosDTO>> findServicesByEmpresa(@PathVariable int idEmpresa) {
 
         List<BuscarServicosDTO> servicosEncontrados = servicoService.buscarServicosDaEmpresa(idEmpresa);
         return ResponseEntity.status(HttpStatus.OK).body(servicosEncontrados);
