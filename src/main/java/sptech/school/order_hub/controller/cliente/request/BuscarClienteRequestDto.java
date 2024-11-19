@@ -19,3 +19,6 @@ public record BuscarClienteRequestDto(
         return new BuscarClienteRequestDto(pagina, tamanho);
     }
 }
+
+
+

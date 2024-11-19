@@ -52,6 +52,10 @@ public class Empresa {
     @OneToOne
     private Endereco endereco;
 
+    @JoinColumn(name = "fk_notificacao")
+    @OneToOne
+    private Notificacao notificacao;
+
     @ManyToOne
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;

@@ -17,7 +17,7 @@ public record EnderecoDTO(
                 .idEndereco(idEndereco)
                 .logradouro(logradouro)
                 .cidade(cidade)
-                .cidade(uf)
+                .estado(uf)
                 .cep(cep)
                 .numero(numero)
                 .complemento(complemento)
