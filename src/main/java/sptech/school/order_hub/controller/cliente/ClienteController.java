@@ -9,9 +9,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
@@ -114,5 +117,10 @@ public class ClienteController {
     public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
         final var output = service.buscarClientes(idEmpresa);
         return ResponseEntity.status(HttpStatus.OK).body(output);
+    }
+
+    @PostMapping
+    public ResponseEntity<ClienteDTO> criarCliente(@RequestBody CriarClienteRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.criarCliente(requestDTO));
     }
 }
