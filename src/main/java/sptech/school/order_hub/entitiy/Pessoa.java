@@ -37,6 +37,8 @@ public abstract class Pessoa {
 
     private String genero;
 
+    private LocalDate dataCriacao;
+
     private String numeroTelefone;
 
     @ManyToOne

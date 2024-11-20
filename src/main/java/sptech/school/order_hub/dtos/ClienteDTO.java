@@ -32,6 +32,7 @@ public record ClienteDTO(
                 .nomePessoa(clienteDTO.nomePessoa())
                 .emailPessoa(clienteDTO.emailPessoa())
                 .dataNascimento(clienteDTO.dataNascimento())
+                .dataCriacao(LocalDate.now())
                 .genero(clienteDTO.genero())
                 .numeroTelefone(clienteDTO.numeroTelefone())
                 .build();
