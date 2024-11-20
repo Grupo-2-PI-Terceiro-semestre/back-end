@@ -247,6 +247,8 @@ public class AgendamentoServices extends Subject {
         notifyObservers(acao);
     }
 
-
+    public Double buscarValorAReceber(Integer idEmpresa) {
+        return repository.buscarValorAReceber(idEmpresa);
+    }
 
 }

@@ -141,9 +141,18 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarTicketMedio(idEmpresa));
     }
 
-    @GetMapping("/agendamentos/{idEmpresa}")
+    @GetMapping("/{idEmpresa}")
     public ResponseEntity<List<ProximosAgendamentosResponseDTO>> buscarAgendamentos(@PathVariable Integer idEmpresa) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentos(idEmpresa));
+    }
+
+    @GetMapping("/aReceber/{idEmpresa}")
+    public ResponseEntity<Double> buscarValorAReceber(@PathVariable Integer idEmpresa) {
+        if (idEmpresa == null || idEmpresa <= 0) {
+            throw new IllegalArgumentException("ID da empresa inválido ou não fornecido.");
+        }
+        Double valorAReceber = agendamentoServices.buscarValorAReceber(idEmpresa);
+        return ResponseEntity.status(HttpStatus.OK).body(valorAReceber);
     }
 
 }

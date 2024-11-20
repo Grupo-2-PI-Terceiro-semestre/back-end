@@ -105,32 +105,32 @@ group by s.nome_servico;
     """, nativeQuery = true)
     List<Object[]> ReceitaPorServico(Integer idEmpresa);
 
-    @Query(value ="""
-    SELECT
-        c.nome_pessoa AS Nome,
-        s.nome_servico AS Servico,
-        CONVERT(DATE, a.data_hora) AS Dia, -- Exibe apenas a data
-        CONVERT(TIME, a.data_hora) AS Hora, -- Exibe apenas a hora
-        u.nome_pessoa AS Atendente
-    FROM agendamento AS a
-    JOIN servico AS s ON a.fk_servico = s.id_servico
-    JOIN cliente AS c ON a.fk_cliente = c.id_pessoa
-    JOIN agenda ON a.fk_agenda = agenda.id_agenda
-    JOIN usuarios AS u ON agenda.fk_usuario = u.id_pessoa
-    WHERE c.fk_empresa = ?1 AND a.status_agendamento = 'AGENDADO'
-    AND a.data_hora >= GETDATE()D
-    ORDER BY a.data_hora;
+    @Query(value = """
+SELECT c.nome_pessoa as Cliente,
+       s.nome_servico as Servico,
+       CONVERT(VARCHAR, agendamento.data_hora, 23) AS Dia, -- Exibe apenas a data no formato 'YYYY-MM-DD'
+        CONVERT(VARCHAR, agendamento.data_hora, 8) AS Hora,
+        u.nome_pessoa as Atendente
+FROM agendamento
+JOIN cliente as c
+on agendamento.fk_cliente = c.id_pessoa
+JOIN agenda as a on agendamento.fk_agenda = a.id_agenda
+JOIN usuarios as u on a.fk_usuario = u.id_pessoa
+JOIN servico as s on agendamento.fk_servico = s.id_servico
+WHERE CAST(data_hora AS DATE) = CAST(GETDATE() AS DATE)
+AND agendamento.status_agendamento = 'AGENDADO';
     """, nativeQuery = true)
     List<Object[]> findNextAgendamentoByEmpresa(Integer idEmpresa);
 
-    @Query(value ="""
+
+    @Query(value = """
 SELECT SUM(servico.valor_servico) AS aReceber
 FROM agendamento
 JOIN servico ON agendamento.fk_servico = servico.id_servico
 WHERE fk_empresa = ?1
 AND status_agendamento = 'AGENDADO';
-    """, nativeQuery = true)
-    Double ReceitaAReceber(Integer idEmpresa);
+""", nativeQuery = true)
+    Double buscarValorAReceber(Integer idEmpresa);
 
     @Query(value ="""
     SELECT
