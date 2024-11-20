@@ -10,8 +10,6 @@ public record ClienteDTO(
         Integer idPesoa,
         String nomePessoa,
         String emailPessoa,
-        LocalDate dataNascimento,
-        String genero,
         String numeroTelefone,
         String telefone
 ) {
