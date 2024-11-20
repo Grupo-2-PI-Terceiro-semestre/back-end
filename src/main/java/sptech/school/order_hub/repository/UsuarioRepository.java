@@ -1,8 +1,11 @@
 package sptech.school.order_hub.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.entitiy.Usuario;
 
 import java.util.List;
@@ -18,4 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findAllByEmpresa(Empresa empresa);
 
     UserDetails findByFirebaseUid(String uid);
+
+    Page<Usuario> findAllByEmpresaOrderByIdPessoaAsc(Empresa empresa, PageRequest pagina);
 }

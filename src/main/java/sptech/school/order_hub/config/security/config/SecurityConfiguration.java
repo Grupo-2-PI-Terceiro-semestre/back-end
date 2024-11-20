@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/categorias").permitAll()
+                        .requestMatchers("/api/v1/agendamentos/sse").permitAll()
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception

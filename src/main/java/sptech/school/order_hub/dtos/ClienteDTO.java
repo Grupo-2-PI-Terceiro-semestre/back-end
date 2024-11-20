@@ -10,8 +10,6 @@ public record ClienteDTO(
         Integer idPesoa,
         String nomePessoa,
         String emailPessoa,
-        LocalDate dataNascimento,
-        String genero,
         String numeroTelefone,
         String telefone
 ) {
@@ -20,8 +18,6 @@ public record ClienteDTO(
                 .idPesoa(cliente.getIdPessoa())
                 .nomePessoa(cliente.getNomePessoa())
                 .emailPessoa(cliente.getEmailPessoa())
-                .dataNascimento(cliente.getDataNascimento())
-                .genero(cliente.getGenero())
                 .numeroTelefone(cliente.getNumeroTelefone())
                 .build();
     }
@@ -31,8 +27,7 @@ public record ClienteDTO(
                 .idPessoa(clienteDTO.idPesoa())
                 .nomePessoa(clienteDTO.nomePessoa())
                 .emailPessoa(clienteDTO.emailPessoa())
-                .dataNascimento(clienteDTO.dataNascimento())
-                .genero(clienteDTO.genero())
+                .dataCriacao(LocalDate.now())
                 .numeroTelefone(clienteDTO.numeroTelefone())
                 .build();
     }

@@ -9,10 +9,8 @@ import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponse
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EnderecoDTO;
-import sptech.school.order_hub.entitiy.Categoria;
-import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Endereco;
-import sptech.school.order_hub.entitiy.Usuario;
+import sptech.school.order_hub.dtos.NotificacaoDTO;
+import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
@@ -61,7 +59,7 @@ public class EmpresaServices {
     }
 
     public Empresa buscarEmpresaEFuncionarios(Integer idEmpresa) {
-        return  repository.findById(idEmpresa)
+        return repository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 
@@ -140,5 +138,32 @@ public class EmpresaServices {
         empresaRepository.save(empresa);
 
         return EnderecoDTO.fromEntity(empresa.getEndereco());
+    }
+
+    public NotificacaoDTO findNotificacaoById(Integer idEmpresa) {
+
+        Empresa empresa = empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+
+        return NotificacaoDTO.fromEntity(empresa.getNotificacao());
+    }
+
+    public NotificacaoDTO createNotificacao(Integer idEmpresa, Notificacao notificacao) {
+
+        Empresa empresa = empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+
+        if (notificacao.getIdNotificacao() != null) {
+            var notificacaoExistente = empresa.getNotificacao();
+            notificacaoExistente.setMensagemCancelamento(notificacao.getMensagemCancelamento());
+            notificacaoExistente.setMensagemAgendamento(notificacao.getMensagemAgendamento());
+            empresa.setNotificacao(notificacaoExistente);
+        } else {
+            empresa.setNotificacao(notificacao);
+        }
+
+        empresaRepository.save(empresa);
+
+        return NotificacaoDTO.fromEntity(empresa.getNotificacao());
     }
 }
