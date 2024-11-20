@@ -7,8 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
+import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.entitiy.Agenda;
 import sptech.school.order_hub.entitiy.Agendamento;
@@ -25,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoServices extends Subject {
@@ -59,6 +59,17 @@ public class AgendamentoServices extends Subject {
         return agendamentos.stream()
                 .map(AgendamentoDTO::from)
                 .toList();
+    }
+
+    public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
+        return repository.findNextAgendamentoByEmpresa(idEmpresa).stream()
+                .map(result -> new ProximosAgendamentosResponseDTO(
+                        (String) result[0],
+                        (String) result[1],
+                        (String) result[2],
+                        (String) result[3],
+                        (String) result[4]
+                )).collect(Collectors.toList());
     }
 
 
@@ -143,6 +154,27 @@ public class AgendamentoServices extends Subject {
         return new ReceitaMensalResponseDTO(totalReceita, comparativoReceita);
     }
 
+    public ServicoMensalResponseDTO buscarServicoMensal(Integer idEmpresa, Integer mes) {
+        List<Object[]> result = repository.ServicoMensal(idEmpresa, mes);
+
+        Integer totalServicos = 0;
+        Double comparativoServicos = 0.0;
+
+        if (!result.isEmpty()) {
+            Object[] row = result.get(0);
+            totalServicos = row[0] != null ? ((Number) row[0]).intValue() : 0;
+            comparativoServicos = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+        }
+
+        return new ServicoMensalResponseDTO(totalServicos, comparativoServicos);
+    }
+
+    public TicketMedioResponseDTO buscarTicketMedio(Integer idEmpresa) {
+        Double ticketMedio = repository.TicketMedio(idEmpresa);
+
+        return TicketMedioResponseDTO.from(ticketMedio);
+    }
+
     public AgendamentoDTO criarAgendamento(CriarAgendamentoRequestDTO requestDTO) {
         Agendamento agendamento = new Agendamento();
         Agenda agenda = agendaRepository.findById(requestDTO.idAgenda())
@@ -172,6 +204,7 @@ public class AgendamentoServices extends Subject {
 
         notifyObservers(acao);
     }
+
 
 
 }

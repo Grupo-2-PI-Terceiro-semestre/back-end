@@ -13,11 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
+import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
+
+import java.util.List;
 
 @Tag(name = "Agendamento", description = "Controller de agendamentos")
 @RestController
@@ -111,6 +112,22 @@ public class AgendamentoController {
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<ReceitaMensalResponseDTO> buscarReceitaMensal(@PathVariable Integer idEmpresa, @RequestParam Integer mes) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaMensal(idEmpresa, mes));
+    }
+
+    @GetMapping("/servicos/{idEmpresa}")
+    public ResponseEntity<ServicoMensalResponseDTO> buscarServicoMensal(@PathVariable Integer idEmpresa, @RequestParam Integer mes) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarServicoMensal(idEmpresa, mes));
+    }
+
+
+    @GetMapping("/ticket/{idEmpresa}")
+    public ResponseEntity<TicketMedioResponseDTO> buscarTicketMedio(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarTicketMedio(idEmpresa));
+    }
+
+    @GetMapping("/agendamentos/{idEmpresa}")
+    public ResponseEntity<List<ProximosAgendamentosResponseDTO>> buscarAgendamentos(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentos(idEmpresa));
     }
 
 }
