@@ -171,4 +171,8 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarServicoDiaSemana(idEmpresa));
     }
 
+    @GetMapping("/receitaPorServico/{idEmpresa}")
+    public ResponseEntity<List<ReceitaPorServicoResponseDTO>> buscarReceitaPorServico(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaPorServico(idEmpresa));
+    }
 }

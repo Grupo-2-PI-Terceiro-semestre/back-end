@@ -118,8 +118,13 @@ SELECT DATEPART(WEEKDAY, a.data_hora) AS dia_semana, COUNT(a.id_agendamento) AS 
     @Query(value ="""
 select s.nome_servico as nomeServicos, sum(s.valor_servico) as totalReceita
 from agendamento as a join servico as s on a.fk_servico = s.id_servico
-where a.fk_agenda = ?1
-group by s.nome_servico;
+where
+    MONTH(a.data_hora) = MONTH(GETDATE())
+    AND YEAR(a.data_hora) = YEAR(GETDATE())
+    AND s.fk_empresa = ?1
+    AND a.status_agendamento = 'REALIZADO'
+group by s.nome_servico
+order by totalReceita desc;
     """, nativeQuery = true)
     List<Object[]> ReceitaPorServico(Integer idEmpresa);
 

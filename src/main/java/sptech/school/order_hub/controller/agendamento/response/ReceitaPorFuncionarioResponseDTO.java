@@ -4,12 +4,12 @@ import lombok.Builder;
 
 @Builder
 public record ReceitaPorFuncionarioResponseDTO(
-        String Funcionario,
+        String Atendente,
         Double Receita
 ) {
     public static ReceitaPorFuncionarioResponseDTO from(String nomeFuncionario, Double totalReceita) {
         return ReceitaPorFuncionarioResponseDTO.builder()
-            .Funcionario(nomeFuncionario)
+            .Atendente(nomeFuncionario)
             .Receita(totalReceita)
             .build();
     }

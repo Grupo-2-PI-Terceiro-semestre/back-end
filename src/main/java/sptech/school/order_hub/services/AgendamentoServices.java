@@ -291,4 +291,12 @@ public class AgendamentoServices extends Subject {
                         (Integer) result[1]
                 )).collect(Collectors.toList());
     }
+
+    public List<ReceitaPorServicoResponseDTO> buscarReceitaPorServico(Integer idEmpresa) {
+        return repository.ReceitaPorServico(idEmpresa).stream()
+                .map(result -> new ReceitaPorServicoResponseDTO(
+                        (String) result[0],
+                        (Double) result[1]
+                )).collect(Collectors.toList());
+    }
 }
