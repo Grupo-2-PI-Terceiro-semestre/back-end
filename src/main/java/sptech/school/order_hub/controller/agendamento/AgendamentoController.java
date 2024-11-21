@@ -17,15 +17,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
-import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
+import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
 
 import java.io.IOException;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
+import java.util.List;
 
 @Tag(name = "Agendamento", description = "Controller de agendamentos")
 @RestController
@@ -34,6 +32,7 @@ public class AgendamentoController {
 
 
     private final AgendamentoServices agendamentoServices;
+
 
     public AgendamentoController(AgendamentoServices agendamentoServices) {
         this.agendamentoServices = agendamentoServices;
@@ -129,6 +128,31 @@ public class AgendamentoController {
     @GetMapping("/empresa/{idEmpresa}")
     public ResponseEntity<ReceitaMensalResponseDTO> buscarReceitaMensal(@PathVariable Integer idEmpresa, @RequestParam Integer mes) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaMensal(idEmpresa, mes));
+    }
+
+    @GetMapping("/servicos/{idEmpresa}")
+    public ResponseEntity<ServicoMensalResponseDTO> buscarServicoMensal(@PathVariable Integer idEmpresa, @RequestParam Integer mes) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarServicoMensal(idEmpresa, mes));
+    }
+
+
+    @GetMapping("/ticket/{idEmpresa}")
+    public ResponseEntity<TicketMedioResponseDTO> buscarTicketMedio(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarTicketMedio(idEmpresa));
+    }
+
+    @GetMapping("/{idEmpresa}")
+    public ResponseEntity<List<ProximosAgendamentosResponseDTO>> buscarAgendamentos(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentos(idEmpresa));
+    }
+
+    @GetMapping("/aReceber/{idEmpresa}")
+    public ResponseEntity<Double> buscarValorAReceber(@PathVariable Integer idEmpresa) {
+        if (idEmpresa == null || idEmpresa <= 0) {
+            throw new IllegalArgumentException("ID da empresa inválido ou não fornecido.");
+        }
+        Double valorAReceber = agendamentoServices.buscarValorAReceber(idEmpresa);
+        return ResponseEntity.status(HttpStatus.OK).body(valorAReceber);
     }
 
 }
