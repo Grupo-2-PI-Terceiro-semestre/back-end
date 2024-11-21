@@ -133,28 +133,45 @@ AND status_agendamento = 'AGENDADO';
     Double buscarValorAReceber(Integer idEmpresa);
 
     @Query(value ="""
-    SELECT
-        u.nome_pessoa AS Atendente,
-        SUM(s.valor_servico) AS Receita
-    FROM
-        agendamento AS a
-    JOIN
-        servico AS s
-        ON a.fk_servico = s.id_servico
-    JOIN
-        agenda
-        ON a.fk_agenda = agenda.id_agenda
-    JOIN
-        usuarios AS u
-        ON agenda.fk_usuario = u.id_pessoa
-    WHERE
-        u.fk_empresa = ?1
-        AND a.status_agendamento = 'REALIZADO'
-    GROUP BY
-        u.nome_pessoa
-    ORDER BY
-        Receita DESC;
+SELECT
+    u.nome_pessoa AS Atendente,
+    SUM(s.valor_servico) AS Receita
+FROM agendamento AS a
+JOIN agenda AS ag ON a.fk_agenda = ag.id_agenda
+JOIN servico AS s ON a.fk_servico = s.id_servico
+JOIN usuarios AS u ON ag.fk_usuario = u.id_pessoa
+WHERE s.fk_empresa = ?1\s
+  AND MONTH(data_hora) = MONTH(GETDATE())
+  AND YEAR(data_hora) = YEAR(GETDATE())
+GROUP BY u.nome_pessoa;
     """, nativeQuery = true)
     List<Object[]> ReceitaPorFuncionario(Integer idEmpresa);
 
+    @Query(value = """
+WITH MesAtual AS (
+    SELECT COUNT(id_pessoa) AS totalClientes
+    FROM cliente
+    WHERE fk_empresa = ?1
+      AND MONTH(data_criacao) = MONTH(GETDATE())
+      AND YEAR(data_criacao) = YEAR(GETDATE())
+),
+MesAnterior AS (
+    SELECT COUNT(id_pessoa) AS totalClientesAnterior
+    FROM cliente
+    WHERE fk_empresa = ?1
+      AND data_criacao >= DATEADD(MONTH, -1, CAST(GETDATE() AS DATE)) -- Primeiro dia do mês anterior
+      AND data_criacao < DATEADD(DAY, 1, EOMONTH(GETDATE(), -1)) -- Último dia do mês anterior
+)
+SELECT
+    a.totalClientes AS totalClientes,
+    b.totalClientesAnterior AS ClientesMesAnterior,
+    CASE
+        WHEN b.totalClientesAnterior IS NULL OR b.totalClientesAnterior = 0 THEN 0.0
+        ELSE ((a.totalClientes - b.totalClientesAnterior) / CAST(b.totalClientesAnterior AS FLOAT)) * 100
+    END AS comparativoClientes
+FROM MesAtual a
+LEFT JOIN MesAnterior b ON 1=1;
+    """, nativeQuery = true)
+    List<Object[]> ClientesMensal(Integer idEmpresa);
+    
 }

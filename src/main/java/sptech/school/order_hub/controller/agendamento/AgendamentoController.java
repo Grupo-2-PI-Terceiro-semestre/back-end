@@ -155,4 +155,14 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(valorAReceber);
     }
 
+    @GetMapping("/receitaPorFuncionario/{idEmpresa}")
+    public ResponseEntity<List<ReceitaPorFuncionarioResponseDTO>> buscarReceitaPorFuncionario(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaPorFuncionario(idEmpresa));
+    }
+
+    @GetMapping("/novosClientes/{idEmpresa}")
+    public ResponseEntity<ClientesMensaisResponseDTO> buscarClientesMensais(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarClientesMensais(idEmpresa));
+    }
+
 }
