@@ -27,8 +27,11 @@ public record NotificacaoDTO(
     }
 
     public static NotificacaoDTO fromEntity(Notificacao notificacao) {
+        if(notificacao == null) {
+            return null;
+        }
         return new NotificacaoDTO(
-                notificacao.getIdNotificacao(),
+                notificacao.getIdNotificacao() ,
                 notificacao.getMensagemAgendamento(),
                 notificacao.getMensagemCancelamento()
         );

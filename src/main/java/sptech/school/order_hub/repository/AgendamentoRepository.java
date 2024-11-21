@@ -15,7 +15,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
             SELECT a FROM Agendamento a
                 WHERE a.agenda.idAgenda = :idAgenda
                     AND a.dataHora BETWEEN :startOfDay AND :endOfDay
-                    AND (a.statusAgendamento = 'AGENDADO' OR a.statusAgendamento = 'PENDENTE')
+                    AND a.statusAgendamento <> 'CANCELADO'
             """)
     List<Agendamento> BuscarAgendamento(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 

@@ -1,5 +1,6 @@
 package sptech.school.order_hub.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
 import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.repository.EmpresaRepository;
+import sptech.school.order_hub.repository.NotificacaoRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
 import java.util.List;
@@ -28,6 +30,9 @@ public class EmpresaServices {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    NotificacaoRepository notificacaoRepository;
 
 
     @Autowired
@@ -148,22 +153,30 @@ public class EmpresaServices {
         return NotificacaoDTO.fromEntity(empresa.getNotificacao());
     }
 
+
+    @Transactional
     public NotificacaoDTO createNotificacao(Integer idEmpresa, Notificacao notificacao) {
 
         Empresa empresa = empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
         if (notificacao.getIdNotificacao() != null) {
-            var notificacaoExistente = empresa.getNotificacao();
-            notificacaoExistente.setMensagemCancelamento(notificacao.getMensagemCancelamento());
-            notificacaoExistente.setMensagemAgendamento(notificacao.getMensagemAgendamento());
-            empresa.setNotificacao(notificacaoExistente);
+            Notificacao notificacaoExistente = empresa.getNotificacao();
+            if (notificacaoExistente != null) {
+                notificacaoExistente.setMensagemCancelamento(notificacao.getMensagemCancelamento());
+                notificacaoExistente.setMensagemAgendamento(notificacao.getMensagemAgendamento());
+                empresa.setNotificacao(notificacaoExistente);
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notificação não encontrada para atualização.");
+            }
         } else {
-            empresa.setNotificacao(notificacao);
+            Notificacao notificacaoCriada = notificacaoRepository.save(notificacao);
+            empresa.setNotificacao(notificacaoCriada);
         }
 
         empresaRepository.save(empresa);
 
         return NotificacaoDTO.fromEntity(empresa.getNotificacao());
     }
+
 }
