@@ -33,9 +33,11 @@ public abstract class Pessoa {
     @Email
     private String emailPessoa;
 
-    private LocalDate dataNascimento;
+//    private LocalDate dataNascimento;
+//
+//    private String genero;
 
-    private String genero;
+    private LocalDate dataCriacao;
 
     private String numeroTelefone;
 

@@ -11,14 +11,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import sptech.school.order_hub.controller.agendamento.response.CriarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
-import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
-import sptech.school.order_hub.entitiy.*;
-import sptech.school.order_hub.enuns.StatusAgendamento;
+import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
 
@@ -95,7 +93,6 @@ public class ClienteServices {
 
                 cliente.setIdPessoa((int) (Math.random() * 10000));
                 cliente.setNomePessoa(firstName);
-                cliente.setDataNascimento(dateOfBirth.toLocalDate());
                 cliente.setEmailPessoa(document);
 
                 clientes[i] = cliente;
@@ -168,17 +165,18 @@ public class ClienteServices {
     }
 
     private static int compararIdades(Cliente cliente1, Cliente cliente2) {
-        Period idadeCliente1 = calcularPeriodo(cliente1.getDataNascimento(), LocalDate.now());
-        Period idadeCliente2 = calcularPeriodo(cliente2.getDataNascimento(), LocalDate.now());
+//        Period idadeCliente1 = calcularPeriodo(cliente1.getDataNascimento(), LocalDate.now());
+//        Period idadeCliente2 = calcularPeriodo(cliente2.getDataNascimento(), LocalDate.now());
 
 
-        if (idadeCliente1.getYears() != idadeCliente2.getYears()) {
-            return Integer.compare(idadeCliente1.getYears(), idadeCliente2.getYears());
-        } else if (idadeCliente1.getMonths() != idadeCliente2.getMonths()) {
-            return Integer.compare(idadeCliente1.getMonths(), idadeCliente2.getMonths());
-        } else {
-            return Integer.compare(idadeCliente1.getDays(), idadeCliente2.getDays());
-        }
+//        if (idadeCliente1.getYears() != idadeCliente2.getYears()) {
+//            return Integer.compare(idadeCliente1.getYears(), idadeCliente2.getYears());
+//        } else if (idadeCliente1.getMonths() != idadeCliente2.getMonths()) {
+//            return Integer.compare(idadeCliente1.getMonths(), idadeCliente2.getMonths());
+//        } else {
+//            return Integer.compare(idadeCliente1.getDays(), idadeCliente2.getDays());
+//        }
+        return 0;
     }
 
     private static void selectionSortOtimizado(Cliente[] clientes) {
