@@ -11,7 +11,12 @@ import java.util.Optional;
 
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Integer> {
 
-    @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay AND a.statusAgendamento = 'AGENDADO'")
+    @Query("""
+            SELECT a FROM Agendamento a
+                WHERE a.agenda.idAgenda = :idAgenda
+                    AND a.dataHora BETWEEN :startOfDay AND :endOfDay
+                    AND (a.statusAgendamento = 'AGENDADO' OR a.statusAgendamento = 'PENDENTE')
+            """)
     List<Agendamento> BuscarAgendamento(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay")

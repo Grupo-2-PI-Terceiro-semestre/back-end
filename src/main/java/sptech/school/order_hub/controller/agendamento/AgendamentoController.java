@@ -58,7 +58,7 @@ public class AgendamentoController {
     })
 
     @PostMapping
-    public ResponseEntity<AgendamentoDTO> criarAgendamento(@RequestBody CriarAgendamentoRequestDTO requestDTO) throws IOException {
+    public ResponseEntity<AgendamentoDTO> criarAgendamento(@RequestBody CriarAgendamentoRequestDTO requestDTO) {
         AgendamentoDTO agendamentoCriado = agendamentoServices.criarAgendamento(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoCriado);
     }
@@ -110,8 +110,8 @@ public class AgendamentoController {
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado"),
     })
     @PutMapping("/{idAgendamento}")
-    public ResponseEntity<AgendamentoDTO> cancelarAgendamento(@PathVariable Integer idAgendamento, @RequestParam String status) {
-        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.cancelarAgendamento(idAgendamento, StatusAgendamento.fromString(status)));
+    public ResponseEntity<AgendamentoDTO> updateStatusAgendamento(@PathVariable Integer idAgendamento, @RequestParam String status) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.updateStatusAgendamento(idAgendamento, StatusAgendamento.fromString(status)));
     }
 
     @Operation(summary = "Buscar Receita Mensal", description = "Busca a receita mensal de uma empresa")

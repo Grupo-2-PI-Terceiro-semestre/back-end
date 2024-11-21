@@ -222,7 +222,7 @@ public class UsuarioServices {
                         colaborador.nomeFuncionario(),
                         colaborador.funcao(),
                         agendamento.cliente().nomePessoa(),
-                        agendamento.cliente().telefone(),
+                        agendamento.cliente().numeroTelefone(),
                         agendamento.servico().nomeServico(),
                         agendamento.servico().descricao(),
                         agendamento.statusAgendamento(),
