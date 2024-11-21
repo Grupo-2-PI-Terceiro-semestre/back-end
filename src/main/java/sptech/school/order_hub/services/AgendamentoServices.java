@@ -152,7 +152,7 @@ public class AgendamentoServices extends Subject {
         return AgendamentoDTO.from(agendamentoCancelado);
     }
 
-    public ReceitaMensalResponseDTO buscarReceitaMensal(Integer idEmpresa, Integer mes) {
+    public ReceitaEComparativoResponseDTO buscarReceitaMensal(Integer idEmpresa, Integer mes) {
         List<Object[]> result = repository.ReceitaMensal(idEmpresa, mes);
 
         if (result.isEmpty()) {
@@ -163,7 +163,7 @@ public class AgendamentoServices extends Subject {
         Double totalReceita = (Double) row[0];
         Double comparativoReceita = (Double) row[1];
 
-        return new ReceitaMensalResponseDTO(totalReceita, comparativoReceita);
+        return new ReceitaEComparativoResponseDTO(totalReceita, comparativoReceita);
     }
 
     public ServicoMensalResponseDTO buscarServicoMensal(Integer idEmpresa, Integer mes) {
@@ -273,4 +273,22 @@ public class AgendamentoServices extends Subject {
         return new ClientesMensaisResponseDTO(totalClientes, comparativoClientes);
     }
 
+    public List<ReceitaPorMesDTO> buscarReceitaPorMes(Integer idEmpresa) {
+        return repository.ReceitaPorMes(idEmpresa).stream()
+                .map(result -> {
+                    String anoMes = result[0] instanceof String
+                            ? (String) result[0]
+                            : result[0].toString();
+                    Double receita = (Double) result[1];
+                    return new ReceitaPorMesDTO(anoMes, receita);
+                }).collect(Collectors.toList());
+    }
+
+    public List<ServicoDiaSemanaResponseDTO> buscarServicoDiaSemana(Integer idEmpresa) {
+        return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
+                .map(result -> new ServicoDiaSemanaResponseDTO(
+                        (Integer) result[0],
+                        (Integer) result[1]
+                )).collect(Collectors.toList());
+    }
 }
