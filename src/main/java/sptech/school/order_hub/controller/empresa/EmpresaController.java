@@ -87,7 +87,8 @@ public class EmpresaController {
     @PostMapping("/{idEmpresa}/notificacao")
     public ResponseEntity<NotificacaoDTO> createNotificacao(@PathVariable Integer idEmpresa, @RequestBody NotificacaoDTO notificacao) {
         var request = NotificacaoDTO.toEntity(notificacao);
-        return ResponseEntity.status(HttpStatus.OK).body(empresaService.createNotificacao(idEmpresa, request));
+        var response = empresaService.createNotificacao(idEmpresa, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
