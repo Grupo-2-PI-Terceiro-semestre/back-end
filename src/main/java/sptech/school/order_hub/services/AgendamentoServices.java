@@ -251,4 +251,26 @@ public class AgendamentoServices extends Subject {
         return repository.buscarValorAReceber(idEmpresa);
     }
 
+    public List<ReceitaPorFuncionarioResponseDTO> buscarReceitaPorFuncionario(Integer idEmpresa) {
+        return repository.ReceitaPorFuncionario(idEmpresa).stream()
+                .map(result -> new ReceitaPorFuncionarioResponseDTO(
+                        (String) result[0],
+                        (Double) result[1]
+                )).collect(Collectors.toList());
+    }
+
+    public ClientesMensaisResponseDTO buscarClientesMensais(Integer idEmpresa) {
+        List<Object[]> result = repository.ClientesMensal(idEmpresa);
+
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clientes não encontrados");
+        }
+
+        Object[] row = result.get(0);
+        Integer totalClientes = ((Number) row[0]).intValue();
+        Double comparativoClientes = ((Number) row[1]).doubleValue(); // Conversão explícita
+
+        return new ClientesMensaisResponseDTO(totalClientes, comparativoClientes);
+    }
+
 }
