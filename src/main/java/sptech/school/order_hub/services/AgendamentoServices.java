@@ -137,7 +137,7 @@ public class AgendamentoServices extends Subject {
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
-    public AgendamentoDTO cancelarAgendamento(final Integer idAgendamento, final StatusAgendamento status) {
+    public AgendamentoDTO updateStatusAgendamento(final Integer idAgendamento, final StatusAgendamento status) {
 
         Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -200,7 +200,7 @@ public class AgendamentoServices extends Subject {
         agendamento.setCliente(cliente);
         agendamento.setAgenda(agenda);
         agendamento.setDataHora(requestDTO.dataAgendamento());
-        agendamento.setStatusAgendamento(StatusAgendamento.AGENDADO);
+        agendamento.setStatusAgendamento(requestDTO.statusAgendamento());
 
         notificarObservers(cliente, "agendamento");
 

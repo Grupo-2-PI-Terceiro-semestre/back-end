@@ -10,8 +10,7 @@ public record ClienteDTO(
         Integer idPesoa,
         String nomePessoa,
         String emailPessoa,
-        String numeroTelefone,
-        String telefone
+        String numeroTelefone
 ) {
     public static ClienteDTO from(Cliente cliente) {
         return ClienteDTO.builder()
