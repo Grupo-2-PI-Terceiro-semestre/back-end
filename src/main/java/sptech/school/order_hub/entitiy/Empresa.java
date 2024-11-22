@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,7 +45,10 @@ public class Empresa {
     private List<Cliente> clientes = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
-    private List<Servico> servicos;
+    private List<Servico> servicos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    private List<Imagens> imagens = new ArrayList<>();
 
     @JoinColumn(name = "fk_endereco")
     @OneToOne
@@ -60,10 +62,14 @@ public class Empresa {
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;
 
-    private String urlImagem;
+    private String urlLogo;
 
     public void addUsuario(Usuario usuario) {
         this.usuarios.add(usuario);
+    }
+
+    public void addImagem(Imagens imagem) {
+        this.imagens.add(imagem);
     }
 
     public void addServico(Servico servico) {

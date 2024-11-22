@@ -18,7 +18,7 @@ public record BuscarEmpresaResponseDTO(
                 .emailEmpresa(empresa.getEmailEmpresa())
                 .telefone(empresa.getTelefone())
                 .cnpj(empresa.getCnpj())
-                .urlLogo(empresa.getUrlImagem())
+                .urlLogo(empresa.getUrlLogo())
                 .build();
     }
 

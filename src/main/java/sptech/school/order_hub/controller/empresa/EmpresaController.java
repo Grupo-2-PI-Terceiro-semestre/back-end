@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
@@ -21,7 +22,9 @@ import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.services.EmpresaServices;
+import sptech.school.order_hub.services.ImagensServices;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Empresa", description = "Controller de empresas")
@@ -31,6 +34,8 @@ public class EmpresaController {
 
     @Autowired
     private EmpresaServices empresaService;
+    @Autowired
+    private ImagensServices imagensServices;
 
     @Operation(summary = "Cadastrar uma empresa", description = "Cadastra uma empresa")
     @ApiResponses(value = {
@@ -100,6 +105,12 @@ public class EmpresaController {
     @PostMapping("/endereco/{idEmpresa}")
     public ResponseEntity<EnderecoDTO> updateEnderecoById(@PathVariable Integer idEmpresa, @RequestBody EnderecoDTO endereco) {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.updateEnderecoById(idEmpresa, endereco));
+    }
+
+    @PostMapping("/imagens/upload/{idEmpresa}")
+    public ResponseEntity<String> uploadImagem(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
+            String urlImagem = imagensServices.uploadImagem(file, idEmpresa);
+            return ResponseEntity.ok(urlImagem);
     }
 
     @Operation(summary = "Deletar empresa", description = "Deleta uma empresa")

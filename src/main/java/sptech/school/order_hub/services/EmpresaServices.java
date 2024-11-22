@@ -116,7 +116,7 @@ public class EmpresaServices {
                         empresa.getIdEmpresa(),
                         empresa.getNomeEmpresa(),
                         empresa.getEndereco(),
-                        empresa.getUrlImagem(),
+                        empresa.getUrlLogo(),
                         empresa.getServicos())
                 )
                 .collect(Collectors.toList());

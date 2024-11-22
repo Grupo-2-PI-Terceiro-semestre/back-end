@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   application:
     name: order-hub
   datasource:
@@ -12,9 +17,8 @@ spring:
       properties:
         hibernate:
           format_sql: true
-          # Logar as queries do Hibernate
           show_sql: true
-    show-sql: false
+    show-sql: true
   main:
     allow-bean-definition-overriding: true
 
@@ -44,4 +48,12 @@ server:
   error:
     include-message: always  # Incluir mensagens nos erros
     include-binding-errors: always  # Incluir erros de binding na resposta
+
+
+aws:
+  access-key: ${ACCESS-KEY}
+  secret-key: ${SECRET-KEY}
+  region: "us-east-2"
+  endpoint: https://image-order-hub.s3.amazonaws.com
+  bucket: image-order-hub
 
