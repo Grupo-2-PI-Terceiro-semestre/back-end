@@ -1,11 +1,8 @@
 package sptech.school.order_hub.dtos;
 
 import lombok.Builder;
-import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Funcao;
 import sptech.school.order_hub.entitiy.Usuario;
-
-import java.time.LocalDate;
 
 @Builder
 public record UsuarioDTO(

@@ -17,6 +17,7 @@ import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDT
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
+import sptech.school.order_hub.controller.empresa.response.BuscarPerfilEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
@@ -68,6 +69,16 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.listarEmpresaPeloNome(termo));
     }
 
+    @GetMapping("/buscar/categoria/{categoria}")
+    public ResponseEntity<List<BuscarEmpresaServicoResponseDTO>> buscarEmpresasPorCategoria(@PathVariable String categoria) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarEmpresasPorCategoria(categoria));
+    }
+
+    @GetMapping("/perfil/{idEmpresa}")
+    public ResponseEntity<BuscarPerfilEmpresaResponseDTO> buscarPerfilEmpresa(@Valid @PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarPerfilEmpresa(idEmpresa));
+    }
+
     @Operation(summary = "buscar por id", description = "Busca uma empresa pelo id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Empresa encontrada com sucesso",
@@ -89,7 +100,7 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.findNotificacaoById(idEmpresa));
     }
 
-    @PostMapping("/{idEmpresa}/notificacao")
+    @PutMapping("/{idEmpresa}/notificacao")
     public ResponseEntity<NotificacaoDTO> createNotificacao(@PathVariable Integer idEmpresa, @RequestBody NotificacaoDTO notificacao) {
         var request = NotificacaoDTO.toEntity(notificacao);
         var response = empresaService.createNotificacao(idEmpresa, request);
@@ -107,10 +118,10 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.updateEnderecoById(idEmpresa, endereco));
     }
 
-    @PostMapping("/imagens/upload/{idEmpresa}")
+    @PostMapping("/imagem/upload/{idEmpresa}")
     public ResponseEntity<String> uploadImagem(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
-            String urlImagem = imagensServices.uploadImagem(file, idEmpresa);
-            return ResponseEntity.ok(urlImagem);
+        String urlImagem = imagensServices.uploadLogoEmpresa(file, idEmpresa);
+        return ResponseEntity.ok(urlImagem);
     }
 
     @Operation(summary = "Deletar empresa", description = "Deleta uma empresa")
@@ -123,7 +134,6 @@ public class EmpresaController {
     public ResponseEntity<Void> deleteById(@PathVariable Integer idEmpresa) {
         empresaService.deleteById(idEmpresa);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
     }
 
     @Operation(summary = "Atualizar empresa", description = "Atualiza uma empresa")

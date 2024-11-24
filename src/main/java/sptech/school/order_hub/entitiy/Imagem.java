@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Imagens {
+public class Imagem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idImagem;

@@ -6,6 +6,7 @@ public record EnderecoDTO(
         int idEndereco,
         String logradouro,
         String cidade,
+        String bairro,
         String uf,
         String cep,
         String numero,
@@ -17,6 +18,7 @@ public record EnderecoDTO(
                 .idEndereco(idEndereco)
                 .logradouro(logradouro)
                 .cidade(cidade)
+                .bairro(bairro)
                 .estado(uf)
                 .cep(cep)
                 .numero(numero)
@@ -29,6 +31,7 @@ public record EnderecoDTO(
                 endereco.getIdEndereco(),
                 endereco.getLogradouro(),
                 endereco.getCidade(),
+                endereco.getBairro(),
                 endereco.getEstado(),
                 endereco.getCep(),
                 endereco.getNumero(),

@@ -60,22 +60,22 @@ VALUES (1, 70.00, 'Pacote Completo',
 
 INSERT INTO usuarios(fk_empresa, fk_endereco, representante, tipos_de_usuario, cpf, email_pessoa,
                      firebase_uid, fk_funcao, nome_pessoa, numero_telefone, senha)
-VALUES ( 1, 1, 1, 0, 12345678905, 'joao.silva@example.com', '', 1, 'João da Silva', NULL,
+    VALUES (1, 1, 1, 0, 12345678905, 'joao.silva@example.com', '', 1, 'João da Silva', NULL,
         '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO usuarios(fk_empresa, fk_endereco, representante, tipos_de_usuario, cpf, email_pessoa,
                      firebase_uid, fk_funcao, nome_pessoa, numero_telefone, senha)
-VALUES ( 1, 1, 0, 1, '12345678902', 'maria.silva@example.com', '', 2, 'Maria da Silva', NULL,
+VALUES (1, 1, 0, 1, '12345678902', 'maria.silva@example.com', '', 2, 'Maria da Silva', NULL,
         '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO usuarios(fk_empresa, fk_endereco, representante, tipos_de_usuario, cpf, email_pessoa,
                      firebase_uid, fk_funcao, nome_pessoa, numero_telefone, senha)
-VALUES ( 1, 1, 0, 1, '12345678902', 'jose.silva@example.com', '', 1, 'José da Silva', NULL,
+VALUES (1, 1, 0, 1, '12345678902', 'jose.silva@example.com', '', 1, 'José da Silva', NULL,
         '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO usuarios(fk_empresa, fk_endereco, representante, tipos_de_usuario, cpf, email_pessoa,
                      firebase_uid, fk_funcao, nome_pessoa, numero_telefone, senha)
-VALUES ( 1, 1, 0, 1, '12345678902', 'felipe.silva@example.com', '', 1, 'Felipe', NULL,
+VALUES (1, 1, 0, 1, '12345678902', 'felipe.silva@example.com', '', 1, 'Felipe', NULL,
         '$2a$10$jTFvRNxv.JBvUvLtCFSeR.UY2O/ugXv.kKYOIuKnwz4GgHKxzRIN.');
 
 INSERT INTO cliente (fk_empresa, email_pessoa, nome_pessoa, numero_telefone)
@@ -155,5 +155,13 @@ VALUES ('2024-11-20 10:30:00', 'PENDENTE', 1, 1, 3);
 
 INSERT INTO agendamento (data_hora, status_agendamento, fk_cliente, fk_agenda, fk_servico)
 VALUES ('2024-10-28 12:00:00', 'REALIZADO', 1, 2, 1);
+
+
+
+insert into imagem (fk_empresa, url_imagem)
+values (1, 'https://www.goldhairmoveis.com.br/wp-content/uploads/2016/11/excelencia-no-salao-de-beleza.jpg'),
+       (1, 'https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg'),
+       (1, 'https://frizzar.com.br/blog/wp-content/uploads/2022/07/moveis-em-sala-de-beleza-compressed-1024x571.jpg'),
+       (1, 'https://contabilidaderm.com.br/wp-content/uploads/2023/07/Analise-Financeira-para-Salao-de-Beleza.jpg');
 
 

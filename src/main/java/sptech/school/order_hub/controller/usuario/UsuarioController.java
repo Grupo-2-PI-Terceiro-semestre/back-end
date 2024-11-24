@@ -14,15 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
-import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
-import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarUsuariosPaginadosResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
-import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -125,7 +122,7 @@ public class UsuarioController {
 
     }
 
-    @PostMapping("/perfil")
+    @PutMapping("/perfil")
     public ResponseEntity<PerfilAtualizadoDTO> cadastrarClientes(@RequestBody AtualizarPerfilClienteEmpresaRequestDTO request) {
         var output = services.atualizarEmpresaCliente(request);
         return ResponseEntity.status(HttpStatus.OK).body(output);

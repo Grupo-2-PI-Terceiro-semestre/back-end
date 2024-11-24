@@ -14,5 +14,15 @@ public record CadastroUsuarioRequestDTO(
         String numeroTelefone,
         Funcao funcao
 ) {
+    public Usuario toEntity() {
+        return Usuario.builder()
+                .nomePessoa(nomePessoa)
+                .emailPessoa(emailPessoa)
+                .senha(senha)
+                .tiposDeUsuario(tiposDeUsuario)
+                .representante(representante)
+                .firebaseUid(firebaseUid)
+                .build();
+    }
 
 }

@@ -1,13 +1,10 @@
 package sptech.school.order_hub.dtos;
 
 import lombok.Builder;
-import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Servico;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Builder
 public record ServicoDTO(
@@ -44,5 +41,4 @@ public record ServicoDTO(
                 .duracao(duracaoComoLocalTime) // Já está no formato LocalTime
                 .build();
     }
-
 }

@@ -12,18 +12,33 @@ public record BuscarEmpresaServicoResponseDTO(
         String nomeEmpresa,
         String bairro,
         String cidade,
+        String uf,
         String urlLogo,
-        List<String> servicos
+        List<String> servicos,
+        String categoria // Novo campo
 ) {
 
-
-    public static BuscarEmpresaServicoResponseDTO from(Integer idEmpresa, String nomeEmpresa, Endereco endereco, String urlLogo, List<Servico> servicos) {
-
-
+    public static BuscarEmpresaServicoResponseDTO from(
+            Integer idEmpresa,
+            String nomeEmpresa,
+            Endereco endereco,
+            String urlLogo,
+            List<Servico> servicos,
+            String categoria
+    ) {
         List<String> nomesServicos = servicos.stream()
                 .map(Servico::getNomeServico)
                 .collect(Collectors.toList());
 
-        return new BuscarEmpresaServicoResponseDTO(idEmpresa, nomeEmpresa, endereco.getBairro(), endereco.getCidade(), urlLogo, nomesServicos);
+        return new BuscarEmpresaServicoResponseDTO(
+                idEmpresa,
+                nomeEmpresa,
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getEstado(),
+                urlLogo,
+                nomesServicos,
+                categoria
+        );
     }
 }

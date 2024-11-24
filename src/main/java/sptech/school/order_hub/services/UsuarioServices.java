@@ -1,7 +1,6 @@
 package sptech.school.order_hub.services;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,21 +10,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config.security.config.TokenServices;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
-import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
-import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.exception.UserCreationException;
+import sptech.school.order_hub.repository.AgendaRepository;
+import sptech.school.order_hub.repository.CategoriaRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
@@ -47,8 +48,10 @@ public class UsuarioServices {
     private final EmpresaRepository empresaRepository;
     private final EmpresaServices empresaServices;
     private final AgendamentoServices agendamentoServices;
+    private final CategoriaRepository categoriaRepository;
+    private final AgendaRepository agendaRepository;
 
-    public UsuarioServices(UsuarioRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenServices tokenServices, EmpresaRepository empresaRepository, EmpresaServices empresaServices, AgendamentoServices agendamentoServices) {
+    public UsuarioServices(UsuarioRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenServices tokenServices, EmpresaRepository empresaRepository, EmpresaServices empresaServices, AgendamentoServices agendamentoServices, CategoriaRepository categoriaRepository, AgendaRepository agendaRepository) {
 
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -57,6 +60,8 @@ public class UsuarioServices {
         this.empresaRepository = empresaRepository;
         this.empresaServices = empresaServices;
         this.agendamentoServices = agendamentoServices;
+        this.categoriaRepository = categoriaRepository;
+        this.agendaRepository = agendaRepository;
     }
 
 
@@ -109,6 +114,8 @@ public class UsuarioServices {
 
     public CadastroUsuarioResponseDTO create(Usuario usuario) {
 
+
+
         if (repository.existsByEmailPessoa(usuario.getEmailPessoa())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
         }
@@ -118,6 +125,13 @@ public class UsuarioServices {
             } else {
                 usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
             }
+
+            Agenda agenda = agendaRepository.save(new Agenda());
+
+            agenda.setUsuario(usuario);
+
+            usuario.setAgenda(agenda);
+
             repository.save(usuario);
             return CadastroUsuarioResponseDTO.toEntity(usuario);
         } catch (Exception e) {
@@ -219,7 +233,7 @@ public class UsuarioServices {
                 writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s",
                         colaborador.idFuncionario(),
                         colaborador.nomeFuncionario(),
-                        colaborador.funcao(),
+                        colaborador.funcao() == null ? "" : colaborador.funcao(),
                         agendamento.cliente().nomePessoa(),
                         agendamento.cliente().numeroTelefone(),
                         agendamento.servico().nomeServico(),
@@ -232,54 +246,74 @@ public class UsuarioServices {
         writer.flush();
     }
 
-    @Transactional
     public PerfilAtualizadoDTO atualizarEmpresaCliente(AtualizarPerfilClienteEmpresaRequestDTO request) {
+        try {
+            // Verificar se o usuário existe
+            Usuario usuario = repository.findById(request.usuario().idPessoa())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
 
-        // Busca o usuário pelo ID e lança exceção se não encontrado
-        Usuario usuario = repository.findById(request.usuario().idPessoa())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+            // Verificar se a categoria existe
+            Categoria categoria = categoriaRepository.findById(request.empresa().idCategoria())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
 
-        Optional<Empresa> empresaOpt = empresaRepository.findById(request.empresa().idEmpresa());
-
-        if (request.usuario().nome() != null) {
-            usuario.setNomePessoa(request.usuario().nome());
-        }
-        if (request.usuario().cpf() != null) {
-            usuario.setCpf(request.usuario().cpf());
-        }
-
-        Usuario userAtualizado = repository.save(usuario);
-
-        Empresa empresaAtualizada = null;
-        if (empresaOpt.isPresent()) {
-            Empresa empresa = empresaOpt.get();
-
-            // Atualiza apenas os dados enviados para a empresa
-            if (request.empresa().nomeEmpresa() != null) {
-                empresa.setNomeEmpresa(request.empresa().nomeEmpresa());
+            // Atualizar dados do usuário
+            if (request.usuario().nome() != null) {
+                usuario.setNomePessoa(request.usuario().nome());
             }
-            if (request.empresa().cnpj() != null) {
-                empresa.setCnpj(request.empresa().cnpj());
-            }
-            if (request.empresa().telefone() != null) {
-                empresa.setTelefone(request.empresa().telefone());
+            if (request.usuario().cpf() != null) {
+                usuario.setCpf(request.usuario().cpf());
             }
 
-            empresaAtualizada = empresaRepository.save(empresa);
-        } else {
-            Empresa novaEmpresa = new Empresa();
 
-            novaEmpresa.setNomeEmpresa(request.empresa().nomeEmpresa());
-            novaEmpresa.setCnpj(request.empresa().cnpj());
-            novaEmpresa.setTelefone(request.empresa().telefone());
-            novaEmpresa.addUsuario(usuario);
+            // Verificar se a empresa existe
 
-            empresaAtualizada = empresaRepository.save(novaEmpresa);
+            if (request.empresa().idEmpresa() == null) {
+
+                Empresa novaEmpresa = new Empresa();
+                novaEmpresa.setNomeEmpresa(request.empresa().nomeEmpresa());
+                novaEmpresa.setCnpj(request.empresa().cnpj());
+                novaEmpresa.setTelefone(request.empresa().telefone());
+                novaEmpresa.setCategoria(categoria);
+                novaEmpresa.addUsuario(usuario);
+
+                Empresa empresaSalva = empresaRepository.save(novaEmpresa);
+
+                usuario.setEmpresa(empresaSalva);
+
+                Usuario usuarioAtualizado = repository.save(usuario);
+
+                return PerfilAtualizadoDTO.toPerfil(usuarioAtualizado, empresaSalva);
+            }
+            Usuario usuarioAtualizado = repository.save(usuario);
+
+            Optional<Empresa> empresaOpt = empresaRepository.findById(request.empresa().idEmpresa());
+
+            final var empresa = getEmpresa(request, empresaOpt, categoria);
+
+            return PerfilAtualizadoDTO.toPerfil(usuarioAtualizado, empresaRepository.save(empresa));
+
+        } catch (TransactionSystemException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao atualizar perfil: " + e.getMessage());
         }
-
-        return PerfilAtualizadoDTO.toPerfil(userAtualizado, empresaAtualizada);
     }
 
+    private static Empresa getEmpresa(AtualizarPerfilClienteEmpresaRequestDTO request, Optional<Empresa> empresaOpt, Categoria categoria) {
+        Empresa empresa = empresaOpt.get();
+
+        if (request.empresa().nomeEmpresa() != null) {
+            empresa.setNomeEmpresa(request.empresa().nomeEmpresa());
+        }
+        if (request.empresa().cnpj() != null) {
+            empresa.setCnpj(request.empresa().cnpj());
+        }
+        if (request.empresa().telefone() != null) {
+            empresa.setTelefone(request.empresa().telefone());
+        }
+        if (request.empresa().idCategoria() != null) {
+            empresa.setCategoria(categoria);
+        }
+        return empresa;
+    }
 
 
     public Paginacao<Usuario> buscarUsuariosPaginado(final Integer idEmpresa, final BuscarUsuarioPaginadoDTO request) {

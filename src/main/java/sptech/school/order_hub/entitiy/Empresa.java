@@ -48,7 +48,7 @@ public class Empresa {
     private List<Servico> servicos = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
-    private List<Imagens> imagens = new ArrayList<>();
+    private List<Imagem> imagens = new ArrayList<>();
 
     @JoinColumn(name = "fk_endereco")
     @OneToOne
@@ -58,7 +58,7 @@ public class Empresa {
     @OneToOne
     private Notificacao notificacao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;
 
@@ -68,7 +68,7 @@ public class Empresa {
         this.usuarios.add(usuario);
     }
 
-    public void addImagem(Imagens imagem) {
+    public void addImagem(Imagem imagem) {
         this.imagens.add(imagem);
     }
 

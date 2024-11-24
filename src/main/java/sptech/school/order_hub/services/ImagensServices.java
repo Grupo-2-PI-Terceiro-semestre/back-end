@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Imagens;
+import sptech.school.order_hub.entitiy.Imagem;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.ImagensRepository;
 
@@ -37,7 +37,31 @@ public class ImagensServices {
         this.imagensRepository = imagensRepository;
     }
 
-    public String uploadImagem(MultipartFile file, Integer idEmpresa) throws IOException {
+    public String uploadLogoEmpresa(MultipartFile file, Integer idEmpresa) throws IOException {
+        Empresa empresa = buscarEmpresa(idEmpresa);
+
+        Imagem imagem = uploadImagem(file, idEmpresa);
+
+        empresa.setUrlLogo(imagem.getUrlImagem());
+
+        empresaRepository.save(empresa);
+
+        return imagem.getUrlImagem();
+    }
+
+    public String uploadImagensEmpresa(MultipartFile file, Integer idEmpresa) throws IOException {
+        Imagem imagem = uploadImagem(file, idEmpresa);
+
+        Empresa empresa = buscarEmpresa(idEmpresa);
+
+        empresa.addImagem(imagem);
+
+        imagensRepository.save(imagem);
+
+        return imagem.getUrlImagem();
+    }
+
+    private Imagem uploadImagem(MultipartFile file, Integer idEmpresa) throws IOException {
         Empresa empresa = empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new IllegalArgumentException("Empresa não encontrada"));
 
@@ -54,16 +78,15 @@ public class ImagensServices {
 
         String urlImagem = urlPadrao + "/" + enderecoImagem;
 
-        Imagens imagem = Imagens.builder()
+        return Imagem.builder()
                 .urlImagem(urlImagem)
                 .empresa(empresa)
                 .build();
-        imagensRepository.save(imagem);
+    }
 
-        empresa.addImagem(imagem);
 
-        empresaRepository.save(empresa);
-
-        return urlImagem;
+    private Empresa buscarEmpresa(Integer idEmpresa) {
+        return empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new IllegalArgumentException("Empresa não encontrada"));
     }
 }
