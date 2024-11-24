@@ -22,10 +22,9 @@ import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
-import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Endereco;
-import sptech.school.order_hub.entitiy.Paginacao;
-import sptech.school.order_hub.entitiy.Usuario;
+import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.UsuarioDTO;
+import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.exception.UserCreationException;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
@@ -293,5 +292,24 @@ public class UsuarioServices {
         final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
+    }
+
+    public UsuarioDTO criarUsuario(Usuario usuario, Integer idEmpresa) {
+
+        final var empresa = buscarEmpresa(idEmpresa);
+
+        usuario.setEmpresa(empresa);
+        Usuario usuarioCriado = repository.save(usuario);
+
+        empresa.addUsuario(usuarioCriado);
+
+        empresaRepository.save(empresa);
+
+        return UsuarioDTO.from(usuarioCriado);
+    }
+
+    private Empresa buscarEmpresa(Integer idEmpresa) {
+        return empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 }

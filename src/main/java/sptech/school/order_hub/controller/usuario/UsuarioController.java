@@ -22,6 +22,8 @@ import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.BuscarUsuariosPaginadosResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.services.UsuarioServices;
@@ -112,9 +114,15 @@ public class UsuarioController {
 
 
     @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
-    @PostMapping()
-    public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.services.create(usuario.toEntity()));
+    @PostMapping("/empresa/colaborador/{idEmpresa}")
+    public ResponseEntity<UsuarioDTO> create(@RequestBody UsuarioDTO usuario,
+                                             @PathVariable Integer idEmpresa) throws IOException {
+
+        UsuarioDTO usuarioCriado = services.criarUsuario(UsuarioDTO.toEntity(usuario), idEmpresa);
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioCriado);
+
+
     }
 
     @PostMapping("/perfil")
