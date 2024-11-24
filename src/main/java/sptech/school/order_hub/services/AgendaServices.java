@@ -1,6 +1,14 @@
 package sptech.school.order_hub.services;
 
 import org.springframework.stereotype.Service;
+import sptech.school.order_hub.controller.agenda.request.BuscarHorariosIndisponiveisRequest;
+import sptech.school.order_hub.dtos.HorariosIndisponiveisDTO;
+import sptech.school.order_hub.repository.AgendaRepository;
+
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AgendaServices {

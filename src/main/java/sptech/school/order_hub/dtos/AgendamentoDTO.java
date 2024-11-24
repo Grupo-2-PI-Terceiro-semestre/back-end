@@ -21,7 +21,7 @@ public record AgendamentoDTO(
                 .horaAgendamento(agendamento.getDataHora())
                 .statusAgendamento(agendamento.getStatusAgendamento())
                 .cliente(ClienteDTO.from(agendamento.getCliente()))
-                .servico(ServicoDTO.fromEntity(agendamento.getServico()))
+                .servico(ServicoDTO.from(agendamento.getServico()))
                 .build();
     }
 }

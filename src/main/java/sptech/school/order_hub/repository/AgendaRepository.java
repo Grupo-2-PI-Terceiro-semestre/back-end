@@ -1,7 +1,11 @@
 package sptech.school.order_hub.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import sptech.school.order_hub.entitiy.Agenda;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Integer> {
 
