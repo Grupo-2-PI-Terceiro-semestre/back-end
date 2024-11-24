@@ -11,11 +11,14 @@ import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDt
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.ServicoDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.ServicoRepository;
 import sptech.school.order_hub.services.ServicoServices;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Servico", description = "Controller de serviços")
@@ -41,10 +44,19 @@ public class ServicoController {
 
     @Operation(summary = "Cadastrar um serviço", description = "Cadastra um serviço")
     @PostMapping("/{idEmpresa}")
-    public ResponseEntity<Servico> create(@Valid @RequestBody Servico servicoParaCadastrar, @PathVariable int idEmpresa) {
-        Servico servicoCriado = servicoService.createServico(servicoParaCadastrar, idEmpresa);
+    public ResponseEntity<ServicoDTO> create(@RequestBody ServicoDTO servicoDTO, @PathVariable int idEmpresa) {
+
+        ServicoDTO servicoCriado = servicoService.createServico(ServicoDTO.toEntity(servicoDTO), idEmpresa);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoCriado);
     }
+
+//    @PostMapping("empresa/{idEmpresa}")
+//    public ResponseEntity<ClienteDTO> criarCliente(@PathVariable Integer idEmpresa,
+//                                                   @RequestBody ClienteDTO requestDTO) throws IOException {
+//        ClienteDTO clienteCriado = service.criarCliente(idEmpresa,ClienteDTO.toEntity(requestDTO));
+//        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+//    }
 
     @Operation(summary = "Buscar serviços de uma empresa", description = "Busca os serviços de uma empresa")
     @GetMapping("/empresa/{idEmpresa}")
@@ -97,4 +109,6 @@ public class ServicoController {
         return ResponseEntity.status(200).body(todosServicos);
 
     }
+
+
 }

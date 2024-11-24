@@ -5,11 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
-import sptech.school.order_hub.controller.servico.request.BuscarServicoRequestDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
-import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.dtos.ServicoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Servico;
@@ -30,15 +28,18 @@ public class ServicoServices {
     private ServicoRepository servicoRepository;
 
 
-    public Servico createServico(Servico servicoParaCadastrar, Integer empresId) {
+    public ServicoDTO createServico(Servico servicoParaCadastrar, Integer empresId) {
         Empresa empresa = empresaRepository.findById(empresId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
-        empresa.addServico(servicoParaCadastrar);
+        servicoParaCadastrar.setEmpresa(empresa);
+        Servico servicoCriado = servicoRepository.save(servicoParaCadastrar);
 
-        servicoParaCadastrar.setIdServico(null);
+        empresa.addServico(servicoCriado);
 
-        return servicoRepository.save(servicoParaCadastrar);
+        empresaRepository.save(empresa);
+
+        return ServicoDTO.from(servicoCriado);
     }
 
     public Servico findById(Integer idServico) {

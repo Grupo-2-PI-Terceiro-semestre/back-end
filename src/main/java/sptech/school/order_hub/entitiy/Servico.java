@@ -16,6 +16,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 @Table(name = "SERVICO")
 public class Servico {
 
