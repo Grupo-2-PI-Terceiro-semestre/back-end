@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Cliente", description = "Controller de clientes")
@@ -119,8 +121,10 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(output);
     }
 
-    @PostMapping
-    public ResponseEntity<ClienteDTO> criarCliente(@RequestBody CriarClienteRequestDTO requestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.criarCliente(requestDTO));
+    @PostMapping("empresa/{idEmpresa}")
+    public ResponseEntity<ClienteDTO> criarCliente(@PathVariable Integer idEmpresa,
+                                                   @RequestBody ClienteDTO requestDTO) throws IOException {
+        ClienteDTO clienteCriado = service.criarCliente(idEmpresa,ClienteDTO.toEntity(requestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
     }
 }
