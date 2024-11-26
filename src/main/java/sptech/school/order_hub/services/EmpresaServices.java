@@ -162,7 +162,18 @@ public class EmpresaServices {
             return EnderecoDTO.fromEntity(empresa.getEndereco());
         }
 
-        empresa.setEndereco(endereco.toEntity());
+        Endereco enderecoExistente = empresa.getEndereco();
+
+        enderecoExistente.setIdEndereco(endereco.idEndereco());
+        enderecoExistente.setCep(endereco.cep());
+        enderecoExistente.setCidade(endereco.cidade());
+        enderecoExistente.setComplemento(endereco.complemento());
+        enderecoExistente.setEstado(endereco.uf());
+        enderecoExistente.setBairro(endereco.bairro());
+        enderecoExistente.setLogradouro(endereco.logradouro());
+        enderecoExistente.setNumero(endereco.numero());
+
+        empresa.setEndereco(enderecoExistente);
 
         empresaRepository.save(empresa);
 

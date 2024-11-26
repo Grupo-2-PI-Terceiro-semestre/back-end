@@ -7,6 +7,7 @@ import sptech.school.order_hub.controller.agenda.request.BuscarHorariosIndisponi
 import sptech.school.order_hub.services.AgendaServices;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Agenda", description = "Controller de agendas")
@@ -21,7 +22,10 @@ public class AgendaController {
     }
 
     @GetMapping("/horarios-indisponiveis/empresa/{idEmpresa}")
-    public ResponseEntity<List<Time>> buscarHorariosIndisponiveis(@PathVariable Integer idEmpresa, @RequestBody BuscarHorariosIndisponiveisRequest request) {
+    public ResponseEntity<List<Time>> buscarHorariosIndisponiveis(@PathVariable Integer idEmpresa,
+                                                                  @RequestParam Integer idProfissional,
+                                                                  @RequestParam LocalDate data) {
+        var request = BuscarHorariosIndisponiveisRequest.from(idProfissional, data);
         var output = agendaServices.buscarHorariosIndisponiveis(idEmpresa, request);
         return ResponseEntity.ok(output);
     }

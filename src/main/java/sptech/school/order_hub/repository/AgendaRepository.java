@@ -26,4 +26,10 @@ public interface AgendaRepository extends JpaRepository<Agenda, Integer> {
             ORDER BY a.data_hora ASC;
             """, nativeQuery = true)
     List<Object[]> buscarHorariosIndisponiveis(Integer idEmpresa, Integer idAgenda, LocalDate data);
+
+
+    @Query("SELECT a.idAgenda FROM Agenda a WHERE a.usuario.idPessoa = ?1")
+    Integer findIdAgendaByUsuarioId(Integer idUsuario);
 }
+
+

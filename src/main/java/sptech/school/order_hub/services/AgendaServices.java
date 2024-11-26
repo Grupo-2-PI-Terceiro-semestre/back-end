@@ -23,7 +23,9 @@ public class AgendaServices {
             Integer idEmpresa,
             BuscarHorariosIndisponiveisRequest request) {
 
-        List<Object[]> resultados = agendaRepository.buscarHorariosIndisponiveis(idEmpresa, request.id_agenda(), request.data());
+        final var idAgenda = agendaRepository.findIdAgendaByUsuarioId(request.idProfissional());
+
+        List<Object[]> resultados = agendaRepository.buscarHorariosIndisponiveis(idEmpresa, idAgenda, request.data());
 
         List<HorariosIndisponiveisDTO> horariosIndisponiveis = new ArrayList<>();
 

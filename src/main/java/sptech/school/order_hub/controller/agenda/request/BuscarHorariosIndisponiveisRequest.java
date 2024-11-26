@@ -8,14 +8,12 @@ import java.time.LocalTime;
 
 @Builder
 public record BuscarHorariosIndisponiveisRequest(
-        Integer idEmpresa,
-        Integer id_agenda,
+        Integer idProfissional,
         LocalDate data
 ) {
-    public static BuscarHorariosIndisponiveisRequest from(Integer idEmpresa, Integer id_agenda, LocalDate data) {
+    public static BuscarHorariosIndisponiveisRequest from(Integer idProfissional, LocalDate data) {
         return BuscarHorariosIndisponiveisRequest.builder()
-                .idEmpresa(idEmpresa)
-                .id_agenda(id_agenda)
+                .idProfissional(idProfissional)
                 .data(data)
                 .build();
     }

@@ -16,10 +16,8 @@ import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoR
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
-import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.BuscarUsuariosPaginadosResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
+import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
+import sptech.school.order_hub.controller.usuario.response.*;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -109,6 +107,11 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
+        CadastroUsuarioResponseDTO usuarioCriado = services.create(usuario.toEntity());
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioCriado);
+    }
 
     @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
     @PostMapping("/empresa/colaborador/{idEmpresa}")

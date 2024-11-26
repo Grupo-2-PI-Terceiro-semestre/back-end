@@ -1,6 +1,7 @@
 package sptech.school.order_hub.controller.empresa.response;
 
 import lombok.Builder;
+import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Empresa;
 
 @Builder
@@ -9,7 +10,7 @@ public record BuscarEmpresaResponseDTO(
         String emailEmpresa,
         String telefone,
         String cnpj,
-        String nomeCategoria,
+        CategoriaDTO categoria,
         String urlLogo
 ) {
 
@@ -19,8 +20,23 @@ public record BuscarEmpresaResponseDTO(
                 .emailEmpresa(empresa.getEmailEmpresa())
                 .telefone(empresa.getTelefone())
                 .cnpj(empresa.getCnpj())
-                .nomeCategoria(empresa.getCategoria() != null ? empresa.getCategoria().getNome() : null)
+                .categoria(empresa.getCategoria() != null ? CategoriaDTO.from(empresa.getCategoria()) : null)
                 .urlLogo(empresa.getUrlLogo())
                 .build();
     }
+
+    @Builder
+    public record CategoriaDTO(
+            Integer idCategoria,
+            String nome
+    ) {
+        public static CategoriaDTO from(Categoria categoria) {
+            return new CategoriaDTO(
+                    categoria.getIdCategoria(),
+                    categoria.getNome()
+            );
+        }
+    }
 }
+
+
