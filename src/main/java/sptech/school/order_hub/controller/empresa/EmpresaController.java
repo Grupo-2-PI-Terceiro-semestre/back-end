@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
-import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
-import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
-import sptech.school.order_hub.controller.empresa.response.BuscarPerfilEmpresaResponseDTO;
-import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
+import sptech.school.order_hub.controller.empresa.response.*;
 import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Imagem;
 import sptech.school.order_hub.services.EmpresaServices;
 import sptech.school.order_hub.services.ImagensServices;
 
@@ -122,6 +120,11 @@ public class EmpresaController {
     public ResponseEntity<String> uploadImagem(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
         String urlImagem = imagensServices.uploadLogoEmpresa(file, idEmpresa);
         return ResponseEntity.ok(urlImagem);
+    }
+
+    @GetMapping("/imagens/{idEmpresa}")
+    public ResponseEntity<List<BuscarImagensDTO>> findImagensByEmpresaId(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.ok(imagensServices.findImagensByEmpresaId(idEmpresa));
     }
 
     @Operation(summary = "Deletar empresa", description = "Deleta uma empresa")

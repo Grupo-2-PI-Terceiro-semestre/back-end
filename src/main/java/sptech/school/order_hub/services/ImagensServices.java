@@ -6,12 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import sptech.school.order_hub.controller.empresa.response.BuscarImagensDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Imagem;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.ImagensRepository;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,6 +61,19 @@ public class ImagensServices {
         imagensRepository.save(imagem);
 
         return imagem.getUrlImagem();
+    }
+
+    public List<BuscarImagensDTO> findImagensByEmpresaId(Integer idEmpresa) {
+
+        List<Imagem> imagens = imagensRepository.buscarImagensDaEmpresa(idEmpresa);
+
+        if (imagens.isEmpty()) {
+            throw new IllegalArgumentException("Nenhuma imagem encontrada");
+        }
+
+        return imagens.stream()
+                .map(BuscarImagensDTO::from)
+                .toList();
     }
 
     private Imagem uploadImagem(MultipartFile file, Integer idEmpresa) throws IOException {

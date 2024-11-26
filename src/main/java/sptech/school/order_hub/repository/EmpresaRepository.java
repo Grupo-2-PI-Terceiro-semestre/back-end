@@ -34,4 +34,7 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
             """)
     Set<Object[]> buscarEmpresasPorCategoria(String categoria);
 
+
+
+
 }
