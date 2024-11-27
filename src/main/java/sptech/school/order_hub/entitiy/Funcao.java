@@ -2,10 +2,7 @@ package sptech.school.order_hub.entitiy;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
 @NoArgsConstructor
@@ -14,8 +11,8 @@ import org.hibernate.validator.constraints.UniqueElements;
 @Getter
 @Setter
 @Table(name = "FUNCAO")
+@Builder
 public class Funcao {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFuncao;

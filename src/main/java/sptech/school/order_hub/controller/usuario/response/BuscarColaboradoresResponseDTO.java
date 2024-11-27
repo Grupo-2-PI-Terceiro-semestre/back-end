@@ -20,7 +20,7 @@ public record BuscarColaboradoresResponseDTO(
         return new BuscarColaboradoresResponseDTO(
                 usuario.getIdPessoa(),
                 usuario.getNomePessoa(),
-                usuario.getFuncao().getNomeFuncao(),
+                usuario.getFuncao() == null ? "Sem Função" : usuario.getFuncao().getNomeFuncao(),
                 usuario.getAgenda().getIdAgenda(),
                 agendamentos,
                 usuario.getNumeroTelefone()

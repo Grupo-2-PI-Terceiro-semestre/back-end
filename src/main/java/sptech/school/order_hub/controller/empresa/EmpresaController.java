@@ -12,16 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.request.CadastroEmpresaRequestDTO;
-import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
-import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
-import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
+import sptech.school.order_hub.controller.empresa.response.*;
 import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.entitiy.Imagem;
 import sptech.school.order_hub.services.EmpresaServices;
+import sptech.school.order_hub.services.ImagensServices;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Empresa", description = "Controller de empresas")
@@ -31,6 +33,8 @@ public class EmpresaController {
 
     @Autowired
     private EmpresaServices empresaService;
+    @Autowired
+    private ImagensServices imagensServices;
 
     @Operation(summary = "Cadastrar uma empresa", description = "Cadastra uma empresa")
     @ApiResponses(value = {
@@ -63,6 +67,16 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.listarEmpresaPeloNome(termo));
     }
 
+    @GetMapping("/buscar/categoria/{categoria}")
+    public ResponseEntity<List<BuscarEmpresaServicoResponseDTO>> buscarEmpresasPorCategoria(@PathVariable String categoria) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarEmpresasPorCategoria(categoria));
+    }
+
+    @GetMapping("/perfil/{idEmpresa}")
+    public ResponseEntity<BuscarPerfilEmpresaResponseDTO> buscarPerfilEmpresa(@Valid @PathVariable Integer idEmpresa) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarPerfilEmpresa(idEmpresa));
+    }
+
     @Operation(summary = "buscar por id", description = "Busca uma empresa pelo id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Empresa encontrada com sucesso",
@@ -84,7 +98,7 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.findNotificacaoById(idEmpresa));
     }
 
-    @PostMapping("/{idEmpresa}/notificacao")
+    @PutMapping("/{idEmpresa}/notificacao")
     public ResponseEntity<NotificacaoDTO> createNotificacao(@PathVariable Integer idEmpresa, @RequestBody NotificacaoDTO notificacao) {
         var request = NotificacaoDTO.toEntity(notificacao);
         var response = empresaService.createNotificacao(idEmpresa, request);
@@ -102,6 +116,17 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.updateEnderecoById(idEmpresa, endereco));
     }
 
+    @PostMapping("/imagem/upload/{idEmpresa}")
+    public ResponseEntity<String> uploadImagem(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
+        String urlImagem = imagensServices.uploadLogoEmpresa(file, idEmpresa);
+        return ResponseEntity.ok(urlImagem);
+    }
+
+    @GetMapping("/imagens/{idEmpresa}")
+    public ResponseEntity<List<BuscarImagensDTO>> findImagensByEmpresaId(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.ok(imagensServices.findImagensByEmpresaId(idEmpresa));
+    }
+
     @Operation(summary = "Deletar empresa", description = "Deleta uma empresa")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Empresa deletada com sucesso"),
@@ -112,7 +137,6 @@ public class EmpresaController {
     public ResponseEntity<Void> deleteById(@PathVariable Integer idEmpresa) {
         empresaService.deleteById(idEmpresa);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
     }
 
     @Operation(summary = "Atualizar empresa", description = "Atualiza uma empresa")

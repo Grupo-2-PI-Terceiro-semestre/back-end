@@ -12,16 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
-import sptech.school.order_hub.controller.cliente.response.PerfilAtualizadoDTO;
+import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
-import sptech.school.order_hub.controller.usuario.response.AuthResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.BuscarUsuariosPaginadosResponseDTO;
-import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
+import sptech.school.order_hub.controller.usuario.response.*;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.UsuarioDTO;
+import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
 import sptech.school.order_hub.services.UsuarioServices;
@@ -110,14 +111,24 @@ public class UsuarioController {
         }
     }
 
-
-    @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.services.create(usuario.toEntity()));
+        CadastroUsuarioResponseDTO usuarioCriado = services.create(usuario.toEntity());
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioCriado);
     }
 
-    @PostMapping("/perfil")
+    @Operation(summary = "Cadastrar um usuário", description = "Cadastra um usuário")
+    @PostMapping("/empresa/colaborador/{idEmpresa}")
+    public ResponseEntity<UsuarioFuncaoDTO> create(@RequestBody UsuarioFuncaoDTO usuario,
+                                                   @PathVariable Integer idEmpresa) throws IOException {
+
+        UsuarioFuncaoDTO usuarioCriado = services.criarUsuario(UsuarioFuncaoDTO.toEntity(usuario), idEmpresa);
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioCriado);
+
+    }
+
+    @PutMapping("/perfil")
     public ResponseEntity<PerfilAtualizadoDTO> cadastrarClientes(@RequestBody AtualizarPerfilClienteEmpresaRequestDTO request) {
         var output = services.atualizarEmpresaCliente(request);
         return ResponseEntity.status(HttpStatus.OK).body(output);
@@ -180,5 +191,10 @@ public class UsuarioController {
         var output = services.buscarUsuariosPaginado(idEmpresa, request);
         var responseDto = BuscarUsuariosPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PutMapping()
+    public ResponseEntity<UsuarioFuncaoDTO> atualizarUsuario(@RequestBody AtualizarUsuarioRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(services.atualizarUsuario(requestDTO));
     }
 }

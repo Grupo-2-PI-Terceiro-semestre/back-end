@@ -16,6 +16,7 @@ import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -229,8 +230,7 @@ public class ClienteServices {
 
     public List<BuscarClientesResponseDTO> buscarClientes(final Integer idEmpresa) {
 
-        final var empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        final var empresa = buscarEmpresa(idEmpresa);
 
         final var clientes = clienteRepository.findAllByEmpresa(empresa);
 
@@ -240,20 +240,22 @@ public class ClienteServices {
                 .toList();
     }
 
-    public ClienteDTO criarCliente(CriarClienteRequestDTO requestDTO) {
-        Cliente cliente = new Cliente();
+    public ClienteDTO criarCliente(Integer idEmpresa, Cliente cliente) {
 
-//        Servico servico = servicoServices.findById(requestDTO.idServico());
-//        Cliente cliente = clienteServices.findById(requestDTO.idCliente());
+        final var empresa = buscarEmpresa(idEmpresa);
 
-        cliente.setNomePessoa(requestDTO.nomePessoa());
-        cliente.setEmailPessoa(requestDTO.emailPessoa());
-        cliente.setNumeroTelefone(requestDTO.numeroTelefone());
-
-//        notificarObservers(cliente, "agendamento");
-
+        cliente.setEmpresa(empresa);
         Cliente clienteCriado = clienteRepository.save(cliente);
 
+        empresa.addCliente(clienteCriado);
+
+        empresaRepository.save(empresa);
+
         return ClienteDTO.from(clienteCriado);
+    }
+
+    private Empresa buscarEmpresa(Integer idEmpresa) {
+        return empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 }

@@ -23,9 +23,10 @@ public class Categoria {
 
     private String nome;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "categoria", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JsonManagedReference
     private List<Empresa> empresas = new ArrayList<>();
+
 
     public void addEmpresa(Empresa empresa) {
         this.empresas.add(empresa);

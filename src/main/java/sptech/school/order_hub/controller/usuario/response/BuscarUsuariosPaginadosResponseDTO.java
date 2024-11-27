@@ -25,7 +25,8 @@ public record BuscarUsuariosPaginadosResponseDTO(
                         usuario.getIdPessoa(),
                         usuario.getNomePessoa(),
                         usuario.getNumeroTelefone(),
-                        usuario.getFuncao()
+                        usuario.getEmailPessoa(),
+                        usuario.getFuncao() == null ? new Funcao(0, "S/F") : usuario.getFuncao()
                 ))
                 .collect(Collectors.toList());
 
@@ -40,6 +41,7 @@ public record BuscarUsuariosPaginadosResponseDTO(
             Integer idPessoa,
             String nomePessoa,
             String numeroTelefone,
+            String emailPessoa,
             Funcao funcao
     ) {
 

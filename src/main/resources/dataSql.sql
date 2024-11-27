@@ -96,3 +96,4 @@ VALUES ('2024-10-03 10:00:00', 1, 3, 3);
 INSERT INTO agendamento (data_hora, fk_cliente, fk_agenda, fk_servico)
 VALUES ('2024-10-03 11:00:00', 1, 3, 3);
 
+

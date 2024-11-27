@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
+import sptech.school.order_hub.dtos.ServicoDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.ServicoRepository;
@@ -41,8 +41,10 @@ public class ServicoController {
 
     @Operation(summary = "Cadastrar um serviço", description = "Cadastra um serviço")
     @PostMapping("/{idEmpresa}")
-    public ResponseEntity<Servico> create(@Valid @RequestBody Servico servicoParaCadastrar, @PathVariable int idEmpresa) {
-        Servico servicoCriado = servicoService.createServico(servicoParaCadastrar, idEmpresa);
+    public ResponseEntity<ServicoDTO> create(@RequestBody ServicoDTO servicoDTO, @PathVariable int idEmpresa) {
+
+        ServicoDTO servicoCriado = servicoService.createServico(ServicoDTO.toEntity(servicoDTO), idEmpresa);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoCriado);
     }
 

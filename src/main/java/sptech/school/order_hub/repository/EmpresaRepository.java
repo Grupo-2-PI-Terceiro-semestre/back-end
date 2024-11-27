@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import sptech.school.order_hub.entitiy.Empresa;
 
 import java.util.List;
+import java.util.Set;
 
 public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
 
@@ -15,11 +16,25 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
     List<Empresa> buscarPorNomeOuServico(@Param("termo") String termo);
 
     @Query("""
-                SELECT e
+                SELECT e, c.nome
                 FROM Empresa e
                 LEFT JOIN e.servicos s
+                JOIN e.categoria c
                 WHERE lower(e.nomeEmpresa) LIKE lower(CONCAT(COALESCE(:nomeEmpresa, ''), '%'))
                 OR lower(s.nomeServico) LIKE lower(CONCAT(COALESCE(:nomeServico, ''), '%'))
             """)
-    List<Empresa> findByNomeEmpresaOrServico(@Param("nomeEmpresa") String nomeEmpresa, @Param("nomeServico") String nomeServico);
+    Set<Object[]> findByNomeEmpresaOrServico(@Param("nomeEmpresa") String nomeEmpresa, @Param("nomeServico") String nomeServico);
+
+    @Query("""
+                SELECT e, c.nome
+                FROM Empresa e
+                LEFT JOIN e.servicos s
+                JOIN e.categoria c
+                WHERE c.nome = :categoria
+            """)
+    Set<Object[]> buscarEmpresasPorCategoria(String categoria);
+
+
+
+
 }

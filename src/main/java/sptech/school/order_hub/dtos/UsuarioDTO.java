@@ -8,5 +8,5 @@ public record UsuarioDTO(
         String dataNascimento,
         String sexo,
         String idEndereco
-) {
+){
 }

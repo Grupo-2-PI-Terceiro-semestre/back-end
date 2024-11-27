@@ -2,7 +2,6 @@ package sptech.school.order_hub.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import sptech.school.order_hub.controller.agendamento.response.ReceitaMensalResponseDTO;
 import sptech.school.order_hub.entitiy.Agendamento;
 
 import java.time.LocalDateTime;
@@ -88,15 +87,29 @@ WHERE fk_empresa = ?1;
     Double TicketMedio(Integer idEmpresa);
 
   @Query(value ="""
-SELECT YEAR(a.data_hora) as ano, MONTH(a.data_hora) as mes, sum(s.valor_servico) as totalReceita
-from agendamento as a join servico as s on a.fk_servico = s.id_servico
-where a.fk_agenda = ?1
-group by YEAR(a.data_hora), MONTH(a.data_hora);""", nativeQuery = true)
+SELECT
+    CAST(YEAR(a.data_hora) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(a.data_hora) AS VARCHAR), 2) as ano_mes,
+    SUM(s.valor_servico) as totalReceita
+FROM
+    agendamento as a
+JOIN
+    servico as s
+    ON a.fk_servico = s.id_servico
+WHERE
+    a.fk_agenda = ?1 AND a.status_agendamento = 'REALIZADO'
+GROUP BY
+    CAST(YEAR(a.data_hora) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(a.data_hora) AS VARCHAR), 2);;""", nativeQuery = true)
   List<Object[]> ReceitaPorMes(Integer idEmpresa);
 
     @Query(value ="""
 SELECT DATEPART(WEEKDAY, a.data_hora) AS dia_semana, COUNT(a.id_agendamento) AS total_agendamentos
-  FROM agendamento AS a where MONTH(data_hora) = ?1 AND YEAR(data_hora) = ?2 AND a.fk_agenda = ?3
+  FROM agendamento AS a
+  JOIN servico as s on a.fk_servico = s.id_servico
+ WHERE
+    MONTH(a.data_hora) = MONTH(GETDATE())
+    AND YEAR(a.data_hora) = YEAR(GETDATE())
+    AND s.fk_empresa = ?1
+    AND a.status_agendamento = 'REALIZADO'
   GROUP BY DATEPART(WEEKDAY, a.data_hora)
   ORDER BY dia_semana;
   """, nativeQuery = true)
@@ -105,8 +118,13 @@ SELECT DATEPART(WEEKDAY, a.data_hora) AS dia_semana, COUNT(a.id_agendamento) AS 
     @Query(value ="""
 select s.nome_servico as nomeServicos, sum(s.valor_servico) as totalReceita
 from agendamento as a join servico as s on a.fk_servico = s.id_servico
-where a.fk_agenda = ?1
-group by s.nome_servico;
+where
+    MONTH(a.data_hora) = MONTH(GETDATE())
+    AND YEAR(a.data_hora) = YEAR(GETDATE())
+    AND s.fk_empresa = ?1
+    AND a.status_agendamento = 'REALIZADO'
+group by s.nome_servico
+order by totalReceita desc;
     """, nativeQuery = true)
     List<Object[]> ReceitaPorServico(Integer idEmpresa);
 

@@ -28,7 +28,6 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 public class SecurityConfiguration {
 
 
-
     private final SecurityFilter securityFilter;
 
     private static final String[] WHITE_LIST_URL = {
@@ -51,7 +50,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/categorias").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categorias").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/empresas/perfil/{idEmpresa}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar/categoria{categoria}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/agendas/horarios-indisponiveis/empresa/{idEmpresa}").permitAll()
                         .requestMatchers("/api/v1/agendamentos/sse").permitAll()
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())
