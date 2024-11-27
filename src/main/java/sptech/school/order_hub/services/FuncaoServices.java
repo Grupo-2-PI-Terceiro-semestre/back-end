@@ -4,10 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.entitiy.Funcao;
+import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.repository.FuncaoRepository;
 
 import java.net.HttpRetryException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FuncaoServices {
@@ -37,5 +39,13 @@ public class FuncaoServices {
 
         return funcoes;
 
+    }
+
+    public Funcao findById(Integer idFuncao) {
+        Optional<Funcao> possivelFuncao = this.funcaoRepository.findById(idFuncao);
+        if (possivelFuncao.isPresent()) {
+            return possivelFuncao.get();
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Função não encontrada.");
     }
 }

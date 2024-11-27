@@ -18,7 +18,7 @@ public class FuncaoController {
         this.funcaoServices = funcaoServices;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<FuncaoResponse> create(@RequestBody FuncaoRequest request) {
 
         var funcao = funcaoServices.create(FuncaoRequest.toEntity(request));
