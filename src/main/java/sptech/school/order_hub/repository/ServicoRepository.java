@@ -9,6 +9,7 @@ import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Servico;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ServicoRepository extends JpaRepository<Servico, Integer> {
 
@@ -18,4 +19,6 @@ public interface ServicoRepository extends JpaRepository<Servico, Integer> {
     List<Servico> findyServicoByEmpresaId(int idEmpresa);
 
     Page<Servico> findAllByEmpresaOrderByIdServicoAsc(Empresa empresa, PageRequest pagina);
+
+    Optional<Servico> findByIdServico(Integer idServico);
 }

@@ -5,8 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
+import sptech.school.order_hub.controller.servico.request.AtualizarServicoRequestDTO;
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.ServicoDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
@@ -106,5 +109,28 @@ public class ServicoServices {
         final var page = servicoRepository.findAllByEmpresaOrderByIdServicoAsc(empresa, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
+    }
+
+    public ServicoDTO atualizarServico(AtualizarServicoRequestDTO requestDTO) {
+
+        final var servico = servicoRepository.findByIdServico(requestDTO.idServico())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Serviço não encontrado"));
+
+        final var nome = requestDTO.nomeServico();
+        final var cor = requestDTO.corReferenciaHex();
+        final var valor = requestDTO.valorServico();
+        final var duracao = requestDTO.duracao();
+        final var descricao = requestDTO.descricao();
+
+        servico.setNomeServico(nome);
+        servico.setCorReferenciaHex(cor);
+        servico.setValorServico(valor);
+        servico.setDuracao(duracao);
+        servico.setDescricao(descricao);
+
+        final var servicoAtualizado = servicoRepository.save(servico);
+
+        return ServicoDTO.from(servicoAtualizado);
     }
 }
