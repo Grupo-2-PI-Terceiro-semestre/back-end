@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import sptech.school.order_hub.enuns.StatusAtividade;
 
 import java.time.LocalDate;
 
@@ -45,6 +46,9 @@ public abstract class Pessoa {
     @JoinColumn(name = "fk_empresa")
     @JsonBackReference
     private Empresa empresa;
+
+    @Enumerated(EnumType.STRING)
+    private StatusAtividade statusAtividade;
 
     public Pessoa(String email) {
         this.emailPessoa = email;
