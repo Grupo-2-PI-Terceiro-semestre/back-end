@@ -122,6 +122,12 @@ public class EmpresaController {
         return ResponseEntity.ok(urlImagem);
     }
 
+    @PostMapping("/imagem/uploadImagem/{idEmpresa}")
+    public ResponseEntity<String> uploadImagensEmpresa(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
+        String urlImagem = imagensServices.uploadImagensEmpresa(file, idEmpresa);
+        return ResponseEntity.ok(urlImagem);
+    }
+
     @GetMapping("/imagens/{idEmpresa}")
     public ResponseEntity<List<BuscarImagensDTO>> findImagensByEmpresaId(@PathVariable Integer idEmpresa) {
         return ResponseEntity.ok(imagensServices.findImagensByEmpresaId(idEmpresa));
