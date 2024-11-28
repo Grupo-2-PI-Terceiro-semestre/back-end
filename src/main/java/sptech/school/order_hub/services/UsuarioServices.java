@@ -366,12 +366,19 @@ public class UsuarioServices {
 //                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
 
         final var funcao = funcaoServices.findById(requestDTO.idFuncao());
+        final var nome = requestDTO.nomePessoa();
+        final var telefone = requestDTO.numeroTelefone();
+        final var email = requestDTO.emailPessoa();
+
 //        final var cliente = clienteServices.findById(requestDTO.idCliente());
 //
 //        Optional.ofNullable(requestDTO.dataAgendamento())
 //                .ifPresent(agendamento::setDataHora);
 
 
+        usuario.setNomePessoa(nome);
+        usuario.setNumeroTelefone(telefone);
+        usuario.setEmailPessoa(email);
         usuario.setFuncao(funcao);
 //        agendamento.setServico(servico);
 //        agendamento.setAgenda(agenda);
