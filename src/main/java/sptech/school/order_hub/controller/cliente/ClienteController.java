@@ -9,10 +9,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.services.ClienteServices;
 
@@ -122,5 +125,10 @@ public class ClienteController {
                                                    @RequestBody ClienteDTO requestDTO) throws IOException {
         ClienteDTO clienteCriado = service.criarCliente(idEmpresa,ClienteDTO.toEntity(requestDTO));
         return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PutMapping("/atualizar")
+    public ResponseEntity<ClienteDTO> atualizarCliente(@RequestBody AtualizarClienteRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.atualizarCliente(requestDTO));
     }
 }

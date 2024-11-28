@@ -11,10 +11,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
 import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
@@ -257,5 +260,24 @@ public class ClienteServices {
     private Empresa buscarEmpresa(Integer idEmpresa) {
         return empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+    }
+
+    public ClienteDTO atualizarCliente(AtualizarClienteRequestDTO requestDTO) {
+
+        final var cliente = clienteRepository.findByIdPessoa(requestDTO.idPessoa())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        final var nome = requestDTO.nomePessoa();
+        final var telefone = requestDTO.numeroTelefone();
+        final var email = requestDTO.emailPessoa();
+
+        cliente.setNomePessoa(nome);
+        cliente.setNumeroTelefone(telefone);
+        cliente.setEmailPessoa(email);
+
+        final var clienteAtualizado = clienteRepository.save(cliente);
+
+        return ClienteDTO.from(clienteAtualizado);
     }
 }
