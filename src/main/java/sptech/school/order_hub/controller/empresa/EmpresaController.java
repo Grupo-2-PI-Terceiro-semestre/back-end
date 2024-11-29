@@ -24,7 +24,9 @@ import sptech.school.order_hub.services.EmpresaServices;
 import sptech.school.order_hub.services.ImagensServices;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Empresa", description = "Controller de empresas")
 @RestController
@@ -122,10 +124,18 @@ public class EmpresaController {
         return ResponseEntity.ok(urlImagem);
     }
 
+
     @PostMapping("/imagem/uploadImagem/{idEmpresa}")
-    public ResponseEntity<String> uploadImagensEmpresa(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
-        String urlImagem = imagensServices.uploadImagensEmpresa(file, idEmpresa);
-        return ResponseEntity.ok(urlImagem);
+    public ResponseEntity<Map<String, Object>> uploadImagensEmpresa(@RequestParam MultipartFile file, @PathVariable Integer idEmpresa) throws IOException {
+        Imagem imagem = imagensServices.uploadImagensEmpresa(file, idEmpresa); // Recupera a imagem salva
+
+        // Monta a resposta com os dados da imagem
+        Map<String, Object> response = new HashMap<>();
+        response.put("idImagem", imagem.getIdImagem());
+        response.put("urlImagem", imagem.getUrlImagem());
+
+
+        return ResponseEntity.ok(response); // Retorna os dados como JSON
     }
 
     @GetMapping("/imagens/{idEmpresa}")
@@ -160,5 +170,11 @@ public class EmpresaController {
     public ResponseEntity<Empresa> updateById(@PathVariable Integer idEmpresa, @RequestBody Empresa empresaParaAtualizar) {
         Empresa empresaAtualizada = empresaService.updateById(idEmpresa, empresaParaAtualizar);
         return ResponseEntity.status(HttpStatus.OK).body(empresaAtualizada);
+    }
+
+    @DeleteMapping("imagem/{idImagem}")
+    public ResponseEntity<Void> deleteImagemById(@PathVariable Integer idImagem) {
+        imagensServices.deleteImagemById(idImagem);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
