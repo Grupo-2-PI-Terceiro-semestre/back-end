@@ -23,6 +23,7 @@ public record BuscarServicosPaginadosResponseDTO(
                         servico.getDescricao(),
                         servico.getCorReferenciaHex(),
                         servico.getDuracao()
+//                        servico.getStatusAtividade()
                 ))
                 .collect(Collectors.toList());
 

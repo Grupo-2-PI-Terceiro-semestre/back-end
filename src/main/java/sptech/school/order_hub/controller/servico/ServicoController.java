@@ -13,6 +13,7 @@ import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoD
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.ServicoAddDTO;
 import sptech.school.order_hub.dtos.ServicoDTO;
 import sptech.school.order_hub.entitiy.Categoria;
 import sptech.school.order_hub.entitiy.Servico;
@@ -44,9 +45,9 @@ public class ServicoController {
 
     @Operation(summary = "Cadastrar um serviço", description = "Cadastra um serviço")
     @PostMapping("/{idEmpresa}")
-    public ResponseEntity<ServicoDTO> create(@RequestBody ServicoDTO servicoDTO, @PathVariable int idEmpresa) {
+    public ResponseEntity<ServicoAddDTO> create(@RequestBody ServicoAddDTO servicoAddDTO, @PathVariable int idEmpresa) {
 
-        ServicoDTO servicoCriado = servicoService.createServico(ServicoDTO.toEntity(servicoDTO), idEmpresa);
+        ServicoAddDTO servicoCriado = servicoService.createServico(ServicoAddDTO.toEntity(servicoAddDTO), idEmpresa);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoCriado);
     }
@@ -106,5 +107,10 @@ public class ServicoController {
     @PutMapping("/atualizar")
     public ResponseEntity<ServicoDTO> atualizarServico(@RequestBody AtualizarServicoRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(servicoService.atualizarServico(requestDTO));
+    }
+
+    @PutMapping("status/{idServico}")
+    public ResponseEntity<ServicoDTO> updateStatusServico(@PathVariable Integer idServico) {
+        return ResponseEntity.status(HttpStatus.OK).body(servicoService.updateStatusServico(idServico));
     }
 }

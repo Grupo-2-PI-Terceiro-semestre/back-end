@@ -10,10 +10,13 @@ import sptech.school.order_hub.controller.servico.request.AtualizarServicoReques
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.ServicoAddDTO;
 import sptech.school.order_hub.dtos.ServicoDTO;
+import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Servico;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.ServicoRepository;
 
@@ -31,18 +34,20 @@ public class ServicoServices {
     private ServicoRepository servicoRepository;
 
 
-    public ServicoDTO createServico(Servico servicoParaCadastrar, Integer empresId) {
+    public ServicoAddDTO createServico(Servico servicoParaCadastrar, Integer empresId) {
         Empresa empresa = empresaRepository.findById(empresId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
         servicoParaCadastrar.setEmpresa(empresa);
+        servicoParaCadastrar.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
+
         Servico servicoCriado = servicoRepository.save(servicoParaCadastrar);
 
         empresa.addServico(servicoCriado);
 
         empresaRepository.save(empresa);
 
-        return ServicoDTO.from(servicoCriado);
+        return ServicoAddDTO.from(servicoCriado);
     }
 
     public Servico findById(Integer idServico) {
@@ -106,7 +111,7 @@ public class ServicoServices {
         final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
-        final var page = servicoRepository.findAllByEmpresaOrderByIdServicoAsc(empresa, pagina);
+        final var page = servicoRepository.findAllByEmpresaAndStatusAtividadeOrderByIdServicoAsc(empresa, StatusAtividade.ATIVO, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
@@ -132,5 +137,18 @@ public class ServicoServices {
         final var servicoAtualizado = servicoRepository.save(servico);
 
         return ServicoDTO.from(servicoAtualizado);
+    }
+
+    public ServicoDTO updateStatusServico(final Integer idServico) {
+
+        Servico servico = servicoRepository.findById(idServico)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Serviço não encontrado"));
+
+        servico.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+
+        Servico servicoInativo = servicoRepository.save(servico);
+
+        return ServicoDTO.from(servicoInativo);
     }
 }
