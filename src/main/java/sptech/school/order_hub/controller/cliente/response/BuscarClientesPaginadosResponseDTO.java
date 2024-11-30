@@ -3,6 +3,7 @@ package sptech.school.order_hub.controller.cliente.response;
 import lombok.Builder;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Paginacao;
+import sptech.school.order_hub.enuns.StatusAtividade;
 
 import java.util.stream.Collectors;
 
@@ -21,7 +22,8 @@ public record BuscarClientesPaginadosResponseDTO(
                         cliente.getIdPessoa(),
                         cliente.getNomePessoa(),
                         cliente.getEmailPessoa(),
-                        cliente.getNumeroTelefone()
+                        cliente.getNumeroTelefone(),
+                        cliente.getStatusAtividade()
                 ))
                 .collect(Collectors.toList());
 
@@ -36,7 +38,8 @@ public record BuscarClientesPaginadosResponseDTO(
             Integer idCliente,
             String nomePessoa,
             String email,
-            String telefone
+            String telefone,
+            String statusAtividade
     ) {
 
     }

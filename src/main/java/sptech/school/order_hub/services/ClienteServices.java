@@ -16,11 +16,15 @@ import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDt
 import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
+import sptech.school.order_hub.entitiy.Agendamento;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Paginacao;
+import sptech.school.order_hub.enuns.StatusAgendamento;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
 
@@ -66,7 +70,7 @@ public class ClienteServices {
         final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
-        final var page = clienteRepository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+        final var page = clienteRepository.findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
@@ -248,6 +252,7 @@ public class ClienteServices {
         final var empresa = buscarEmpresa(idEmpresa);
 
         cliente.setEmpresa(empresa);
+        cliente.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
         Cliente clienteCriado = clienteRepository.save(cliente);
 
         empresa.addCliente(clienteCriado);
@@ -279,5 +284,18 @@ public class ClienteServices {
         final var clienteAtualizado = clienteRepository.save(cliente);
 
         return ClienteDTO.from(clienteAtualizado);
+    }
+
+    public ClienteDTO updateStatusCliente(final Integer idCliente) {
+
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        cliente.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+
+        Cliente clienteInativo = clienteRepository.save(cliente);
+
+        return ClienteDTO.from(clienteInativo);
     }
 }

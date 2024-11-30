@@ -14,9 +14,12 @@ import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDt
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.enuns.StatusAgendamento;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.services.ClienteServices;
 
 import java.io.IOException;
@@ -103,7 +106,6 @@ public class ClienteController {
 //        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 //    }
 
-
     @PostMapping("empresa/paginado/{idEmpresa}")
     public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
                                                                              @RequestBody BuscarClienteRequestDto request
@@ -112,7 +114,6 @@ public class ClienteController {
         var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
-
 
     @GetMapping("empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
@@ -130,5 +131,10 @@ public class ClienteController {
     @PutMapping("/atualizar")
     public ResponseEntity<ClienteDTO> atualizarCliente(@RequestBody AtualizarClienteRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(service.atualizarCliente(requestDTO));
+    }
+
+    @PutMapping("/{idCliente}")
+    public ResponseEntity<ClienteDTO> updateStatusCliente(@PathVariable Integer idCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateStatusCliente(idCliente));
     }
 }
