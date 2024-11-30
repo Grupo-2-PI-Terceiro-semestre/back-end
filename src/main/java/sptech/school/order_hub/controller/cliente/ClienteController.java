@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
+import sptech.school.order_hub.controller.cliente.request.LoginClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
@@ -121,6 +123,18 @@ public class ClienteController {
     public ResponseEntity<ClienteDTO> criarCliente(@PathVariable Integer idEmpresa,
                                                    @RequestBody ClienteDTO requestDTO) throws IOException {
         ClienteDTO clienteCriado = service.criarCliente(idEmpresa,ClienteDTO.toEntity(requestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PostMapping()
+    public ResponseEntity<ClienteDTO> criarClienteSemEmpresa(@RequestBody CriarClienteRequestDTO requestDTO) {
+        ClienteDTO clienteCriado = service.criarClienteSemEmpresa(CriarClienteRequestDTO.toEntity(requestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<ClienteDTO> loginCliente(@RequestBody LoginClienteRequestDTO requestDTO) {
+        ClienteDTO clienteCriado = service.loginCliente(LoginClienteRequestDTO.toEntity(requestDTO));
         return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
     }
 }
