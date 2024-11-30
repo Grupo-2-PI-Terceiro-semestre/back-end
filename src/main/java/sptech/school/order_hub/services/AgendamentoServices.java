@@ -50,14 +50,16 @@ public class AgendamentoServices extends Subject {
 
 
     public List<AgendamentoDTO> buscaAgendamento(BuscarAgendamentoRequestDTO request, Integer idAgenda, Boolean dadosCompletos) {
+        if (request.dataAgendamento() == null) {
+            throw new IllegalArgumentException("A data do agendamento não pode ser nula.");
+        }
 
         LocalDateTime startOfDay = request.dataAgendamento().atStartOfDay();
         LocalDateTime endOfDay = request.dataAgendamento().atTime(LocalTime.MAX);
 
-        List<Agendamento> agendamentos = null;
+        List<Agendamento> agendamentos;
         if (dadosCompletos) {
             agendamentos = repository.BuscarAgendamentoCompleto(idAgenda, startOfDay, endOfDay);
-
         } else {
             agendamentos = repository.BuscarAgendamento(idAgenda, startOfDay, endOfDay);
         }
@@ -66,6 +68,7 @@ public class AgendamentoServices extends Subject {
                 .map(AgendamentoDTO::from)
                 .toList();
     }
+
 
     public List<AgendamentoDTO> buscarAgendamentoPorCliente(Integer idCliente) {
         return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
@@ -243,7 +246,7 @@ public class AgendamentoServices extends Subject {
         return AgendamentoDTO.from(agendamentoCriado);
     }
 
-    private void tigerEvent(Agendamento agendamento) {
+    public void tigerEvent(Agendamento agendamento) {
 
         boolean refrash;
         if (agendamento == null) {
