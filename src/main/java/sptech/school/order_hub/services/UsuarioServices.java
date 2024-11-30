@@ -24,9 +24,11 @@ import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresRe
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.*;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.exception.UserCreationException;
 import sptech.school.order_hub.repository.*;
 
@@ -327,7 +329,8 @@ public class UsuarioServices {
         final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
-        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+//        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+        final var page = repository.findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
@@ -346,6 +349,8 @@ public class UsuarioServices {
 
         usuario.setAgenda(agenda);
 
+        usuario.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
+
         Usuario usuarioCriado = repository.save(usuario);
 
         empresa.addUsuario(usuarioCriado);
@@ -361,24 +366,17 @@ public class UsuarioServices {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuário não encontrado"));
 
-//        final var agenda = agendaRepository.findById(requestDTO.idAgenda())
-//                .orElseThrow(() -> new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
-
         final var funcao = funcaoServices.findById(requestDTO.idFuncao());
-//        final var cliente = clienteServices.findById(requestDTO.idCliente());
-//
-//        Optional.ofNullable(requestDTO.dataAgendamento())
-//                .ifPresent(agendamento::setDataHora);
+        final var nome = requestDTO.nomePessoa();
+        final var telefone = requestDTO.numeroTelefone();
+        final var email = requestDTO.emailPessoa();
 
-
+        usuario.setNomePessoa(nome);
+        usuario.setNumeroTelefone(telefone);
+        usuario.setEmailPessoa(email);
         usuario.setFuncao(funcao);
-//        agendamento.setServico(servico);
-//        agendamento.setAgenda(agenda);
 
         final var usuarioAtualizado = repository.save(usuario);
-
-//        tigerEvent(usuarioAtualizado);
 
         return UsuarioFuncaoDTO.from(usuarioAtualizado);
     }
@@ -391,5 +389,18 @@ public class UsuarioServices {
     private Funcao buscarFuncao(Integer idFuncao) {
         return funcaoRepository.findById(idFuncao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Função não encontrada."));
+    }
+
+    public UsuarioFuncaoDTO updateStatusUsuario(final Integer idPessoa) {
+
+        Usuario usuario = repository.findById(idPessoa)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        usuario.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+
+        Usuario usuarioInativo = repository.save(usuario);
+
+        return UsuarioFuncaoDTO.from(usuarioInativo);
     }
 }

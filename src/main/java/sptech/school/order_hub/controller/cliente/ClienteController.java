@@ -9,11 +9,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.*;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
+import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
+import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.enuns.StatusAgendamento;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.services.ClienteServices;
 
 import java.io.IOException;
@@ -100,7 +105,6 @@ public class ClienteController {
 //        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 //    }
 
-
     @PostMapping("empresa/paginado/{idEmpresa}")
     public ResponseEntity<BuscarClientesPaginadosResponseDTO> buscarClientes(@PathVariable Integer idEmpresa,
                                                                              @RequestBody BuscarClienteRequestDto request
@@ -109,7 +113,6 @@ public class ClienteController {
         var responseDto = BuscarClientesPaginadosResponseDTO.fromEntity(output);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
-
 
     @GetMapping("empresa/{idEmpresa}")
     public ResponseEntity<List<BuscarClientesResponseDTO>> buscarClientes(@PathVariable final Integer idEmpresa) {
@@ -122,5 +125,27 @@ public class ClienteController {
                                                    @RequestBody ClienteDTO requestDTO) throws IOException {
         ClienteDTO clienteCriado = service.criarCliente(idEmpresa,ClienteDTO.toEntity(requestDTO));
         return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PostMapping()
+    public ResponseEntity<ClienteDTO> criarClienteSemEmpresa(@RequestBody CriarClienteSemEmpresaRequestDTO requestDTO) {
+        ClienteDTO clienteCriado = service.criarClienteSemEmpresa(CriarClienteSemEmpresaRequestDTO.toEntity(requestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<ClienteDTO> loginCliente(@RequestBody LoginClienteRequestDTO requestDTO) {
+        ClienteDTO clienteCriado = service.loginCliente(LoginClienteRequestDTO.toEntity(requestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(clienteCriado);
+    }
+
+    @PutMapping("/atualizar")
+    public ResponseEntity<ClienteDTO> atualizarCliente(@RequestBody AtualizarClienteRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.atualizarCliente(requestDTO));
+    }
+
+    @PutMapping("/{idCliente}")
+    public ResponseEntity<ClienteDTO> updateStatusCliente(@PathVariable Integer idCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateStatusCliente(idCliente));
     }
 }

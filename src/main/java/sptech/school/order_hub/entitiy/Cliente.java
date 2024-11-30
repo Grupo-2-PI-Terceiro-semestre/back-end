@@ -16,6 +16,8 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "CLIENTE")
 public class Cliente extends Pessoa {
 
+    private String senha;
+
     public Cliente() {
         super();
     }

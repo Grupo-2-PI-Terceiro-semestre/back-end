@@ -67,6 +67,12 @@ public class AgendamentoServices extends Subject {
                 .toList();
     }
 
+    public List<AgendamentoDTO> buscarAgendamentoPorCliente(Integer idCliente) {
+        return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
+                .map(AgendamentoDTO::from)
+                .collect(Collectors.toList());
+    }
+
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
         return repository.findNextAgendamentoByEmpresa(idEmpresa).stream()
                 .map(result -> new ProximosAgendamentosResponseDTO(
@@ -107,6 +113,32 @@ public class AgendamentoServices extends Subject {
         tigerEvent(agendamentoAtualizado);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
+    }
+
+
+    public AgendamentoDTO clienteCriarAgendamento(ClienteCriarAgendamentoRequestDTO requestDTO) {
+
+        var idAgenda = agendaRepository.findIdAgendaByUsuarioId(requestDTO.idProfissional());
+
+        final var agendamento = new Agendamento();
+        final var agenda = agendaRepository.findById(idAgenda)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+
+        final var servico = servicoServices.findById(requestDTO.idServico());
+        final var cliente = clienteServices.findById(requestDTO.idCliente());
+
+        agendamento.setServico(servico);
+        agendamento.setCliente(cliente);
+        agendamento.setAgenda(agenda);
+        agendamento.setDataHora(requestDTO.dataAgendamento());
+        agendamento.setStatusAgendamento(requestDTO.statusAgendamento());
+
+        final var agendamentoCriado = repository.save(agendamento);
+
+        tigerEvent(agendamentoCriado);
+
+        return AgendamentoDTO.from(agendamentoCriado);
     }
 
     public AgendamentoDTO atualizarAgendamento(AtualizarAgendamentoRequestDTO requestDTO) {
@@ -299,4 +331,6 @@ public class AgendamentoServices extends Subject {
                         (Double) result[1]
                 )).collect(Collectors.toList());
     }
+
+
 }

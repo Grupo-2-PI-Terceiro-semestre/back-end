@@ -7,6 +7,7 @@ import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Funcao;
 import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Usuario;
+import sptech.school.order_hub.enuns.StatusAtividade;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -26,7 +27,8 @@ public record BuscarUsuariosPaginadosResponseDTO(
                         usuario.getNomePessoa(),
                         usuario.getNumeroTelefone(),
                         usuario.getEmailPessoa(),
-                        usuario.getFuncao() == null ? new Funcao(0, "S/F") : usuario.getFuncao()
+                        usuario.getFuncao() == null ? new Funcao(0, "S/F") : usuario.getFuncao(),
+                        usuario.getStatusAtividade()
                 ))
                 .collect(Collectors.toList());
 
@@ -42,7 +44,8 @@ public record BuscarUsuariosPaginadosResponseDTO(
             String nomePessoa,
             String numeroTelefone,
             String emailPessoa,
-            Funcao funcao
+            Funcao funcao,
+            String statusAtividade
     ) {
 
     }

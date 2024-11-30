@@ -23,9 +23,10 @@ public class AgendaController {
 
     @GetMapping("/horarios-indisponiveis/empresa/{idEmpresa}")
     public ResponseEntity<List<Time>> buscarHorariosIndisponiveis(@PathVariable Integer idEmpresa,
+                                                                  @RequestParam Integer idServico,
                                                                   @RequestParam Integer idProfissional,
                                                                   @RequestParam LocalDate data) {
-        var request = BuscarHorariosIndisponiveisRequest.from(idProfissional, data);
+        var request = BuscarHorariosIndisponiveisRequest.from(idProfissional, data, idServico);
         var output = agendaServices.buscarHorariosIndisponiveis(idEmpresa, request);
         return ResponseEntity.ok(output);
     }

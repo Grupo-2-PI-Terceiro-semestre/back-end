@@ -58,6 +58,17 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoCriado);
     }
 
+    @PostMapping("/cliente")
+    public ResponseEntity<AgendamentoDTO> clienteCriarAgendamento(@RequestBody ClienteCriarAgendamentoRequestDTO requestDTO) {
+        AgendamentoDTO agendamentoCriado = agendamentoServices.clienteCriarAgendamento(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoCriado);
+    }
+
+    @GetMapping("/cliente/{idCliente}")
+    public ResponseEntity<List<AgendamentoDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentoPorCliente(idCliente));
+    }
+
     @GetMapping(value = "/sse", produces = "text/event-stream")
     public SseEmitter streamEvents() {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);

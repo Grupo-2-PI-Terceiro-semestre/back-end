@@ -21,6 +21,13 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay")
     List<Agendamento> BuscarAgendamentoCompleto(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
+    @Query("""
+            SELECT a FROM Agendamento a
+                WHERE a.cliente.idPessoa = :idCliente
+                    AND a.statusAgendamento <> 'CANCELADO'
+            """)
+    List<Agendamento> buscarAgendamentosDeUmCliente(Integer idCliente);
+
     Optional<Agendamento> findByIdAgendamento(Integer idAgendamento);
 
     @Query(value = """
@@ -96,9 +103,9 @@ JOIN
     servico as s
     ON a.fk_servico = s.id_servico
 WHERE
-    a.fk_agenda = ?1 AND a.status_agendamento = 'REALIZADO'
+    s.fk_empresa = ?1 AND a.status_agendamento = 'REALIZADO'
 GROUP BY
-    CAST(YEAR(a.data_hora) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(a.data_hora) AS VARCHAR), 2);;""", nativeQuery = true)
+    CAST(YEAR(a.data_hora) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(a.data_hora) AS VARCHAR), 2);""", nativeQuery = true)
   List<Object[]> ReceitaPorMes(Integer idEmpresa);
 
     @Query(value ="""
@@ -166,7 +173,9 @@ JOIN usuarios AS u ON ag.fk_usuario = u.id_pessoa
 WHERE s.fk_empresa = ?1\s
   AND MONTH(data_hora) = MONTH(GETDATE())
   AND YEAR(data_hora) = YEAR(GETDATE())
-GROUP BY u.nome_pessoa;
+  AND a.status_agendamento = 'REALIZADO'
+GROUP BY u.nome_pessoa
+ORDER BY Receita DESC;
     """, nativeQuery = true)
     List<Object[]> ReceitaPorFuncionario(Integer idEmpresa);
 
@@ -196,5 +205,4 @@ FROM MesAtual a
 LEFT JOIN MesAnterior b ON 1=1;
     """, nativeQuery = true)
     List<Object[]> ClientesMensal(Integer idEmpresa);
-    
 }

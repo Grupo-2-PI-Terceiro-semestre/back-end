@@ -5,6 +5,7 @@ import sptech.school.order_hub.entitiy.Servico;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 public record ServicoDTO(

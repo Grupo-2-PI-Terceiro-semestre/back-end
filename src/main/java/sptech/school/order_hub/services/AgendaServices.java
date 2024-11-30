@@ -15,9 +15,11 @@ import java.util.List;
 public class AgendaServices {
 
     private final AgendaRepository agendaRepository;
+    private final ServicoServices servicoServices;
 
-    public AgendaServices(AgendaRepository agendaRepository) {
+    public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
+        this.servicoServices = servicoServices;
     }
 
     public List<Time> buscarHorariosIndisponiveis(
@@ -37,16 +39,34 @@ public class AgendaServices {
             horariosIndisponiveis.add(new HorariosIndisponiveisDTO(duracao, horaInicio, horaFinal));
         }
 
+        var servico = servicoServices.findById(request.idServico());
+        LocalTime duracao = servico.getDuracao();
+        int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
+
+        LocalTime horarioFinal = LocalTime.of(22, 0).minusMinutes(tempoServicoMinutos);
+
         List<Time> agendaDiaria = new ArrayList<>();
+        LocalTime horarioInicial;
 
         if (request.data().equals(LocalDate.now())) {
-            for (int i = 0; i < 64; i++) {
-                agendaDiaria.add(Time.valueOf(LocalTime.now().plusMinutes(i * 15)));
+            LocalTime agora = LocalTime.now();
+            if (agora.isBefore(LocalTime.of(6, 0))) {
+                horarioInicial = LocalTime.of(6, 0);
+            } else {
+                horarioInicial = agora.plusMinutes(15 - (agora.getMinute() % 15));
+            }
+
+            if (horarioInicial.isAfter(horarioFinal)) {
+                return agendaDiaria;
             }
         } else {
-            for (int i = 0; i < 64; i++) {
-                agendaDiaria.add(Time.valueOf(LocalTime.of(6, 0).plusMinutes(i * 15)));
-            }
+            horarioInicial = LocalTime.of(6, 0);
+        }
+
+        for (LocalTime horario = horarioInicial;
+             !horario.isAfter(horarioFinal);
+             horario = horario.plusMinutes(15)) {
+            agendaDiaria.add(Time.valueOf(horario));
         }
 
         for (HorariosIndisponiveisDTO horario : horariosIndisponiveis) {
@@ -59,11 +79,11 @@ public class AgendaServices {
             }
         }
 
-        int tempoServicoMinutos = 45;
         int intervalosNecessarios = tempoServicoMinutos / 15;
 
         List<Time> disponiveis = new ArrayList<>();
 
+        // Verificar intervalos disponíveis para o serviço
         for (int i = 0; i <= agendaDiaria.size() - intervalosNecessarios; i++) {
             boolean disponivel = true;
             for (int j = 0; j < intervalosNecessarios; j++) {
@@ -79,4 +99,7 @@ public class AgendaServices {
 
         return disponiveis;
     }
+
+
+
 }
