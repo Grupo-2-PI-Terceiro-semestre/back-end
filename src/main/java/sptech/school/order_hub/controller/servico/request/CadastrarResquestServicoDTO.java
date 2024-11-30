@@ -1,5 +1,7 @@
 package sptech.school.order_hub.controller.servico.request;
 
+import sptech.school.order_hub.enuns.StatusAtividade;
+
 import java.time.LocalTime;
 
 public record CadastrarResquestServicoDTO(
@@ -7,6 +9,7 @@ public record CadastrarResquestServicoDTO(
         Double valorServico,
         LocalTime duracao,
         String corReferenciaHex,
-        String descricao
+        String descricao,
+        StatusAtividade statusAtividade
 ) {
 }

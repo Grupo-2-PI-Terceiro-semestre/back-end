@@ -4,10 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
-import sptech.school.order_hub.entitiy.Agendamento;
-import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Servico;
-import sptech.school.order_hub.entitiy.Usuario;
+import sptech.school.order_hub.entitiy.*;
+import sptech.school.order_hub.enuns.StatusAtividade;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +22,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     UserDetails findByFirebaseUid(String uid);
 
-    Page<Usuario> findAllByEmpresaOrderByIdPessoaAsc(Empresa empresa, PageRequest pagina);
+//    Page<Usuario> findAllByEmpresaOrderByIdPessoaAsc(Empresa empresa, PageRequest pagina);
 
     Optional<Usuario> findByIdPessoa(Integer idPessoa);
+
+    Page<Usuario> findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(Empresa empresa, StatusAtividade statusAtividade, PageRequest pagina);
 }

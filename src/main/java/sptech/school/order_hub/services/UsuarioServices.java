@@ -24,9 +24,11 @@ import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresRe
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.*;
+import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.exception.UserCreationException;
 import sptech.school.order_hub.repository.*;
 
@@ -327,7 +329,8 @@ public class UsuarioServices {
         final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
-        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+//        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
+        final var page = repository.findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }
@@ -345,6 +348,8 @@ public class UsuarioServices {
         agenda.setUsuario(usuario);
 
         usuario.setAgenda(agenda);
+
+        usuario.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
 
         Usuario usuarioCriado = repository.save(usuario);
 
@@ -384,5 +389,18 @@ public class UsuarioServices {
     private Funcao buscarFuncao(Integer idFuncao) {
         return funcaoRepository.findById(idFuncao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Função não encontrada."));
+    }
+
+    public UsuarioFuncaoDTO updateStatusUsuario(final Integer idPessoa) {
+
+        Usuario usuario = repository.findById(idPessoa)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        usuario.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+
+        Usuario usuarioInativo = repository.save(usuario);
+
+        return UsuarioFuncaoDTO.from(usuarioInativo);
     }
 }
