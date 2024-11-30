@@ -166,6 +166,7 @@ JOIN usuarios AS u ON ag.fk_usuario = u.id_pessoa
 WHERE s.fk_empresa = ?1\s
   AND MONTH(data_hora) = MONTH(GETDATE())
   AND YEAR(data_hora) = YEAR(GETDATE())
+  AND a.status_agendamento = 'REALIZADO'
 GROUP BY u.nome_pessoa
 ORDER BY Receita DESC;
     """, nativeQuery = true)
