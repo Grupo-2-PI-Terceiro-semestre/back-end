@@ -49,7 +49,13 @@ public class AgendaServices {
         LocalTime horarioInicial;
 
         if (request.data().equals(LocalDate.now())) {
-            horarioInicial = LocalTime.now().plusMinutes(15 - (LocalTime.now().getMinute() % 15));
+            LocalTime agora = LocalTime.now();
+            if (agora.isBefore(LocalTime.of(6, 0))) {
+                horarioInicial = LocalTime.of(6, 0);
+            } else {
+                horarioInicial = agora.plusMinutes(15 - (agora.getMinute() % 15));
+            }
+
             if (horarioInicial.isAfter(horarioFinal)) {
                 return agendaDiaria;
             }
@@ -93,6 +99,7 @@ public class AgendaServices {
 
         return disponiveis;
     }
+
 
 
 }

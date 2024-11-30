@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/perfil/{idEmpresa}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar/categoria{categoria}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/agendas/horarios-indisponiveis/empresa/{idEmpresa}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/agendamentos/cliente/{idCliente}").permitAll()
                         .requestMatchers("/api/v1/agendamentos/sse").permitAll()
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())

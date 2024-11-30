@@ -21,6 +21,13 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay")
     List<Agendamento> BuscarAgendamentoCompleto(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
+    @Query("""
+            SELECT a FROM Agendamento a
+                WHERE a.cliente.idPessoa = :idCliente
+                    AND a.statusAgendamento <> 'CANCELADO'
+            """)
+    List<Agendamento> buscarAgendamentosDeUmCliente(Integer idCliente);
+
     Optional<Agendamento> findByIdAgendamento(Integer idAgendamento);
 
     @Query(value = """
@@ -198,5 +205,4 @@ FROM MesAtual a
 LEFT JOIN MesAnterior b ON 1=1;
     """, nativeQuery = true)
     List<Object[]> ClientesMensal(Integer idEmpresa);
-    
 }

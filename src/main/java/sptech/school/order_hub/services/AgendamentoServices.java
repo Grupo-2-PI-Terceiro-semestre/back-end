@@ -67,6 +67,12 @@ public class AgendamentoServices extends Subject {
                 .toList();
     }
 
+    public List<AgendamentoDTO> buscarAgendamentoPorCliente(Integer idCliente) {
+        return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
+                .map(AgendamentoDTO::from)
+                .collect(Collectors.toList());
+    }
+
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
         return repository.findNextAgendamentoByEmpresa(idEmpresa).stream()
                 .map(result -> new ProximosAgendamentosResponseDTO(
