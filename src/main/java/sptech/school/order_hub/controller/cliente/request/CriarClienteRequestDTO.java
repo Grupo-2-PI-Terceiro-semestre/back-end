@@ -1,7 +1,7 @@
 package sptech.school.order_hub.controller.cliente.request;
 
 import lombok.Builder;
-import sptech.school.order_hub.entitiy.Cliente;
+import sptech.school.order_hub.enuns.StatusAtividade;
 
 @Builder
 public record CriarClienteRequestDTO(
@@ -9,15 +9,7 @@ public record CriarClienteRequestDTO(
         String nomePessoa,
         String emailPessoa,
         String numeroTelefone,
-        String senha
+        String senha,
+        StatusAtividade statusAtividade
 ) {
-
-    public static Cliente toEntity(CriarClienteRequestDTO requestDTO) {
-        return Cliente.builder()
-                .nomePessoa(requestDTO.nomePessoa())
-                .emailPessoa(requestDTO.emailPessoa())
-                .numeroTelefone(requestDTO.numeroTelefone())
-                .senha(requestDTO.senha())
-                .build();
-    }
 }

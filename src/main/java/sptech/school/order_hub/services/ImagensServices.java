@@ -51,16 +51,15 @@ public class ImagensServices {
         return imagem.getUrlImagem();
     }
 
-    public String uploadImagensEmpresa(MultipartFile file, Integer idEmpresa) throws IOException {
-        Imagem imagem = uploadImagem(file, idEmpresa);
+    public Imagem uploadImagensEmpresa(MultipartFile file, Integer idEmpresa) throws IOException {
+        Imagem imagem = uploadImagem(file, idEmpresa); // Método que faz o upload da imagem
 
-        Empresa empresa = buscarEmpresa(idEmpresa);
+        Empresa empresa = buscarEmpresa(idEmpresa); // Recupera a empresa associada
+        empresa.addImagem(imagem); // Adiciona a imagem à empresa
 
-        empresa.addImagem(imagem);
+        imagensRepository.save(imagem); // Salva a imagem no repositório
 
-        imagensRepository.save(imagem);
-
-        return imagem.getUrlImagem();
+        return imagem; // Retorna o objeto completo da imagem
     }
 
     public List<BuscarImagensDTO> findImagensByEmpresaId(Integer idEmpresa) {
@@ -103,5 +102,9 @@ public class ImagensServices {
     private Empresa buscarEmpresa(Integer idEmpresa) {
         return empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new IllegalArgumentException("Empresa não encontrada"));
+    }
+
+    public void deleteImagemById(Integer idImagem) {
+        imagensRepository.deleteById(idImagem);
     }
 }

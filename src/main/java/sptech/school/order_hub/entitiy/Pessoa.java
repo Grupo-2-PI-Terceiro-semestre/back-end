@@ -53,4 +53,8 @@ public abstract class Pessoa {
     public Pessoa(String email) {
         this.emailPessoa = email;
     }
+
+    public String getStatusAtividade() {
+        return statusAtividade.toString();
+    }
 }

@@ -21,6 +21,7 @@ import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoD
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Endereco;
@@ -196,5 +197,10 @@ public class UsuarioController {
     @PutMapping()
     public ResponseEntity<UsuarioFuncaoDTO> atualizarUsuario(@RequestBody AtualizarUsuarioRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(services.atualizarUsuario(requestDTO));
+    }
+
+    @PutMapping("status/{idPessoa}")
+    public ResponseEntity<UsuarioFuncaoDTO> updateStatusUsuario(@PathVariable Integer idPessoa) {
+        return ResponseEntity.status(HttpStatus.OK).body(services.updateStatusUsuario(idPessoa));
     }
 }
