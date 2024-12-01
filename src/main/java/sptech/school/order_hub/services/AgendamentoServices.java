@@ -22,6 +22,7 @@ import sptech.school.order_hub.repository.AgendamentoRepository;
 import sptech.school.order_hub.sender.implementation.EmailSenderImple;
 import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -70,10 +71,16 @@ public class AgendamentoServices extends Subject {
     }
 
 
-    public List<AgendamentoDTO> buscarAgendamentoPorCliente(Integer idCliente) {
+    public List<AgendamentosClienteResponseDTO> buscarAgendamentosCliente(Integer idCliente) {
         return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
-                .map(AgendamentoDTO::from)
-                .collect(Collectors.toList());
+                .map(result -> new AgendamentosClienteResponseDTO(
+                        (Integer) result[0],
+                        (String) result[1],
+                        (String) result[2],
+                        ((java.sql.Timestamp) result[3]).toLocalDateTime(),
+                        (String) result[4],
+                        (String) result[5]
+                )).collect(Collectors.toList());
     }
 
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
@@ -336,4 +343,17 @@ public class AgendamentoServices extends Subject {
     }
 
 
+    public AgendamentoDTO cancelaAgendamento(Integer idAgendamento) {
+        Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+
+        agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
+
+        Agendamento agendamentoCancelado = repository.save(agendamento);
+
+        tigerEvent(agendamentoCancelado);
+
+        return AgendamentoDTO.from(agendamentoCancelado);
+    }
 }

@@ -65,8 +65,8 @@ public class AgendamentoController {
     }
 
     @GetMapping("/cliente/{idCliente}")
-    public ResponseEntity<List<AgendamentoDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
-        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentoPorCliente(idCliente));
+    public ResponseEntity<List<AgendamentosClienteResponseDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosCliente(idCliente));
     }
 
     @GetMapping(value = "/sse", produces = "text/event-stream")
@@ -185,5 +185,10 @@ public class AgendamentoController {
     @GetMapping("/receitaPorServico/{idEmpresa}")
     public ResponseEntity<List<ReceitaPorServicoResponseDTO>> buscarReceitaPorServico(@PathVariable Integer idEmpresa) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaPorServico(idEmpresa));
+    }
+
+    @PutMapping("/cancelaAgendamento/{idAgendamento}")
+    public ResponseEntity<AgendamentoDTO> cancelaAgendamento(@PathVariable Integer idAgendamento) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.cancelaAgendamento(idAgendamento));
     }
 }
