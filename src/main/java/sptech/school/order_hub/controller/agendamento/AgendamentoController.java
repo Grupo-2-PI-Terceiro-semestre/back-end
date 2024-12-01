@@ -186,4 +186,9 @@ public class AgendamentoController {
     public ResponseEntity<List<ReceitaPorServicoResponseDTO>> buscarReceitaPorServico(@PathVariable Integer idEmpresa) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarReceitaPorServico(idEmpresa));
     }
+
+    @PutMapping("/cancelaAgendamento/{idAgendamento}")
+    public ResponseEntity<AgendamentoDTO> cancelaAgendamento(@PathVariable Integer idAgendamento) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.cancelaAgendamento(idAgendamento));
+    }
 }

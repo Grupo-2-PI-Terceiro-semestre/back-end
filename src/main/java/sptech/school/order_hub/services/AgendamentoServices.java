@@ -343,4 +343,17 @@ public class AgendamentoServices extends Subject {
     }
 
 
+    public AgendamentoDTO cancelaAgendamento(Integer idAgendamento) {
+        Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+
+        agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
+
+        Agendamento agendamentoCancelado = repository.save(agendamento);
+
+        tigerEvent(agendamentoCancelado);
+
+        return AgendamentoDTO.from(agendamentoCancelado);
+    }
 }
