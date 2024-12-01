@@ -2,6 +2,7 @@ package sptech.school.order_hub.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import sptech.school.order_hub.controller.agendamento.response.AgendamentosClienteResponseDTO;
 import sptech.school.order_hub.entitiy.Agendamento;
 
 import java.time.LocalDateTime;
@@ -21,12 +22,22 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay")
     List<Agendamento> BuscarAgendamentoCompleto(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    @Query("""
-            SELECT a FROM Agendamento a
-                WHERE a.cliente.idPessoa = :idCliente
-                    AND a.statusAgendamento <> 'CANCELADO'
-            """)
-    List<Agendamento> buscarAgendamentosDeUmCliente(Integer idCliente);
+    @Query(value = """
+            SELECT a.id_agendamento as idAgendamento,
+                   s.nome_servico as nomeServico,
+                   e.nome_empresa as nomeEmpresa,
+                   a.data_hora as dataHora,
+                   a.status_agendamento as status,
+                   u.nome_pessoa as atendente
+            FROM Agendamento a
+            JOIN servico s on a.fk_servico = s.id_servico
+            JOIN empresa e  on s.fk_empresa = e.id_empresa
+            JOIN agenda ag on a.fk_agenda = ag.id_agenda
+            JOIN usuarios u on ag.fk_usuario = u.id_pessoa
+            WHERE a.fk_cliente = ?1
+            ORDER BY a.data_hora DESC;
+            """, nativeQuery = true)
+    List<Object[]> buscarAgendamentosDeUmCliente(Integer idCliente);
 
     Optional<Agendamento> findByIdAgendamento(Integer idAgendamento);
 
@@ -148,7 +159,8 @@ JOIN agenda as a on agendamento.fk_agenda = a.id_agenda
 JOIN usuarios as u on a.fk_usuario = u.id_pessoa
 JOIN servico as s on agendamento.fk_servico = s.id_servico
 WHERE CAST(data_hora AS DATE) = CAST(GETDATE() AS DATE)
-AND agendamento.status_agendamento = 'AGENDADO';
+AND agendamento.status_agendamento = 'AGENDADO'
+AND s.fk_empresa = ?1;
     """, nativeQuery = true)
     List<Object[]> findNextAgendamentoByEmpresa(Integer idEmpresa);
 
