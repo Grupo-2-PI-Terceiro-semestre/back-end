@@ -110,6 +110,7 @@ public class UsuarioServices {
             usuario.setEmailPessoa(usuarioDTO.emailPessoa());
             usuario.setTiposDeUsuario(usuarioDTO.tiposDeUsuario());
             usuario.setRepresentante(usuarioDTO.representante());
+            usuario.setStatusAtividade(StatusAtividade.ATIVO);
             repository.save(usuario);
             return usuario;
         } catch (Exception e) {
@@ -119,8 +120,6 @@ public class UsuarioServices {
 
 
     public CadastroUsuarioResponseDTO create(Usuario usuario) {
-
-
 
         if (repository.existsByEmailPessoa(usuario.getEmailPessoa())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
@@ -349,7 +348,7 @@ public class UsuarioServices {
 
         usuario.setAgenda(agenda);
 
-        usuario.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
+        usuario.setStatusAtividade(StatusAtividade.ATIVO);
 
         Usuario usuarioCriado = repository.save(usuario);
 
@@ -397,7 +396,7 @@ public class UsuarioServices {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 
-        usuario.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+        usuario.setStatusAtividade(StatusAtividade.INATIVO);
 
         Usuario usuarioInativo = repository.save(usuario);
 
