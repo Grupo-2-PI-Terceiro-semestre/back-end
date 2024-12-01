@@ -43,7 +43,7 @@ public class AgendaServices {
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
-        LocalTime horarioFinal = LocalTime.of(22, 0).minusMinutes(tempoServicoMinutos);
+        LocalTime horarioFinal = LocalTime.of(22, 0);
 
         List<Time> agendaDiaria = new ArrayList<>();
         LocalTime horarioInicial;

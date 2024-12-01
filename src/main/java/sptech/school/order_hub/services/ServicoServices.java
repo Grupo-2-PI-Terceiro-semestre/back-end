@@ -39,7 +39,7 @@ public class ServicoServices {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
         servicoParaCadastrar.setEmpresa(empresa);
-        servicoParaCadastrar.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
+        servicoParaCadastrar.setStatusAtividade(StatusAtividade.ATIVO);
 
         Servico servicoCriado = servicoRepository.save(servicoParaCadastrar);
 
@@ -145,7 +145,7 @@ public class ServicoServices {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Serviço não encontrado"));
 
-        servico.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+        servico.setStatusAtividade(StatusAtividade.INATIVO);
 
         Servico servicoInativo = servicoRepository.save(servico);
 

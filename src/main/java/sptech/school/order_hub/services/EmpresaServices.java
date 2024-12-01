@@ -130,8 +130,8 @@ public class EmpresaServices {
                     return BuscarEmpresaServicoResponseDTO.from(
                             empresa.getIdEmpresa(),
                             empresa.getNomeEmpresa(),
-                            empresa.getEndereco(),
-                            empresa.getUrlLogo(),
+                            empresa.getEndereco() != null ? empresa.getEndereco() : new Endereco(),
+                            empresa.getUrlLogo() != null ? empresa.getUrlLogo() : "",
                             empresa.getServicos(),
                             categoriaNome
                     );
@@ -233,7 +233,7 @@ public class EmpresaServices {
 
         return new BuscarPerfilEmpresaResponseDTO(
                 empresa.getNomeEmpresa(),
-                EnderecoDTO.fromEntity(empresa.getEndereco()),
+                EnderecoDTO.fromEntity(empresa.getEndereco() != null ? empresa.getEndereco() : new Endereco()),
                 imagens,
                 servicos,
                 usuarios

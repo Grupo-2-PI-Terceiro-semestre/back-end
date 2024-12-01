@@ -15,7 +15,7 @@ public record BuscarEmpresaServicoResponseDTO(
         String uf,
         String urlLogo,
         List<String> servicos,
-        String categoria // Novo campo
+        String categoria
 ) {
 
     public static BuscarEmpresaServicoResponseDTO from(

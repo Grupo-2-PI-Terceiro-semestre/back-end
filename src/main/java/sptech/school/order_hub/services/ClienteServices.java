@@ -249,7 +249,7 @@ public class ClienteServices {
         final var empresa = buscarEmpresa(idEmpresa);
 
         cliente.setEmpresa(empresa);
-        cliente.setStatusAtividade(StatusAtividade.fromString("ATIVO"));
+        cliente.setStatusAtividade(StatusAtividade.ATIVO);
         Cliente clienteCriado = clienteRepository.save(cliente);
 
         empresa.addCliente(clienteCriado);
@@ -315,7 +315,7 @@ public class ClienteServices {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 
-        cliente.setStatusAtividade(StatusAtividade.fromString("INATIVO"));
+        cliente.setStatusAtividade(StatusAtividade.INATIVO);
 
         Cliente clienteInativo = clienteRepository.save(cliente);
 
