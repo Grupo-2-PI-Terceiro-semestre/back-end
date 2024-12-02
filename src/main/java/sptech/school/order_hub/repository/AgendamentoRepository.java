@@ -66,6 +66,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
                 ELSE ((a.totalReceita - b.totalValorAnterior) / b.totalValorAnterior) * 100
             END AS comparativoReceita
         FROM MesAtual a, MesAnterior b;
+        
         """, nativeQuery = true)
     List<Object[]> ReceitaMensal(Integer idEmpresa, Integer mesAtual);
 
@@ -82,7 +83,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
                  SELECT COUNT(id_servico) AS totalServicosAnterior
                  FROM agendamento
                           JOIN servico ON agendamento.fk_servico = servico.id_servico
-                 WHERE fk_empresa = 1
+                 WHERE fk_empresa = ?1
                    AND status_agendamento = 'REALIZADO'
                    AND MONTH(data_hora) = (?2) - 1
              )
