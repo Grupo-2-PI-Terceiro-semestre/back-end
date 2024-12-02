@@ -22,7 +22,7 @@ import sptech.school.order_hub.repository.AgendamentoRepository;
 import sptech.school.order_hub.sender.implementation.EmailSenderImple;
 import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -254,31 +254,38 @@ public class AgendamentoServices extends Subject {
     }
 
     public void tigerEvent(Agendamento agendamento) {
+        boolean refrash = agendamento != null &&
+                agendamento.getDataHora().toLocalDate().isEqual(LocalDateTime.now().toLocalDate());
 
-        boolean refrash;
-        if (agendamento == null) {
-            refrash = false;
-        } else {
-            refrash = agendamento.getDataHora().toLocalDate().isEqual(LocalDateTime.now().toLocalDate());
-        }
-
-
-        for (SseEmitter emitter : emitters) {
+        for (SseEmitter emitter : getEmitters()) {
             try {
                 emitter.send(SseEmitter.event()
                         .name("refrash")
                         .data(refrash));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 emitter.complete();
-                emitters.remove(emitter);
+                getEmitters().remove(emitter);
             }
         }
     }
 
+
     public void addEmitter(SseEmitter emitter) {
         emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
+
+        emitter.onTimeout(() -> {
+            System.out.println("Timeout do emissor");
+            emitters.remove(emitter);
+        });
+
+        emitter.onCompletion(() -> {
+            System.out.println("Emissor completado");
+            emitters.remove(emitter);
+        });
+    }
+
+    public List<SseEmitter> getEmitters() {
+        return emitters;
     }
 
     private void notificarObservers(Cliente destinatario, String acao) {

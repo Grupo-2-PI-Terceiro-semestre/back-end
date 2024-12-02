@@ -71,7 +71,7 @@ public class AgendamentoController {
 
     @GetMapping(value = "/sse", produces = "text/event-stream")
     public SseEmitter streamEvents() {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // Configura o timeout do SSE
         agendamentoServices.addEmitter(emitter);
         return emitter;
     }
