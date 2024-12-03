@@ -51,8 +51,8 @@ server:
 
 
 aws:
-  access-key: ${ACCESS-KEY}
-  secret-key: ${SECRET-KEY}
+  access-key: ${ACCESS_KEY}
+  secret-key: ${SECRET_KEY}
   region: "us-east-2"
   endpoint: https://image-order-hub.s3.amazonaws.com
   bucket: image-order-hub
