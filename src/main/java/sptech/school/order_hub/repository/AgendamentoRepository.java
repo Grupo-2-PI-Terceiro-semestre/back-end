@@ -197,6 +197,7 @@ WITH MesAtual AS (
     SELECT COUNT(id_pessoa) AS totalClientes
     FROM cliente
     WHERE fk_empresa = ?1
+    AND cliente.status_atividade = 'ATIVO'
       AND MONTH(data_criacao) = MONTH(GETDATE())
       AND YEAR(data_criacao) = YEAR(GETDATE())
 ),
@@ -205,7 +206,8 @@ MesAnterior AS (
     FROM cliente
     WHERE fk_empresa = ?1
       AND data_criacao >= DATEADD(MONTH, -1, CAST(GETDATE() AS DATE)) -- Primeiro dia do mês anterior
-      AND data_criacao < DATEADD(DAY, 1, EOMONTH(GETDATE(), -1)) -- Último dia do mês anterior
+      AND data_criacao < DATEADD(DAY, 1, EOMONTH(GETDATE(), -1))
+      AND cliente.status_atividade = 'ATIVO'
 )
 SELECT
     a.totalClientes AS totalClientes,
