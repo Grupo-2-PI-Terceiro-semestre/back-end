@@ -120,7 +120,7 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoAtualizado = repository.save(agendamento);
 
-        tigerEvent(agendamentoAtualizado);
+        //tigerEvent(agendamentoAtualizado);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
@@ -146,7 +146,8 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoCriado = repository.save(agendamento);
 
-        tigerEvent(agendamentoCriado);
+
+        //tigerEvent(agendamentoCriado);
 
         return AgendamentoDTO.from(agendamentoCriado);
     }
@@ -174,7 +175,7 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoAtualizado = repository.save(agendamento);
 
-        tigerEvent(agendamentoAtualizado);
+        //tigerEvent(agendamentoAtualizado);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
@@ -189,7 +190,7 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
 
-        tigerEvent(agendamentoCancelado);
+        //tigerEvent(agendamentoCancelado);
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
@@ -248,7 +249,7 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCriado = repository.save(agendamento);
 
-        tigerEvent(agendamentoCriado);
+        //tigerEvent(agendamentoCriado);
 
         return AgendamentoDTO.from(agendamentoCriado);
     }
@@ -359,7 +360,7 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
 
-        tigerEvent(agendamentoCancelado);
+        //tigerEvent(agendamentoCancelado);
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
