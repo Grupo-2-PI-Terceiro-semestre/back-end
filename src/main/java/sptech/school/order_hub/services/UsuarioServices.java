@@ -148,7 +148,7 @@ public class UsuarioServices {
 
         Empresa empresa = empresaServices.buscarEmpresaEFuncionarios(idEmpresa);
 
-        List<Usuario> usuarios = repository.findAllByEmpresaAndStatusAtividadeContaining(empresa, StatusAtividade.ATIVO);
+        List<Usuario> usuarios = repository.buscarColaborador(empresa.getIdEmpresa());
 
         if (usuarios.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
