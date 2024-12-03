@@ -18,7 +18,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     boolean existsByEmailPessoaAndCpf(String email, String cpf);
 
-    List<Usuario> findAllByEmpresa(Empresa empresa);
+    List<Usuario> findAllByEmpresaAndStatusAtividadeContaining(Empresa empresa, StatusAtividade statusAtividade);
 
     UserDetails findByFirebaseUid(String uid);
 
