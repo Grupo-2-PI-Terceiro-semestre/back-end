@@ -17,13 +17,11 @@ public class AgendaServices {
 
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
-    private final ZoneOffset offset;
 
     public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
         this.servicoServices = servicoServices;
-        
-        this.offset = ZoneOffset.ofHours(-3);
+
     }
 
     public List<Time> buscarHorariosIndisponiveis(
@@ -43,7 +41,7 @@ public class AgendaServices {
             horariosIndisponiveis.add(new HorariosIndisponiveisDTO(duracao, horaInicio, horaFinal));
         }
 
-        var servico = servicoServices.findById(request.idServico());
+        final var servico = servicoServices.findById(request.idServico());
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
