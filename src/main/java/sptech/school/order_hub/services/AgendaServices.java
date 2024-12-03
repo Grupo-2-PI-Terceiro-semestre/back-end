@@ -40,7 +40,7 @@ public class AgendaServices {
             horariosIndisponiveis.add(new HorariosIndisponiveisDTO(duracao, horaInicio, horaFinal));
         }
 
-        var servico = servicoServices.findById(request.idServico());
+        final var servico = servicoServices.findById(request.idServico());
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
