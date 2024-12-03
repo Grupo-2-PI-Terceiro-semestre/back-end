@@ -9,6 +9,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,6 @@ public class AgendaServices {
     public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
         this.servicoServices = servicoServices;
-
     }
 
     public List<Time> buscarHorariosIndisponiveis(
@@ -41,33 +41,28 @@ public class AgendaServices {
             horariosIndisponiveis.add(new HorariosIndisponiveisDTO(duracao, horaInicio, horaFinal));
         }
 
-        final var servico = servicoServices.findById(request.idServico());
+        var servico = servicoServices.findById(request.idServico());
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
-        // Define os horários inicial e final ajustados para o deslocamento de -3 horas
-        LocalTime horarioFinal = LocalTime.of(22, 10).minusHours(3);
-        LocalTime horarioInicial;
-
-        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Definir fuso horário de Brasília
-        LocalDate hoje = LocalDate.now(zoneId);
-        LocalTime agora = LocalTime.now(zoneId);
-
-        if (request.data().equals(hoje)) {
-            if (agora.isBefore(LocalTime.of(6, 0))) {
-                horarioInicial = LocalTime.of(6, 0);
-            } else {
-                horarioInicial = agora.plusMinutes(15 - (agora.getMinute() % 15));
-            }
-
-            if (horarioInicial.isAfter(horarioFinal)) {
-                return new ArrayList<>();
-            }
-        } else {
-            horarioInicial = LocalTime.of(6, 0).minusHours(3);
-        }
+        LocalTime horarioFinal = LocalTime.of(22, 0);
 
         List<Time> agendaDiaria = new ArrayList<>();
+        LocalTime horarioInicial;
+
+        ZonedDateTime agora = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"));
+
+        if (request.data().equals(agora.toLocalDate())) {
+
+            horarioInicial = LocalTime.of(17, 0);
+
+            if (horarioInicial.isAfter(horarioFinal)) {
+                return agendaDiaria;
+            }
+        } else {
+            horarioInicial = LocalTime.of(6, 0);
+        }
+
         for (LocalTime horario = horarioInicial;
              !horario.isAfter(horarioFinal);
              horario = horario.plusMinutes(15)) {
