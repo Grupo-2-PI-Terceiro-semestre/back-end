@@ -8,6 +8,7 @@ import sptech.school.order_hub.repository.AgendaRepository;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,11 @@ public class AgendaServices {
         List<Time> agendaDiaria = new ArrayList<>();
         LocalTime horarioInicial;
 
-        if (request.data().equals(LocalDate.now())) {
-            LocalTime agora = LocalTime.now();
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Definir fuso horário de Brasília
+        LocalDate hoje = LocalDate.now(zoneId);
+        LocalTime agora = LocalTime.now(zoneId);
+
+        if (request.data().equals(hoje)) {
             if (agora.isBefore(LocalTime.of(6, 0))) {
                 horarioInicial = LocalTime.of(6, 0);
             } else {
@@ -99,7 +103,4 @@ public class AgendaServices {
 
         return disponiveis;
     }
-
-
-
 }
