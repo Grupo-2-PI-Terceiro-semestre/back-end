@@ -8,6 +8,8 @@ import sptech.school.order_hub.repository.AgendaRepository;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,13 @@ public class AgendaServices {
 
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
+    private final ZoneOffset offset;
 
     public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
         this.servicoServices = servicoServices;
+        
+        this.offset = ZoneOffset.ofHours(-3);
     }
 
     public List<Time> buscarHorariosIndisponiveis(
@@ -43,26 +48,28 @@ public class AgendaServices {
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
-        LocalTime horarioFinal = LocalTime.of(22, 10);
-
-        List<Time> agendaDiaria = new ArrayList<>();
+        // Define os horários inicial e final ajustados para o deslocamento de -3 horas
+        LocalTime horarioFinal = LocalTime.of(22, 10).minusHours(3);
         LocalTime horarioInicial;
 
-        if (request.data().equals(LocalDate.now())) {
-            LocalTime agora = LocalTime.now();
-            if (agora.isBefore(LocalTime.of(6, 0))) {
-                horarioInicial = LocalTime.of(6, 0);
+        OffsetDateTime agoraOffset = OffsetDateTime.now(offset);
+
+        if (request.data().equals(agoraOffset.toLocalDate())) {
+            LocalTime agora = agoraOffset.toLocalTime();
+            if (agora.isBefore(LocalTime.of(6, 0).minusHours(3))) {
+                horarioInicial = LocalTime.of(6, 0).minusHours(3);
             } else {
                 horarioInicial = agora.plusMinutes(15 - (agora.getMinute() % 15));
             }
 
             if (horarioInicial.isAfter(horarioFinal)) {
-                return agendaDiaria;
+                return new ArrayList<>();
             }
         } else {
-            horarioInicial = LocalTime.of(6, 0);
+            horarioInicial = LocalTime.of(6, 0).minusHours(3);
         }
 
+        List<Time> agendaDiaria = new ArrayList<>();
         for (LocalTime horario = horarioInicial;
              !horario.isAfter(horarioFinal);
              horario = horario.plusMinutes(15)) {
@@ -99,7 +106,4 @@ public class AgendaServices {
 
         return disponiveis;
     }
-
-
-
 }
