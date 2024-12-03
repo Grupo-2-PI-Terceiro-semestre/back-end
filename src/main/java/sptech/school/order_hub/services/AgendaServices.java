@@ -17,13 +17,11 @@ public class AgendaServices {
 
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
-    private final ZoneOffset offset;
 
     public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
         this.servicoServices = servicoServices;
-        
-        this.offset = ZoneOffset.ofHours(-3);
+
     }
 
     public List<Time> buscarHorariosIndisponiveis(
