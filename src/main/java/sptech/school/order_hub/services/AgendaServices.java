@@ -17,10 +17,13 @@ public class AgendaServices {
 
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
+    private final ZoneOffset offset;
 
     public AgendaServices(AgendaRepository agendaRepository, ServicoServices servicoServices) {
         this.agendaRepository = agendaRepository;
         this.servicoServices = servicoServices;
+        
+        this.offset = ZoneOffset.ofHours(-3);
     }
 
     public List<Time> buscarHorariosIndisponiveis(
@@ -44,9 +47,8 @@ public class AgendaServices {
         LocalTime duracao = servico.getDuracao();
         int tempoServicoMinutos = (duracao.getHour() * 60 + duracao.getMinute());
 
-        LocalTime horarioFinal = LocalTime.of(22, 0);
-
-        List<Time> agendaDiaria = new ArrayList<>();
+        // Define os horários inicial e final ajustados para o deslocamento de -3 horas
+        LocalTime horarioFinal = LocalTime.of(22, 10).minusHours(3);
         LocalTime horarioInicial;
 
         ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Definir fuso horário de Brasília
@@ -61,12 +63,13 @@ public class AgendaServices {
             }
 
             if (horarioInicial.isAfter(horarioFinal)) {
-                return agendaDiaria;
+                return new ArrayList<>();
             }
         } else {
-            horarioInicial = LocalTime.of(6, 0);
+            horarioInicial = LocalTime.of(6, 0).minusHours(3);
         }
 
+        List<Time> agendaDiaria = new ArrayList<>();
         for (LocalTime horario = horarioInicial;
              !horario.isAfter(horarioFinal);
              horario = horario.plusMinutes(15)) {
