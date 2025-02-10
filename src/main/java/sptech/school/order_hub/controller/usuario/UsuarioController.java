@@ -7,12 +7,12 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
@@ -20,9 +20,6 @@ import sptech.school.order_hub.controller.usuario.request.AuthRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.response.*;
-import sptech.school.order_hub.dtos.AgendamentoDTO;
-import sptech.school.order_hub.dtos.ClienteDTO;
-import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.Endereco;
 import sptech.school.order_hub.entitiy.Usuario;
@@ -113,7 +110,8 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<CadastroUsuarioResponseDTO> create(@RequestBody CadastroUsuarioRequestDTO usuario) {
+    public ResponseEntity<CadastroUsuarioResponseDTO> create(HttpServletRequest request, @RequestBody CadastroUsuarioRequestDTO usuario) {
+        System.out.println("URL Recebida no Controller: " + request.getRequestURI());
         CadastroUsuarioResponseDTO usuarioCriado = services.create(usuario.toEntity());
         return ResponseEntity.status(HttpStatus.OK).body(usuarioCriado);
     }
