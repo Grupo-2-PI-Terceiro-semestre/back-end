@@ -13,7 +13,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+
 
   # TODO: Change to H2 for testing
   # datasource:
@@ -36,6 +37,9 @@ spring:
   #     include-binding-errors: always
   # jpa:
   #   defer-datasource-initialization: true
-
+server:
+  error:
+    whitelabel:
+      enabled: false
 # origins:
 #   url: http://localhost:5173

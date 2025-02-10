@@ -1,5 +1,6 @@
 package sptech.school.order_hub.dtos;
 
+import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 import sptech.school.order_hub.entitiy.Endereco;
 
 public record EnderecoDTO(
@@ -27,6 +28,11 @@ public record EnderecoDTO(
     }
 
     public static EnderecoDTO fromEntity(Endereco endereco) {
+
+        if(endereco == null) {
+            throw new SemConteudoException("Endereço não encontrado.");
+        }
+
         return new EnderecoDTO(
                 endereco.getIdEndereco(),
                 endereco.getLogradouro(),

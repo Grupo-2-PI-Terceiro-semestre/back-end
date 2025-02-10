@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config.security.config.TokenServices;
-import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
+import sptech.school.order_hub.config_exception.exceptions.ConflitoAoCadastrarRecursoException;
+import sptech.school.order_hub.config_exception.exceptions.ParametrosInvalidosException;
+import sptech.school.order_hub.config_exception.exceptions.RecursoNaoEncontradoException;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarPerfilClienteEmpresaRequestDTO;
+import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
 import sptech.school.order_hub.controller.usuario.request.BuscarUsuarioPaginadoDTO;
 import sptech.school.order_hub.controller.usuario.request.CadastroUsuarioRequestDTO;
@@ -24,12 +27,9 @@ import sptech.school.order_hub.controller.usuario.response.BuscarColaboradoresRe
 import sptech.school.order_hub.controller.usuario.response.CadastroUsuarioResponseDTO;
 import sptech.school.order_hub.controller.usuario.response.PerfilAtualizadoDTO;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
-import sptech.school.order_hub.dtos.ClienteDTO;
-import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.dtos.UsuarioFuncaoDTO;
 import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.enuns.StatusAtividade;
-import sptech.school.order_hub.exception.UserCreationException;
 import sptech.school.order_hub.repository.*;
 
 import javax.naming.AuthenticationException;
@@ -94,35 +94,10 @@ public class UsuarioServices {
         return new ResponseEntity<>(authResponseDTO, headers, HttpStatus.OK);
     }
 
-    public Usuario create(CadastroUsuarioRequestDTO usuarioDTO) {
-
-        Usuario usuario = new Usuario();
-
-        if (repository.existsByEmailPessoa(usuarioDTO.emailPessoa())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
-        }
-        try {
-            if (usuarioDTO.senha() != null) {
-                usuario.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
-            }
-            usuario.setNomePessoa(usuarioDTO.nomePessoa());
-            usuario.setFirebaseUid(usuarioDTO.firebaseUid());
-            usuario.setEmailPessoa(usuarioDTO.emailPessoa());
-            usuario.setTiposDeUsuario(usuarioDTO.tiposDeUsuario());
-            usuario.setRepresentante(usuarioDTO.representante());
-            usuario.setStatusAtividade(StatusAtividade.ATIVO);
-            repository.save(usuario);
-            return usuario;
-        } catch (Exception e) {
-            throw new UserCreationException("Erro ao cadastrar o usuário: " + e.getMessage(), e);
-        }
-    }
-
-
     public CadastroUsuarioResponseDTO create(Usuario usuario) {
 
         if (repository.existsByEmailPessoa(usuario.getEmailPessoa())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já cadastrado.");
+            throw new ConflitoAoCadastrarRecursoException("Usuário já cadastrado.");
         }
         try {
             if (usuario.getFirebaseUid() == null) {
@@ -140,7 +115,7 @@ public class UsuarioServices {
             repository.save(usuario);
             return CadastroUsuarioResponseDTO.toEntity(usuario);
         } catch (Exception e) {
-            throw new UserCreationException("Erro ao cadastrar o usuário: " + e.getMessage(), e);
+            throw new ConflitoAoCadastrarRecursoException("Erro ao cadastrar o usuário: " + e.getMessage(), e);
         }
     }
 
@@ -164,11 +139,14 @@ public class UsuarioServices {
     }
 
     public Usuario findById(Integer idUsuario) {
+
         Optional<Usuario> usuario = repository.findById(idUsuario);
+
         if (usuario.isPresent()) {
             return usuario.get();
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        throw new RecursoNaoEncontradoException("Usuário não encontrado.");
     }
 
     public Usuario update(Integer id, Usuario usuarioAtualizar) {
@@ -253,24 +231,17 @@ public class UsuarioServices {
 
     public PerfilAtualizadoDTO atualizarEmpresaCliente(AtualizarPerfilClienteEmpresaRequestDTO request) {
         try {
-            // Verificar se o usuário existe
-            Usuario usuario = repository.findById(request.usuario().idPessoa())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+            Usuario usuario = findById(request.usuario().idPessoa());
 
-            // Verificar se a categoria existe
             Categoria categoria = categoriaRepository.findById(request.empresa().idCategoria())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
 
-            // Atualizar dados do usuário
             if (request.usuario().nome() != null) {
                 usuario.setNomePessoa(request.usuario().nome());
             }
             if (request.usuario().cpf() != null) {
                 usuario.setCpf(request.usuario().cpf());
             }
-
-
-            // Verificar se a empresa existe
 
             if (request.empresa().idEmpresa() == null) {
 
@@ -298,7 +269,7 @@ public class UsuarioServices {
             return PerfilAtualizadoDTO.toPerfil(usuarioAtualizado, empresaRepository.save(empresa));
 
         } catch (TransactionSystemException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao atualizar perfil: " + e.getMessage());
+            throw new ParametrosInvalidosException("Erro ao atualizar perfil: " + e.getMessage(), e);
         }
     }
 
@@ -361,9 +332,7 @@ public class UsuarioServices {
 
     public UsuarioFuncaoDTO atualizarUsuario(AtualizarUsuarioRequestDTO requestDTO) {
 
-        final var usuario = repository.findByIdPessoa(requestDTO.idPessoa())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+        final var usuario = findById(requestDTO.idPessoa());
 
         final var funcao = funcaoServices.findById(requestDTO.idFuncao());
         final var nome = requestDTO.nomePessoa();

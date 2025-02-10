@@ -1,7 +1,7 @@
 package sptech.school.order_hub.controller.servico.response;
 
 import lombok.Builder;
-import sptech.school.order_hub.entitiy.Paginacao;
+import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.entitiy.Servico;
 
 import java.time.LocalTime;
