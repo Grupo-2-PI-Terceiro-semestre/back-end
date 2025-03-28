@@ -1,9 +1,7 @@
-name: Deploy Java Backend
+name: Deploy OrderHub Backend
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 env:
@@ -13,7 +11,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,6 +25,20 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
+      - name: Find built JAR
+        id: find-jar
+        run: |
+          JAR_PATH=$(ls target/order-hub-*.jar)
+          echo "JAR_NAME=$(basename $JAR_PATH)" >> $GITHUB_OUTPUT
+          echo "JAR_PATH=$JAR_PATH" >> $GITHUB_OUTPUT
+
+      - name: Validate environment
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ] || [ -z "$PUBLIC_IP" ] || [ -z "$PRIVATE_IP" ]; then
+            echo "Missing required secrets"
+            exit 1
+          fi
+
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -34,33 +46,32 @@ jobs:
           PRIVATE_IP: ${{ secrets.EC2_PRIVATE_IP }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JAR_NAME: ${{ steps.find-jar.outputs.JAR_NAME }}
+          JAR_PATH: ${{ steps.find-jar.outputs.JAR_PATH }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # Copia o JAR e application-prod.properties
+          # Copia os arquivos necessários
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
-            target/your-app.jar \
-            ubuntu@$PUBLIC_IP:/tmp/
-          
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+            $JAR_PATH \
             src/main/resources/application-prod.properties \
             ubuntu@$PUBLIC_IP:/tmp/
           
-          # Comandos na instância privada via pública
-          ssh -i ~/.ssh/id_rsa ubuntu@$PUBLIC_IP << 'EOF'
-            ssh -i /home/ubuntu/orderhub.pem ubuntu@$PRIVATE_IP << 'ENDSSH'
-              mkdir -p ~/app
-              mv /tmp/your-app.jar ~/app/
-              mv /tmp/application-prod.properties ~/app/
+          # Executa comandos remotos
+          ssh -i ~/.ssh/id_rsa ubuntu@$PUBLIC_IP << 'EOT'
+            ssh -i /home/ubuntu/orderhub.pem ubuntu@$PRIVATE_IP << 'END'
+              mkdir -p ~/order-hub
+              mv /tmp/$JAR_NAME ~/order-hub/
+              mv /tmp/application-prod.properties ~/order-hub/
           
-              # Configura variáveis para Java/Spring
+              # Configura variáveis de ambiente
               export SPRING_DATASOURCE_URL="jdbc:mysql://$RDS_ENDPOINT:3306/orderhub"
               export SPRING_DATASOURCE_USERNAME="$DB_USERNAME"
               export SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD"
           
-              # Reinicia o serviço
-              sudo systemctl restart your-java-app.service
-            ENDSSH
-          EOF
+              # Reinicia o serviço order-hub
+              sudo systemctl restart order-hub.service
+            END
+          EOT
