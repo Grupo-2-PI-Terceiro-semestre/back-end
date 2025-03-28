@@ -278,7 +278,7 @@ public class ClienteServices {
     public ClienteDTO loginCliente(Cliente entity) {
         // Busca o cliente pelo email
         Cliente cliente = clienteRepository.findByEmailPessoa(entity.getEmailPessoa())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cliente não encontrado."));
 
         // Verifica se a senha fornecida corresponde à senha criptografada no banco
         if (!passwordEncoder.matches(entity.getSenha(), cliente.getSenha())) {
