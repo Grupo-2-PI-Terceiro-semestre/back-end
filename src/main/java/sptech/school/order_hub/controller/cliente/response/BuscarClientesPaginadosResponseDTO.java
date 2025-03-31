@@ -2,8 +2,7 @@ package sptech.school.order_hub.controller.cliente.response;
 
 import lombok.Builder;
 import sptech.school.order_hub.entitiy.Cliente;
-import sptech.school.order_hub.entitiy.Paginacao;
-import sptech.school.order_hub.enuns.StatusAtividade;
+import sptech.school.order_hub.controller.response.Paginacao;
 
 import java.util.stream.Collectors;
 

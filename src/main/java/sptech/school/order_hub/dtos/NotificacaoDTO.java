@@ -2,6 +2,7 @@ package sptech.school.order_hub.dtos;
 
 
 import lombok.Builder;
+import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 import sptech.school.order_hub.entitiy.Notificacao;
 
 @Builder
@@ -27,9 +28,11 @@ public record NotificacaoDTO(
     }
 
     public static NotificacaoDTO fromEntity(Notificacao notificacao) {
+
         if(notificacao == null) {
-            return null;
+            throw new SemConteudoException("Notificação não encontrada.");
         }
+
         return new NotificacaoDTO(
                 notificacao.getIdNotificacao() ,
                 notificacao.getMensagemAgendamento(),
