@@ -26,24 +26,6 @@ jwt:
   secret: ${JWT_SERCRET:orderhub}
   expiration-hour: ${EXPIRATION_TOKEN:168}
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG  # Para depuração de segurança
-        org.springframework.web: DEBUG  # Para depuração das requisições web
-    hibernate:
-      SQL: DEBUG  # Para logar as queries SQL executadas pelo Hibernate
-      type:
-        descriptor:
-          sql: TRACE  # Para logar detalhes dos parâmetros da query
-    root: INFO  # Define o nível de log global (pode ser DEBUG ou INFO, dependendo do seu caso)
-
-  # Definindo os padrões de log mais detalhados
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # Personalizando o formato dos logs no console
-    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # Personalizando o formato dos logs nos arquivos
-
 server:
   error:
     include-message: always  # Incluir mensagens nos erros
@@ -51,8 +33,8 @@ server:
 
 
 aws:
-  access-key: ${ACCESS_KEY}
-  secret-key: ${SECRET_KEY}
+  access-key: "AKIA5J4"
+  secret-key: "5J4"
   region: "us-east-2"
   endpoint: https://image-order-hub.s3.amazonaws.com
   bucket: image-order-hub
