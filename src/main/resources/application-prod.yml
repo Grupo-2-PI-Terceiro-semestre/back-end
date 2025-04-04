@@ -1,3 +1,10 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+  error:
+    include-message: always  # Incluir mensagens nos erros
+    include-binding-errors: always  # Incluir erros de binding na resposta
+
 spring:
   servlet:
     multipart:
@@ -24,14 +31,8 @@ spring:
     allow-bean-definition-overriding: true
 
 jwt:
-  secret: ${JWT_SERCRET:orderhub}
+  secret: ${JWT_SECRET:orderhub}  # Corrigi o nome da variável para JWT_SECRET
   expiration-hour: ${EXPIRATION_TOKEN:168}
-
-server:
-  error:
-    include-message: always  # Incluir mensagens nos erros
-    include-binding-errors: always  # Incluir erros de binding na resposta
-
 
 aws:
   access-key: "AKIA5J4"
@@ -39,4 +40,3 @@ aws:
   region: "us-east-2"
   endpoint: https://image-order-hub.s3.amazonaws.com
   bucket: image-order-hub
-
