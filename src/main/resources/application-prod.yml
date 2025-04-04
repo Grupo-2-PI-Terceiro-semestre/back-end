@@ -7,9 +7,9 @@ spring:
   application:
     name: order-hub
   datasource:
-    url: jdbc:mysql://${RDS_ENDPOINT}:3306/order_hub
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub
+    username: orderhub
+    password: order_hub
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
