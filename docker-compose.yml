@@ -6,9 +6,6 @@ services:
     container_name: jonathancarvalho039/api-order-hub:latest
     restart: always
     environment:
-      RDS_ENDPOINT: order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com
-      DB_USERNAME: orderhub
-      DB_PASSWORD: orderhub
       SPRING_PROFILES_ACTIVE: prod
     ports:
       - "8080:8080"

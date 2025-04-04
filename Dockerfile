@@ -21,9 +21,6 @@ COPY --from=build /app/target/order-hub-0.0.1-SNAPSHOT.jar ./order-hub.jar
 
 # Configurações do Spring Boot
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/order_hub
-ENV SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-ENV SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
 
 # Expõe a porta 8080
 EXPOSE 8080

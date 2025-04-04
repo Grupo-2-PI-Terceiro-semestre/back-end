@@ -7,7 +7,7 @@ spring:
   application:
     name: order-hub
   datasource:
-    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub
+    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC
     username: orderhub
     password: orderhub
     driverClassName: com.mysql.cj.jdbc.Driver
