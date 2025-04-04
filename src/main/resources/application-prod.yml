@@ -7,7 +7,7 @@ spring:
   application:
     name: order-hub
   datasource:
-    url: jdbc:mysql://${RDS_ENDPOINT}:3306/orderhub
+    url: jdbc:mysql://${RDS_ENDPOINT}:3306/order_hub
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driverClassName: com.mysql.cj.jdbc.Driver
