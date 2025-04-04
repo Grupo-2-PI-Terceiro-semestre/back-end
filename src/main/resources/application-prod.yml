@@ -1,42 +1,30 @@
 spring:
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-  application:
-    name: order-hub
   datasource:
-    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?useSSL=false&allowPublicKeyRetrieval=true&connectionTimeZone=SERVER&socketTimeout=30000&connectTimeout=10000&autoReconnect=true
     username: orderhub
     password: orderhub
-    driverClassName: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      initialization-fail-timeout: 10000
+
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate # Alterado de update para validate em produção
       properties:
         hibernate:
+          connection.provider_disables_autocommit: true
           format_sql: true
           show_sql: true
+          jdbc:
+            time_zone: SERVER
     show-sql: true
-  main:
-    allow-bean-definition-overriding: true
-
-jwt:
-  secret: ${JWT_SERCRET:orderhub}
-  expiration-hour: ${EXPIRATION_TOKEN:168}
-
-server:
-  error:
-    include-message: always  # Incluir mensagens nos erros
-    include-binding-errors: always  # Incluir erros de binding na resposta
-
-
-aws:
-  access-key: "AKIA5J4"
-  secret-key: "5J4"
-  region: "us-east-2"
-  endpoint: https://image-order-hub.s3.amazonaws.com
-  bucket: image-order-hub
-
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
