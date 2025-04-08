@@ -7,6 +7,5 @@ services:
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: ${DB_HOST}
     ports:
       - "8080:8080"
