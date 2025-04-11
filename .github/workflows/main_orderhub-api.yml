@@ -49,6 +49,6 @@ jobs:
     steps:
       - name: Pull latest image and restart container
         run: |
-          sudo docker compose down --remove-orphans
-          sudo docker pull jonathancarvalho039/api-order-hub:latest
-          sudo docker compose up -d
+          sudo docker ps -aq | xargs -r sudo docker stop
+          sudo docker ps -aq | xargs -r sudo docker rm
+          sudo docker run -d -p 8080:8080 --name back-end jonathancarvalho039/api-order-hub
