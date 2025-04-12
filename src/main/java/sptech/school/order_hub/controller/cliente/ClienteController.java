@@ -151,7 +151,7 @@ public class ClienteController {
     }
 
     @PutMapping("/atualizar-completo")
-    public ResponseEntity<ClienteDTO> atualizarClienteCompleto(@RequestBody AtualizarClienteCompletoRequestDTO requestDTO) {
+    public ResponseEntity<BuscarClienteResponseDTO> atualizarClienteCompleto(@RequestBody AtualizarClienteCompletoRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(service.atualizarClienteCompleto(requestDTO));
     }
 

@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteCompletoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
@@ -300,7 +301,7 @@ public class ClienteServices {
     }
 
 
-    public ClienteDTO atualizarClienteCompleto(AtualizarClienteCompletoRequestDTO requestDTO) {
+    public BuscarClienteResponseDTO atualizarClienteCompleto(AtualizarClienteCompletoRequestDTO requestDTO) {
 
         final var cliente = clienteRepository.findByIdPessoa(requestDTO.idPessoa())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -318,7 +319,7 @@ public class ClienteServices {
 
         final var clienteAtualizado = clienteRepository.save(cliente);
 
-        return ClienteDTO.from(clienteAtualizado);
+        return BuscarClienteResponseDTO.fromEntity(clienteAtualizado);
     }
 
     public ClienteDTO atualizarCliente(AtualizarClienteRequestDTO requestDTO) {
