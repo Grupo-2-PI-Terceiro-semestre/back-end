@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/clientes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/clientes/{idCliente}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/clientes/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/agendamentos/cliente").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar").permitAll()

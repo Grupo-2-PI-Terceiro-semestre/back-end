@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
@@ -242,6 +243,14 @@ public class ClienteServices {
                 .stream()
                 .map(BuscarClientesResponseDTO::fromEntity)
                 .toList();
+    }
+
+    public BuscarClienteResponseDTO buscarCliente(final Integer idCliente) {
+
+        final var cliente = clienteRepository.findByIdPessoa(idCliente).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+
+        return BuscarClienteResponseDTO.fromEntity(cliente);
     }
 
     public ClienteDTO criarCliente(Integer idEmpresa, Cliente cliente) {

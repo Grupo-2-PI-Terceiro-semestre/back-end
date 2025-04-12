@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.cliente.request.*;
+import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.controller.usuario.request.AtualizarUsuarioRequestDTO;
@@ -120,6 +121,11 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(output);
     }
 
+    @GetMapping("{idCliente}")
+    public ResponseEntity<BuscarClienteResponseDTO> buscarCliente(@PathVariable final Integer idCliente) {
+        final var output = service.buscarCliente(idCliente);
+        return ResponseEntity.status(HttpStatus.OK).body(output);
+    }
     @PostMapping("empresa/{idEmpresa}")
     public ResponseEntity<ClienteDTO> criarCliente(@PathVariable Integer idEmpresa,
                                                    @RequestBody ClienteDTO requestDTO) throws IOException {
