@@ -150,6 +150,11 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(service.atualizarCliente(requestDTO));
     }
 
+    @PutMapping("/atualizar-completo")
+    public ResponseEntity<ClienteDTO> atualizarClienteCompleto(@RequestBody AtualizarClienteCompletoRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.atualizarClienteCompleto(requestDTO));
+    }
+
     @PutMapping("/{idCliente}")
     public ResponseEntity<ClienteDTO> updateStatusCliente(@PathVariable Integer idCliente) {
         return ResponseEntity.status(HttpStatus.OK).body(service.updateStatusCliente(idCliente));
