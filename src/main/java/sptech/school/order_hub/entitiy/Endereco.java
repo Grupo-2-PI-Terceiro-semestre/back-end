@@ -25,4 +25,6 @@ public class Endereco {
     private String cep;
     private String numero;
     private String complemento;
+    private String latitude;
+    private String longitude;
 }

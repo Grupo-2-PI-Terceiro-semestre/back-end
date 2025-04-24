@@ -37,6 +37,9 @@ public class EmpresaServices {
     @Autowired
     NotificacaoRepository notificacaoRepository;
 
+    @Autowired
+    private GeocodingService geocodingService;
+
 
     @Autowired
     private EmpresaRepository empresaRepository;
@@ -149,14 +152,23 @@ public class EmpresaServices {
 
     }
 
-    public EnderecoDTO updateEnderecoById(Integer idEmpresa, EnderecoDTO endereco) {
+    public EnderecoDTO updateEnderecoById(Integer idEmpresa, EnderecoDTO enderecoDTO) {
 
         var empresa = empresaRepository.findById(idEmpresa)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
 
-        Endereco enderecoCriado = null;
-        if (endereco.idEndereco() == 0) {
-            enderecoCriado = enderecoService.create(endereco.toEntity());
+        Endereco enderecoCriado;
+
+        if (enderecoDTO.idEndereco() == 0) {
+            enderecoCriado = enderecoService.create(enderecoDTO.toEntity());
+
+            // Buscar coordenadas
+            geocodingService.getCoordinatesFromAddress(enderecoCriado)
+                    .ifPresent(geo -> {
+                        enderecoCriado.setLatitude(geo.getLat());
+                        enderecoCriado.setLongitude(geo.getLon());
+                    });
+
             empresa.setEndereco(enderecoCriado);
             empresaRepository.save(empresa);
             return EnderecoDTO.fromEntity(empresa.getEndereco());
@@ -164,17 +176,21 @@ public class EmpresaServices {
 
         Endereco enderecoExistente = empresa.getEndereco();
 
-        enderecoExistente.setIdEndereco(endereco.idEndereco());
-        enderecoExistente.setCep(endereco.cep());
-        enderecoExistente.setCidade(endereco.cidade());
-        enderecoExistente.setComplemento(endereco.complemento());
-        enderecoExistente.setEstado(endereco.uf());
-        enderecoExistente.setBairro(endereco.bairro());
-        enderecoExistente.setLogradouro(endereco.logradouro());
-        enderecoExistente.setNumero(endereco.numero());
+        enderecoExistente.setCep(enderecoDTO.cep());
+        enderecoExistente.setCidade(enderecoDTO.cidade());
+        enderecoExistente.setComplemento(enderecoDTO.complemento());
+        enderecoExistente.setEstado(enderecoDTO.uf());
+        enderecoExistente.setBairro(enderecoDTO.bairro());
+        enderecoExistente.setLogradouro(enderecoDTO.logradouro());
+        enderecoExistente.setNumero(enderecoDTO.numero());
+
+        geocodingService.getCoordinatesFromAddress(enderecoExistente)
+                .ifPresent(geo -> {
+                    enderecoExistente.setLatitude(geo.getLat());
+                    enderecoExistente.setLongitude(geo.getLon());
+                });
 
         empresa.setEndereco(enderecoExistente);
-
         empresaRepository.save(empresa);
 
         return EnderecoDTO.fromEntity(empresa.getEndereco());

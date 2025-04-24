@@ -10,7 +10,9 @@ public record EnderecoDTO(
         String uf,
         String cep,
         String numero,
-        String complemento
+        String complemento,
+        String lat,
+        String lng
 ) {
 
     public Endereco toEntity() {
@@ -23,6 +25,8 @@ public record EnderecoDTO(
                 .cep(cep)
                 .numero(numero)
                 .complemento(complemento)
+                .latitude(lat)
+                .longitude(lng)
                 .build();
     }
 
@@ -35,7 +39,9 @@ public record EnderecoDTO(
                 endereco.getEstado(),
                 endereco.getCep(),
                 endereco.getNumero(),
-                endereco.getComplemento()
+                endereco.getComplemento(),
+                endereco.getLatitude(),
+                endereco.getLongitude()
         );
     }
 }
