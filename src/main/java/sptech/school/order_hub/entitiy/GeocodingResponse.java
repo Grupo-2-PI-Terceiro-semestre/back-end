@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GeocodingResponse {
-    private String lat;
-    private String lon;
+    private double lat;
+    private double lon;
 }
-

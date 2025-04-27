@@ -12,12 +12,12 @@ import sptech.school.order_hub.controller.empresa.response.BuscarPerfilEmpresaRe
 import sptech.school.order_hub.controller.empresa.response.CadastroEmpresaResponseDTO;
 import sptech.school.order_hub.dtos.EnderecoDTO;
 import sptech.school.order_hub.dtos.NotificacaoDTO;
-import sptech.school.order_hub.dtos.PerfilEmpresaDTO;
 import sptech.school.order_hub.entitiy.*;
 import sptech.school.order_hub.repository.EmpresaRepository;
 import sptech.school.order_hub.repository.NotificacaoRepository;
 import sptech.school.order_hub.repository.UsuarioRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -165,8 +165,8 @@ public class EmpresaServices {
             // Buscar coordenadas
             geocodingService.getCoordinatesFromAddress(enderecoCriado)
                     .ifPresent(geo -> {
-                        enderecoCriado.setLatitude(geo.getLat());
-                        enderecoCriado.setLongitude(geo.getLon());
+                        enderecoCriado.setLatitude(String.valueOf(geo.getLat()));
+                        enderecoCriado.setLongitude(String.valueOf(geo.getLon()));
                     });
 
             empresa.setEndereco(enderecoCriado);
@@ -186,8 +186,8 @@ public class EmpresaServices {
 
         geocodingService.getCoordinatesFromAddress(enderecoExistente)
                 .ifPresent(geo -> {
-                    enderecoExistente.setLatitude(geo.getLat());
-                    enderecoExistente.setLongitude(geo.getLon());
+                    enderecoExistente.setLatitude(String.valueOf(geo.getLat()));
+                    enderecoExistente.setLongitude(String.valueOf(geo.getLon()));
                 });
 
         empresa.setEndereco(enderecoExistente);
@@ -256,4 +256,50 @@ public class EmpresaServices {
         );
 
     }
+
+
+    public List<BuscarPerfilEmpresaResponseDTO> buscarGeolocalizacao(String cidade, String bairro) {
+
+        var empresas = repository.buscarPorGeolocalizacao(cidade, bairro); // Passando as variáveis corretamente
+
+        if (empresas.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhuma empresa encontrada.");
+        }
+
+        List<BuscarPerfilEmpresaResponseDTO> responseList = new ArrayList<>();
+
+        for (Empresa empresa : empresas) {
+
+            if(empresa.getEndereco().getLatitude() == null || empresa.getEndereco().getLongitude() == null) {
+                geocodingService.getCoordinatesFromAddress(empresa.getEndereco())
+                        .ifPresent(geo -> {
+                            empresa.getEndereco().setLatitude(String.valueOf(geo.getLat()));
+                            empresa.getEndereco().setLongitude(String.valueOf(geo.getLon()));
+                        });
+            }
+
+            var imagens = empresa.getImagens().stream()
+                    .map(BuscarPerfilEmpresaResponseDTO.ImagemSimplificadaDTO::from)
+                    .collect(Collectors.toList());
+
+            var servicos = empresa.getServicos().stream()
+                    .map(BuscarPerfilEmpresaResponseDTO.ServicoSimplificadoDTO::from)
+                    .collect(Collectors.toList());
+
+            var usuarios = empresa.getUsuarios().stream()
+                    .map(BuscarPerfilEmpresaResponseDTO.UsuarioSimplificadoDTO::from)
+                    .collect(Collectors.toList());
+
+            responseList.add(new BuscarPerfilEmpresaResponseDTO(
+                    empresa.getNomeEmpresa(),
+                    EnderecoDTO.fromEntity(empresa.getEndereco() != null ? empresa.getEndereco() : new Endereco()),
+                    imagens,
+                    servicos,
+                    usuarios
+            ));
+        }
+
+        return responseList;
+    }
+
 }

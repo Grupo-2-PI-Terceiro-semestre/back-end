@@ -34,7 +34,13 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
             """)
     Set<Object[]> buscarEmpresasPorCategoria(String categoria);
 
-
+    @Query("""
+                SELECT e
+                FROM Empresa e
+                JOIN e.endereco endereco
+                WHERE endereco.bairro = ?2 OR endereco.cidade = ?1
+            """)
+    List<Empresa> buscarPorGeolocalizacao(String cidade, String bairro);
 
 
 }
