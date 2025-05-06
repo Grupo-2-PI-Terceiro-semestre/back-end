@@ -64,6 +64,12 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoCriado);
     }
 
+    @PostMapping("/app/cliente")
+    public ResponseEntity<Void> clienteCriarAgendamentoApp(@RequestBody ClienteCriarAgendamentoRequestDTO requestDTO) {
+        agendamentoServices.clienteCriarAgendamento(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @GetMapping("/cliente/{idCliente}")
     public ResponseEntity<List<AgendamentosClienteResponseDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosCliente(idCliente));

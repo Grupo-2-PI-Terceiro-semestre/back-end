@@ -21,19 +21,18 @@ INSERT INTO funcao (nome_funcao)
 VALUES ('Recepcionista');
 
 -- Endereços para as empresas
-INSERT INTO endereco (bairro, cep, cidade, complemento, estado, logradouro, numero)
-VALUES
-    ('Cerqueira César', '01414-001', 'São Paulo', 'Apto 456', 'SP', 'Rua Haddock Lobo', '595'),
-    ('Centro', '20010-000', 'Rio de Janeiro', 'Sala 101', 'RJ', 'Av. Presidente Vargas', '1000'),
-    ('Savassi', '30112-010', 'Belo Horizonte', 'Loja 5', 'MG', 'Rua Pernambuco', '123'),
-    ('Boa Viagem', '51020-010', 'Recife', 'Casa', 'PE', 'Rua dos Navegantes', '456'),
-    ('Batel', '80420-090', 'Curitiba', 'Conjunto 1203', 'PR', 'Av. Batel', '789'),
-    ('Jardim Goiás', '74810-010', 'Goiânia', 'Qd. 45 Lt. 10', 'GO', 'Av. Jamel Cecílio', '250'),
-    ('Praia do Canto', '29055-250', 'Vitória', 'Bloco B', 'ES', 'Rua Aleixo Neto', '100'),
-    ('Asa Sul', '70390-010', 'Brasília', 'Edifício Brasília Center', 'DF', 'SQS 202', '3'),
-    ('Trindade', '88036-000', 'Florianópolis', 'Cobertura', 'SC', 'Rua Lauro Linhares', '890'),
-    ('Meireles', '60160-150', 'Fortaleza', 'Apartamento 802', 'CE', 'Av. Beira Mar', '555'),
-    ('Vila Mariana', '04018-001', 'São Paulo', 'Sala 204', 'SP', 'Rua Vergueiro', '1001');
+INSERT INTO endereco (bairro, cep, cidade, complemento, estado, logradouro, numero, latitude, longitude) VALUES
+('Cerqueira César', '01414-905', 'São Paulo', '', 'SP', 'Rua Haddock Lobo', '1000', '-23.5605724', '-46.6644755'),
+('Bela Vista', '01310-300', 'São Paulo', 'de 2134 ao fim - lado par', 'SP', 'Avenida Paulista', '2202', '-23.5575252', '-46.66038169999999'),
+('Jardim Record', '06784-210', 'Taboão da Serra', '', 'SP', 'Rua João Pereira dos Santos', '123', null, null),
+('Cerqueira César', '01413-000', 'São Paulo', 'de 1681 a 2429 - lado ímpar', 'SP', 'Rua Augusta', '1801', '-23.558713', '-46.6606999'),
+('Cerqueira César', '01418-200', 'São Paulo', 'de 2154 ao fim - lado par', 'SP', 'Alameda Santos', '2300', '-23.5582822', '-46.6617526'),
+('Cerqueira César', '01418-200', 'São Paulo', 'de 2154 ao fim - lado par', 'SP', 'Alameda Santos', '2335', '-23.5581665', '-46.6625583'),
+('Bela Vista', '01310-200', 'São Paulo', 'de 1512 a 2132 - lado par', 'SP', 'Avenida Paulista', '1710', '-23.5605266', '-46.65700469999999'),
+('Cerqueira César', '01414-000', 'São Paulo', 'até 1048 - lado par', 'SP', 'Rua Haddock Lobo', '614', '-23.5579233', '-46.6620658'),
+('Trindade', '88036-000', 'Florianópolis', 'Cobertura', 'SC', 'Rua Lauro Linhares', '890', null, null),
+('Meireles', '60160-150', 'Fortaleza', 'Apartamento 802', 'CE', 'Av. Beira Mar', '555', null, null),
+('Vila Mariana', '04018-001', 'São Paulo', 'Sala 204', 'SP', 'Rua Vergueiro', '1001', null, null);
 
 INSERT INTO empresa (fk_endereco, fk_categoria, url_logo, cnpj, email_empresa, nome_empresa, telefone)
 VALUES (1, 2, 'https://storage.googleapis.com/udois-261822.appspot.com/imagens-templates/thumbnail_1735372022031662324a1938845.webp', '96541975000104',
@@ -493,5 +492,6 @@ VALUES
 
 
 
-
+insert into cliente (data_criacao, email_pessoa, nome_pessoa, numero_telefone, status_atividade, senha) values
+('2024-08-15 10:30:00.000000', 'teste1@email.com', 'Cliente Teste', '11999998888', 'ATIVO', '123');
 
