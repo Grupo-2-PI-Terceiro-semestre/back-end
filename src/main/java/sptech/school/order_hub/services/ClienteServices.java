@@ -18,10 +18,10 @@ import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDt
 import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
+import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.repository.ClienteRepository;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -67,8 +67,7 @@ public class ClienteServices {
 
         final var pagina = PageRequest.of(request.pagina(), request.tamanho());
 
-        final var empresa = empresaRepository.findById(idEmpresa).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
+        final var empresa = buscarEmpresa(idEmpresa);
 
         final var page = clienteRepository.findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
 

@@ -1,4 +1,4 @@
-package sptech.school.order_hub.entitiy;
+package sptech.school.order_hub.controller.response;
 
 
 import java.util.List;

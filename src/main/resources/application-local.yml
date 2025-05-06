@@ -36,7 +36,10 @@ spring:
   #     include-binding-errors: always
   # jpa:
   #   defer-datasource-initialization: true
-
+server:
+  error:
+    whitelabel:
+      enabled: false
 # origins:
 #   url: http://localhost:5173
 server:

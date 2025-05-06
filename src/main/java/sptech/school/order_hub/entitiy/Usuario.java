@@ -87,5 +87,9 @@ public class Usuario extends Pessoa implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    public boolean isPresent() {
+        return this != null;
+    }
 }
 

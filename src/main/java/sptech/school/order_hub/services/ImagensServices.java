@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 import sptech.school.order_hub.controller.empresa.response.BuscarImagensDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Imagem;
@@ -67,7 +68,7 @@ public class ImagensServices {
         List<Imagem> imagens = imagensRepository.buscarImagensDaEmpresa(idEmpresa);
 
         if (imagens.isEmpty()) {
-            throw new IllegalArgumentException("Nenhuma imagem encontrada");
+            throw new SemConteudoException("Nenhuma imagem encontrada");
         }
 
         return imagens.stream()

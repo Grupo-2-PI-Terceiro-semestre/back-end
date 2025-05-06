@@ -1,17 +1,11 @@
 package sptech.school.order_hub.controller.usuario.response;
 
 import lombok.Builder;
-import sptech.school.order_hub.controller.cliente.response.BuscarClientesPaginadosResponseDTO;
-import sptech.school.order_hub.controller.servico.response.BuscarServicosPaginadosResponseDTO;
-import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.entitiy.Funcao;
-import sptech.school.order_hub.entitiy.Paginacao;
+import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.entitiy.Usuario;
-import sptech.school.order_hub.enuns.StatusAtividade;
 
-import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Builder
