@@ -1,66 +1,55 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - orderhub-api
+name: CI/CD
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Java version
-        uses: actions/setup-java@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: '17'
-          distribution: 'microsoft'
 
-      - name: Tests
-        run: mvn test
-
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
         with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: ~/.m2
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-${{ runner.os }}-
+
+      - name: Build Java Application
+        run: mvn clean package -DskipTests
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t jonathancarvalho039/api-order-hub:latest .
+
+      - name: Push Docker Image
+        run: docker push jonathancarvalho039/api-order-hub:latest
 
   deploy:
-    runs-on: ubuntu-latest
+    name: Deploy
+    runs-on: self-hosted
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-  
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: java-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_177A23589DA94B2F9066A07ED27ADFAF }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E2D79A078BF8418C8DBC9C4F84126F01 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A35A8829507746CCA2B56EB3757D4EFD }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'orderhub-api'
-          slot-name: 'Production'
-          package: '*.jar'
-          
+    steps:
+      - name: Pull latest image and restart container
+        run: |
+          sudo docker ps -aq | xargs -r sudo docker stop
+          sudo docker ps -aq | xargs -r sudo docker rm
+          sudo docker run -d -p 8080:8080 --name back-end jonathancarvalho039/api-order-hub

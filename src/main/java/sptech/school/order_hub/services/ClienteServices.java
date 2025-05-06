@@ -12,8 +12,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.controller.cliente.request.AtualizarClienteCompletoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
+import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
+import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.dtos.ClienteDTO;
@@ -243,6 +246,14 @@ public class ClienteServices {
                 .toList();
     }
 
+    public BuscarClienteResponseDTO buscarCliente(final Integer idCliente) {
+
+        final var cliente = clienteRepository.findByIdPessoa(idCliente).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+
+        return BuscarClienteResponseDTO.fromEntity(cliente);
+    }
+
     public ClienteDTO criarCliente(Integer idEmpresa, Cliente cliente) {
 
         final var empresa = buscarEmpresa(idEmpresa);
@@ -277,7 +288,7 @@ public class ClienteServices {
     public ClienteDTO loginCliente(Cliente entity) {
         // Busca o cliente pelo email
         Cliente cliente = clienteRepository.findByEmailPessoa(entity.getEmailPessoa())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cliente não encontrado."));
 
         // Verifica se a senha fornecida corresponde à senha criptografada no banco
         if (!passwordEncoder.matches(entity.getSenha(), cliente.getSenha())) {
@@ -288,6 +299,27 @@ public class ClienteServices {
         return ClienteDTO.from(cliente);
     }
 
+
+    public BuscarClienteResponseDTO atualizarClienteCompleto(AtualizarClienteCompletoRequestDTO requestDTO) {
+
+        final var cliente = clienteRepository.findByIdPessoa(requestDTO.idPessoa())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        final var nome = requestDTO.nomePessoa();
+        final var telefone = requestDTO.numeroTelefone();
+        final var dataNascimento = LocalDate.parse(requestDTO.dataNascimento());
+        final var genero = requestDTO.genero();
+
+        cliente.setNomePessoa(nome);
+        cliente.setNumeroTelefone(telefone);
+        cliente.setDataNascimento(dataNascimento);
+        cliente.setGenero(genero);
+
+        final var clienteAtualizado = clienteRepository.save(cliente);
+
+        return BuscarClienteResponseDTO.fromEntity(clienteAtualizado);
+    }
 
     public ClienteDTO atualizarCliente(AtualizarClienteRequestDTO requestDTO) {
 

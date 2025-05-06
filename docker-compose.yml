@@ -1,15 +1,11 @@
 version: '3.8'
 
 services:
-  spring-boot-app:
+  app:
     build: .
-    ports:
-      - "8080:8080"  # Mapeia a porta 8080 do host para a porta 8080 do contêiner
-    restart: always  # Reinicia o contêiner automaticamente em caso de falha
+    container_name: jonathancarvalho039/api-order-hub:latest
+    restart: always
     environment:
-      SPRING_APPLICATION_NAME: order-hub
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://servidor-orderhub.database.windows.net:1433;databaseName=bd-projeto-orderhub
-      SPRING_DATASOURCE_USERNAME: admin-orderhub
-      SPRING_DATASOURCE_PASSWORD: Order123@
-      JWT_SECRET: orderhub
-      JWT_EXPIRATION_HOUR: 2
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"

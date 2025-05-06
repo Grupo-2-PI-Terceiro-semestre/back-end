@@ -79,6 +79,11 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarPerfilEmpresa(idEmpresa));
     }
 
+    @GetMapping("/geolocalizacao")
+    public ResponseEntity<List<BuscarPerfilEmpresaResponseDTO>> buscarGeolocalizacao(@RequestParam String cidade, @RequestParam String bairro) {
+        return ResponseEntity.status(HttpStatus.OK).body(empresaService.buscarGeolocalizacao(cidade, bairro));
+    }
+
     @Operation(summary = "buscar por id", description = "Busca uma empresa pelo id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Empresa encontrada com sucesso",
