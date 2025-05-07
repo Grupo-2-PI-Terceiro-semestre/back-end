@@ -60,6 +60,11 @@ public class EmpresaServices {
         return this.repository.save(empresaExistente);
     }
 
+    private Empresa buscarEmpresa(Integer idEmpresa) {
+        return repository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+    }
+
     public void deleteById(Integer idEmpresa) {
     }
 

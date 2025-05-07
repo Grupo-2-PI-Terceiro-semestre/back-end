@@ -1,6 +1,7 @@
 package sptech.school.order_hub.services;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sptech.school.order_hub.config_exception.exceptions.ParametrosInvalidosException;
@@ -26,12 +27,14 @@ import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AgendamentoServices extends Subject {
 
 
@@ -39,16 +42,9 @@ public class AgendamentoServices extends Subject {
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
     private final ClienteServices clienteServices;
+    private final NotificationService notificationService;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-
-
-    public AgendamentoServices(AgendamentoRepository repository, AgendaRepository agendaRepository, ServicoServices servicoServices, ClienteServices clienteServices) {
-        this.repository = repository;
-        this.agendaRepository = agendaRepository;
-        this.servicoServices = servicoServices;
-        this.clienteServices = clienteServices;
-    }
 
 
     public List<AgendamentoDTO> buscaAgendamento(BuscarAgendamentoRequestDTO request, Integer idAgenda, Boolean dadosCompletos) {
@@ -156,11 +152,37 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoCriado = repository.save(agendamento);
 
+        final var idEmpresa = agendaRepository.findIdEnterpriseByAgendaId(requestDTO.idProfissional());
 
-        //tigerEvent(agendamentoCriado);
+        notificationService.sendNotificationToEmpresa(idEmpresa.toString(), gerarMensagemNotificacao(agendamentoCriado));
 
         return AgendamentoDTO.from(agendamentoCriado);
     }
+
+    private String gerarMensagemNotificacao(Agendamento agendamento) {
+        String status = agendamento.getStatusAgendamento();
+        String nomeCliente = agendamento.getCliente().getNomePessoa();
+        String nomeServico = agendamento.getServico().getNomeServico();
+        String nomeProfissional = agendamento.getAgenda().getUsuario().getNomePessoa();
+        String dataHoraFormatada = agendamento.getDataHora()
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
+
+        switch (status) {
+            case "PENDENTE":
+                return String.format(
+                        "<b style=\\\"font-size:12px;\\\">Novo agendamento pendente</b><br>%s agendou um serviço de %s com o profissional %s para o dia %s.<br><b>Clique para verificar.</b>",
+                        nomeCliente, nomeServico, nomeProfissional, dataHoraFormatada
+                );
+            case "CANCELADO":
+                return String.format(
+                        "<b style=\\\"font-size:12px;\\\">Agendamento cancelado</b><br>%s cancelou o serviço de %s com o profissional %s do dia %s.<br><b>Clique para verificar.</b>",
+                        nomeCliente, nomeServico, nomeProfissional, dataHoraFormatada
+                );
+            default:
+                return "Você tem uma atualização na agenda. Atualize para mais detalhes.";
+        }
+    }
+
 
     public AgendamentoDTO atualizarAgendamento(AtualizarAgendamentoRequestDTO requestDTO) {
 
@@ -197,7 +219,11 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
 
-        //tigerEvent(agendamentoCancelado);
+        final var idEmpresa = agendaRepository.findIdEnterpriseByAgendaId(agendamento.getAgenda().getUsuario().getEmpresa().getIdEmpresa());
+
+        if (agendamentoCancelado.getStatusAgendamento().equals("CANCELADO")) {
+            notificationService.sendNotificationToEmpresa(idEmpresa.toString(), gerarMensagemNotificacao(agendamentoCancelado));
+        }
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }

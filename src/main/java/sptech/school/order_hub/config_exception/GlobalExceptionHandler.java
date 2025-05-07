@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import sptech.school.order_hub.config_exception.exceptions.ConflitoAoCadastrarRecursoException;
+import sptech.school.order_hub.config_exception.exceptions.NotificationException;
 import sptech.school.order_hub.config_exception.exceptions.RecursoNaoEncontradoException;
 import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 
@@ -67,5 +68,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroResponse> handleConflitoAoCadastrarRecursoException(ConflitoAoCadastrarRecursoException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ErroResponse.fromException(ex.getMessage(), ex, HttpStatus.CONFLICT.value()));
+    }
+
+    @ExceptionHandler(NotificationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErroResponse> handleNotificationException(NotificationException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErroResponse.fromException(ex.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 }
