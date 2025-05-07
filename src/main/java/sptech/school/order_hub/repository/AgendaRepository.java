@@ -30,6 +30,9 @@ public interface AgendaRepository extends JpaRepository<Agenda, Integer> {
 
     @Query("SELECT a.idAgenda FROM Agenda a WHERE a.usuario.idPessoa = ?1")
     Integer findIdAgendaByUsuarioId(Integer idUsuario);
+
+    @Query("SELECT u.empresa.idEmpresa FROM Agenda a JOIN a.usuario u WHERE u.idPessoa = ?1")
+    Integer findIdEnterpriseByAgendaId(Integer idProficional);
 }
 
 
