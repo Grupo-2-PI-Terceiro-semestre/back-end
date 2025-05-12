@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @Table(name = "AGENDA")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idAgenda")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id_agenda")
 public class Agenda {
 
     @Id

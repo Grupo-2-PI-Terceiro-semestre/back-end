@@ -1,5 +1,6 @@
 package sptech.school.order_hub.entitiy;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class Cliente extends Pessoa {
 
     private String senha;
 
+    @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
 
     private String genero;

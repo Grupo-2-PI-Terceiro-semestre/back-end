@@ -14,9 +14,12 @@ import lombok.*;
 public class Notificacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_notificacao")
     private Integer idNotificacao;
 
+    @Column(name = "mensagem_cancelamento")
     private String mensagemCancelamento;
 
+    @Column(name = "mensagem_agendamento")
     private String mensagemAgendamento;
 }

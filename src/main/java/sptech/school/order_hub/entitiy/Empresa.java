@@ -22,12 +22,15 @@ public class Empresa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_empresa")
     private Integer idEmpresa;
 
     @NotBlank
     @NotNull
+    @Column(name = "nome_empresa")
     private String nomeEmpresa;
 
+    @Column(name = "email_empresa")
     private String emailEmpresa;
 
     @CNPJ
@@ -62,6 +65,7 @@ public class Empresa {
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;
 
+    @Column(name = "url_logo")
     private String urlLogo;
 
     public void addUsuario(Usuario usuario) {
