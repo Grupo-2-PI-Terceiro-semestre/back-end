@@ -14,5 +14,6 @@ services:
       AWS_SECRET_ACCESS_KEY: k6oyUMIpnuQgq6xOZcgUs2h2ykpgBgcexqDQMJOG
       AWS_ACCESS_KEY_ID: ASIAVGZ6ASQ4VBNUJVSZ
       AWS_REGION: us-east-1
+      AWS_SESSION_TOKEN:
     ports:
       - "8080:8080"
