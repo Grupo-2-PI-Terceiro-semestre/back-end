@@ -36,19 +36,15 @@ jwt:
 
 aws:
   bucket:
-    access-key: ${AWS_ACCESS_KEY_ID:5J4}
-    secret-key: ${AWS_SECRET_ACCESS_KEY:5J4}
-    region: ${AWS_REGION:us-east-1}
     endpoint: https://image-order-hub.s3.amazonaws.com
-    bucket: image-order-hub
+    bucket: ordehub-image
 
   sqs:
-    region: ${AWS_REGION:us-east-1}
     endpoint: ""
-    access-key-id: ${AWS_ACCESS_KEY_ID:ASIAVGZ6ASQ4VBNUJVSZ}
-    secret-access-key: ${AWS_SECRET_ACCESS_KEY:k6oyUMIpnuQgq6xOZcgUs2h2ykpgBgcexqDQMJOG}
-    session-token: ${AWS_SESSION_TOKEN}
+    queue:
+      name: ${QUEUE_NAME:notification-orderhub}
 
-queue:
-  order:
-    name: ${QUEUE_NAME:notification-orderhub}
+  region: ${AWS_REGION:us-east-1}
+  access-key-id: ${AWS_ACCESS_KEY_ID:AKIA3FRRJEMNRYCSBOW3}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+

@@ -9,13 +9,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class SqsListenerService {
 
+
+
     private final SimpMessagingTemplate messagingTemplate;
 
     public SqsListenerService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @SqsListener(value = "${queue.order.name}")
+    @SqsListener(value = "${aws.sqs.queue.name}")
     public void consumer(String messageJson) throws JsonProcessingException {
         try {
             ObjectMapper mapper = new ObjectMapper();

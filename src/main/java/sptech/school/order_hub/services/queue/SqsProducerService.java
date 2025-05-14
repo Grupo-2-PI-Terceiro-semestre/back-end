@@ -11,7 +11,7 @@ public class SqsProducerService {
 
     private final SqsAsyncClient sqsClient;
 
-    @Value("${queue.order.name}")
+    @Value("${aws.sqs.queue.name}")
     String QUEUE_URL;
 
     public SqsProducerService(SqsAsyncClient sqsClient) {
