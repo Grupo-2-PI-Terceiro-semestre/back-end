@@ -47,6 +47,7 @@ aws:
     endpoint: ""
     access-key-id: ${AWS_ACCESS_KEY_ID:ASIAVGZ6ASQ4VBNUJVSZ}
     secret-access-key: ${AWS_SECRET_ACCESS_KEY:k6oyUMIpnuQgq6xOZcgUs2h2ykpgBgcexqDQMJOG}
+    session-token: ${AWS_SESSION_TOKEN}
 
 queue:
   order:
