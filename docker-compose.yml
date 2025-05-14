@@ -7,5 +7,12 @@ services:
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      DATA_BASE_URL: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC
+      DATA_BASE_USERNAME: orderhub
+      DATA_BASE_PASSWORD: orderhub
+      QUEUE_NAME: notification-orderhub
+      AWS_SECRET_ACCESS_KEY: k6oyUMIpnuQgq6xOZcgUs2h2ykpgBgcexqDQMJOG
+      AWS_ACCESS_KEY_ID: ASIAVGZ6ASQ4VBNUJVSZ
+      AWS_REGION: us-east-1
     ports:
       - "8080:8080"

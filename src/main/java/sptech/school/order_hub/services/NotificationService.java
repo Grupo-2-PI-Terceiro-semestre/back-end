@@ -1,53 +1,45 @@
 package sptech.school.order_hub.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import sptech.school.order_hub.config_exception.exceptions.NotificationException;
+import sptech.school.order_hub.services.queue.MessageEmpresa;
+import sptech.school.order_hub.services.queue.SqsProducerService;
 
 @Service
 public class NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final SqsProducerService sqs;
 
-    @Autowired
-    public NotificationService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public NotificationService(SqsProducerService sqs) {
+        this.sqs = sqs;
     }
 
     /**
-     * Envia notificação para um tópico específico de uma empresa
-     * @param empresaId ID da empresa destinatária (não pode ser nulo ou vazio)
-     * @param message Objeto de mensagem a ser enviado (pode ser DTO, String, etc.)
-     * @throws IllegalArgumentException se empresaId for inválido
-     * @throws NotificationException se ocorrer erro no envio
+     * Envia uma notificação para a fila SQS com base no ID da empresa
+     * @param empresaId ID da empresa
+     * @param message mensagem a ser enviada (pode ser string ou JSON serializado)
      */
-    public void sendNotificationToEmpresa(String empresaId, Object message) {
+    public void sendNotificationToEmpresa(String empresaId, String message) {
         validateEmpresaId(empresaId);
 
         try {
-            String destination = "/topic/" + empresaId.trim() + "/notifications";
-            logger.debug("Enviando notificação para {}: {}", destination, message);
+            var fullMessage = new MessageEmpresa(empresaId, message);
 
-            messagingTemplate.convertAndSend(destination, message);
-            logger.info("Notificação enviada com sucesso para empresa {}", empresaId);
+            sqs.send(fullMessage);
+
+            logger.info("Mensagem enviada com sucesso para a fila. Empresa: {}", empresaId);
 
         } catch (Exception e) {
-            String errorMsg = "Falha ao enviar notificação para empresa " + empresaId;
+            String errorMsg = "Falha ao enviar mensagem para a fila da empresa " + empresaId;
             logger.error(errorMsg, e);
             throw new NotificationException(errorMsg, e);
         }
     }
 
-    /**
-     * Valida o ID da empresa
-     * @param empresaId ID a ser validado
-     * @throws IllegalArgumentException se o ID for inválido
-     */
     private void validateEmpresaId(String empresaId) {
         if (empresaId == null || empresaId.trim().isEmpty()) {
             String errorMsg = "ID da empresa não pode ser nulo ou vazio";

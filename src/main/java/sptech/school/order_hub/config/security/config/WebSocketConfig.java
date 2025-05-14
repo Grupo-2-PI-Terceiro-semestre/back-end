@@ -20,10 +20,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Habilita o broker para tópicos (/topic) e filas (/queue)
         registry.enableSimpleBroker("/topic", "/queue");
 
-        // Prefixo para mensagens que são roteadas para métodos anotados com @MessageMapping
         registry.setApplicationDestinationPrefixes("/app");
     }
 
