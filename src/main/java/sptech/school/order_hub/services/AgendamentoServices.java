@@ -152,9 +152,9 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoCriado = repository.save(agendamento);
 
-        final var idEmpresa = agendaRepository.findIdEnterpriseByAgendaId(requestDTO.idProfissional());
+        final var empresa = agendaRepository.findIdEnterpriseByAgenda(requestDTO.idProfissional());
 
-        notificationService.sendNotificationToEmpresa(idEmpresa.toString(), gerarMensagemNotificacao(agendamentoCriado));
+        notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCriado));
 
         return AgendamentoDTO.from(agendamentoCriado);
     }
@@ -219,10 +219,10 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
 
-        final var idEmpresa = agendaRepository.findIdEnterpriseByAgendaId(agendamento.getAgenda().getUsuario().getEmpresa().getIdEmpresa());
+        final var empresa = agendaRepository.findIdEnterpriseByAgenda(agendamento.getAgenda().getUsuario().getEmpresa().getIdEmpresa());
 
         if (agendamentoCancelado.getStatusAgendamento().equals("CANCELADO")) {
-            notificationService.sendNotificationToEmpresa(idEmpresa.toString(), gerarMensagemNotificacao(agendamentoCancelado));
+            notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCancelado));
         }
 
         return AgendamentoDTO.from(agendamentoCancelado);
