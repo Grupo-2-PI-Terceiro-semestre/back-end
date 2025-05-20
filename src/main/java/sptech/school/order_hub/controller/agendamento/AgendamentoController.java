@@ -18,6 +18,7 @@ import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
+import sptech.school.order_hub.services.NotificationService;
 
 import java.util.List;
 
@@ -28,10 +29,12 @@ public class AgendamentoController {
 
 
     private final AgendamentoServices agendamentoServices;
+    private final NotificationService notificationService;
 
 
-    public AgendamentoController(AgendamentoServices agendamentoServices) {
+    public AgendamentoController(AgendamentoServices agendamentoServices, NotificationService notificationService) {
         this.agendamentoServices = agendamentoServices;
+        this.notificationService = notificationService;
     }
 
     @Operation(summary = "Criar um Agendamento", description = "Cria um agendamento")
@@ -73,6 +76,18 @@ public class AgendamentoController {
     @GetMapping("/cliente/{idCliente}")
     public ResponseEntity<List<AgendamentosClienteResponseDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosCliente(idCliente));
+    }
+
+    @PutMapping("/notificacao/{idEmpresa}")
+    public ResponseEntity<Void> buscarNotificacao(@PathVariable Integer idEmpresa) {
+        notificationService.buscarMensagensNaoLidas(idEmpresa.toString());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PutMapping("/notificacao/lida/{idEmpresa}")
+    public ResponseEntity<Void> marcarComoLida(@PathVariable String idEmpresa) {
+        notificationService.marcarComoLida(idEmpresa);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping(value = "/sse", produces = "text/event-stream")

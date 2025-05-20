@@ -86,9 +86,6 @@ public class ServicoServices {
 
     public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
-
         List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa);
 
         if (servicos.isEmpty()) {
@@ -98,6 +95,11 @@ public class ServicoServices {
         return servicos.stream()
                 .map(BuscarServicosDTO::from)
                 .toList();
+    }
+
+    public Empresa buscarEmpresaPorId(int idEmpresa) {
+        return empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 
 

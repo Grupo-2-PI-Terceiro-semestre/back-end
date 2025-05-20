@@ -1,58 +1,80 @@
 package sptech.school.order_hub.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import sptech.school.order_hub.config_exception.exceptions.NotificationException;
+import sptech.school.order_hub.entitiy.AcaoNotificacao;
+import sptech.school.order_hub.entitiy.Empresa;
+import sptech.school.order_hub.repository.AcaoNotificacaoRepository;
+import sptech.school.order_hub.dtos.MessageEmpresa;
+
+import java.util.List;
 
 @Service
 public class NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final AcaoNotificacaoRepository repository;
 
-    @Autowired
-    public NotificationService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public NotificationService(AcaoNotificacaoRepository repository) {
+        this.repository = repository;
     }
 
     /**
-     * Envia notificação para um tópico específico de uma empresa
-     * @param empresaId ID da empresa destinatária (não pode ser nulo ou vazio)
-     * @param message Objeto de mensagem a ser enviado (pode ser DTO, String, etc.)
-     * @throws IllegalArgumentException se empresaId for inválido
-     * @throws NotificationException se ocorrer erro no envio
+     * Envia uma notificação para a fila SQS com base no ID da empresa
+     *
+     * @param empresa ID da empresa
+     * @param message mensagem a ser enviada (pode ser string ou JSON serializado)
      */
-    public void sendNotificationToEmpresa(String empresaId, Object message) {
-        validateEmpresaId(empresaId);
+    public void sendNotificationToEmpresa(Empresa empresa, String message) {
+        validateEmpresaId(empresa.getIdEmpresa().toString());
 
         try {
-            String destination = "/topic/" + empresaId.trim() + "/notifications";
-            logger.debug("Enviando notificação para {}: {}", destination, message);
+            var menssagem = new MessageEmpresa(empresa, message);
 
-            messagingTemplate.convertAndSend(destination, message);
-            logger.info("Notificação enviada com sucesso para empresa {}", empresaId);
+            var entity = AcaoNotificacao.fromEntity(menssagem);
+
+            repository.save(entity);
+
+            logger.info("Mensagem enviada com sucesso para a fila. Empresa: {}", empresa.getIdEmpresa());
 
         } catch (Exception e) {
-            String errorMsg = "Falha ao enviar notificação para empresa " + empresaId;
+            String errorMsg = "Falha ao enviar mensagem para a fila da empresa " + empresa.getIdEmpresa();
             logger.error(errorMsg, e);
             throw new NotificationException(errorMsg, e);
         }
     }
 
-    /**
-     * Valida o ID da empresa
-     * @param empresaId ID a ser validado
-     * @throws IllegalArgumentException se o ID for inválido
-     */
+    @Transactional
+    public void buscarMensagensNaoLidas(String empresaId) {
+        List<Long> notificacoesNaoLidas = repository.buscarListaNoficacaoNaoEnviadaPorEmpresaId(empresaId);
+
+        for(Long id : notificacoesNaoLidas) {
+            repository.alterarNotificacaoLida(id);
+        }
+    }
+
     private void validateEmpresaId(String empresaId) {
         if (empresaId == null || empresaId.trim().isEmpty()) {
             String errorMsg = "ID da empresa não pode ser nulo ou vazio";
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
+        }
+    }
+
+    public void marcarComoLida(String empresaId) {
+
+        List<Long> notificacoesNaoLidas = repository.buscarListaNoficacaoNaoEnviadaPorEmpresaId(empresaId);
+
+        for (Long id : notificacoesNaoLidas) {
+            AcaoNotificacao acao = repository.findById(id)
+                    .orElseThrow(() -> new NotificationException("Ação de notificação não encontrada com o ID: " + id));
+            acao.setLida(true);
+            acao.setEnviada(true);
+            repository.save(acao);
         }
     }
 }

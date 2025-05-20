@@ -44,6 +44,9 @@ public class Empresa {
     private List<Usuario> usuarios = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    private List<AcaoNotificacao> acoesNotificacao = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
     @JsonManagedReference
     private List<Cliente> clientes = new ArrayList<>();
 

@@ -26,7 +26,7 @@ public class ImagensServices {
     private final EmpresaRepository empresaRepository;
     private final ImagensRepository imagensRepository;
 
-    @Value("${aws.bucket}")
+    @Value("${aws.bucket.bucket}")
     private String bucket;
 
     public ImagensServices(
