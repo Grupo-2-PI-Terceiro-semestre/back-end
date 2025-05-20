@@ -13,6 +13,6 @@ public interface AcaoNotificacaoRepository extends JpaRepository<AcaoNotificacao
     List<Long> buscarListaNoficacaoNaoEnviadaPorEmpresaId(String idEmpresa);
 
     @Modifying
-    @Query("UPDATE AcaoNotificacao a SET a.enviada = false WHERE a.id = ?1 AND a.enviada = true")
+    @Query("UPDATE AcaoNotificacao a SET a.enviada = false WHERE a.id = ?1")
     void alterarNotificacaoLida(Long id);
 }
