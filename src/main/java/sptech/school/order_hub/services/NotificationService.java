@@ -50,9 +50,15 @@ public class NotificationService {
 
     @Transactional
     public void buscarMensagensNaoLidas(String empresaId) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Thread interrompida durante o processamento", e);
+        }
         List<Long> notificacoesNaoLidas = repository.buscarListaNoficacaoNaoEnviadaPorEmpresaId(empresaId);
 
-        for(Long id : notificacoesNaoLidas) {
+        for (Long id : notificacoesNaoLidas) {
             repository.alterarNotificacaoLida(id);
         }
     }
