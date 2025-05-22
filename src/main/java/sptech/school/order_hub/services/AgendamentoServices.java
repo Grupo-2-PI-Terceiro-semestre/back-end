@@ -2,6 +2,7 @@ package sptech.school.order_hub.services;
 
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sptech.school.order_hub.config_exception.exceptions.ParametrosInvalidosException;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AgendamentoServices extends Subject {
@@ -70,20 +72,15 @@ public class AgendamentoServices extends Subject {
 
     public List<AgendamentosClienteResponseDTO> buscarAgendamentosCliente(Integer idCliente) {
 
-        try {
-            return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
-                    .map(result -> new AgendamentosClienteResponseDTO(
-                            (Integer) result[0],
-                            (String) result[1],
-                            (String) result[2],
-                            ((java.sql.Timestamp) result[3]).toLocalDateTime(),
-                            (String) result[4],
-                            (String) result[5]
-                    )).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new SemConteudoException("");
-        }
+        var result = repository.buscarAgendamentosDeUmCliente(idCliente);
 
+        log.info("Agendamentos encontrados: {}", result.size());
+        log.info("Agendamentos encontrados: {}", result);
+
+        return result
+                .stream()
+                .map(AgendamentosClienteResponseDTO::from)
+                .collect(Collectors.toList());
     }
 
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
