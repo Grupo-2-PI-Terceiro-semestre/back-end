@@ -50,13 +50,10 @@ public class NotificationService {
 
     @Transactional
     public void buscarMensagensNaoLidas(String empresaId) {
-
         List<Long> notificacoesNaoLidas = repository.buscarListaNoficacaoNaoEnviadaPorEmpresaId(empresaId);
 
-        for (Long id : notificacoesNaoLidas) {
-            AcaoNotificacao acao = repository.BuscarNotificaoNaoNotificacaoLida(id);
-            acao.setEnviada(false);
-            repository.save(acao);
+        for(Long id : notificacoesNaoLidas) {
+            repository.alterarNotificacaoLida(id);
         }
     }
 
