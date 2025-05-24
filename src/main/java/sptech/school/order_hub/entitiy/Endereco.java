@@ -17,7 +17,9 @@ public class Endereco {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column(name = "id_endereco")
     private int idEndereco;
+
     private String logradouro;
     private String bairro;
     private String cidade;

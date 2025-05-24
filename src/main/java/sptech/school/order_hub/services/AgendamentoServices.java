@@ -84,21 +84,27 @@ public class AgendamentoServices extends Subject {
     }
 
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
-
-
         try {
-            return repository.findNextAgendamentoByEmpresa(idEmpresa).stream()
+            List<Object[]> resultados = repository.findNextAgendamentoByEmpresa(idEmpresa);
+
+            System.out.println("Resultados findNextAgendamentoByEmpresa: " + resultados);
+
+            return resultados.stream()
                     .map(result -> new ProximosAgendamentosResponseDTO(
-                            (String) result[0],
-                            (String) result[1],
-                            (String) result[2],
-                            (String) result[3],
-                            (String) result[4]
-                    )).collect(Collectors.toList());
+                            result[0] != null ? result[0].toString() : "",
+                            result[1] != null ? result[1].toString() : "",
+                            result[2] != null ? result[2].toString() : "",
+                            result[3] != null ? result[3].toString() : "",
+                            result[4] != null ? result[4].toString() : ""
+                    ))
+                    .collect(Collectors.toList());
+
         } catch (RuntimeException e) {
-            throw new SemConteudoException("");
+            e.printStackTrace();
+            throw new SemConteudoException("Erro ao buscar próximos agendamentos.");
         }
     }
+
 
 
     public Agendamento findById(Integer idAgendamento) {
@@ -384,19 +390,19 @@ public class AgendamentoServices extends Subject {
     }
 
     public List<ServicoDiaSemanaResponseDTO> buscarServicoDiaSemana(Integer idEmpresa) {
-
         try {
-            return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
+            List<Object[]> resultados = repository.ServicoPorDiaDaSemana(idEmpresa);
+            return resultados.stream()
                     .map(result -> new ServicoDiaSemanaResponseDTO(
                             (Integer) result[0],
-                            (Integer) result[1]
+                            ((Number) result[1]).intValue()
                     )).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new SemConteudoException("");
+            e.printStackTrace();
+            throw new SemConteudoException("Erro ao buscar serviços por dia da semana.");
         }
-
-
     }
+
 
     public List<ReceitaPorServicoResponseDTO> buscarReceitaPorServico(Integer idEmpresa) {
 

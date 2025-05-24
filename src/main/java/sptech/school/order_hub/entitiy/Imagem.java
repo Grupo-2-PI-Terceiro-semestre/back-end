@@ -12,8 +12,10 @@ import lombok.*;
 public class Imagem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_imagem")
     private Integer idImagem;
 
+    @Column(name = "url_imagem")
     private String urlImagem;
 
     @ManyToOne
