@@ -22,88 +22,84 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT a FROM Agendamento a WHERE a.agenda.idAgenda = :idAgenda AND a.dataHora BETWEEN :startOfDay AND :endOfDay")
     List<Agendamento> BuscarAgendamentoCompleto(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    @Query(value = """
-            SELECT a.id_agendamento as idAgendamento,
-                   s.nome_servico as nomeServico,
-                   e.nome_empresa as nomeEmpresa,
-                   a.data_hora as dataHora,
-                   a.status_agendamento as status,
-                   u.nome_pessoa as atendente
-            FROM Agendamento a
-            JOIN servico s on a.fk_servico = s.id_servico
-            JOIN empresa e  on s.fk_empresa = e.id_empresa
-            JOIN agenda ag on a.fk_agenda = ag.id_agenda
-            JOIN usuarios u on ag.fk_usuario = u.id_pessoa
-            WHERE a.fk_cliente = ?1
-            ORDER BY a.data_hora DESC;
-            """, nativeQuery = true)
-    List<Object[]> buscarAgendamentosDeUmCliente(Integer idCliente);
+    @Query("""
+                SELECT a FROM Agendamento a
+                JOIN a.servico s
+                JOIN s.empresa e
+                JOIN a.agenda ag
+                JOIN ag.usuario u
+                WHERE a.cliente.idPessoa = ?1
+                ORDER BY a.dataHora DESC
+            """)
+    List<Agendamento> buscarAgendamentosDeUmCliente(Integer idCliente);
+
 
     Optional<Agendamento> findByIdAgendamento(Integer idAgendamento);
 
     @Query(value = """
 
-            WITH MesAtual AS (
-            SELECT COALESCE(SUM(valor_servico), 0) AS totalReceita
-            FROM agendamento
-                     JOIN servico ON agendamento.fk_servico = servico.id_servico
-            WHERE fk_empresa = ?1
-              AND status_agendamento = 'REALIZADO'
-              AND MONTH(data_hora) = ?2
-        ),
-        MesAnterior AS (
-            SELECT COALESCE(SUM(valor_servico), 0) AS totalValorAnterior
-            FROM agendamento
-                     JOIN servico ON agendamento.fk_servico = servico.id_servico
-            WHERE fk_empresa = ?1
-              AND status_agendamento = 'REALIZADO'
-              AND MONTH(data_hora) = (?2) - 1
-        )
-        SELECT
-            a.totalReceita,
-            CASE
-                WHEN b.totalValorAnterior = 0 THEN 0
-                ELSE ((a.totalReceita - b.totalValorAnterior) / b.totalValorAnterior) * 100
-            END AS comparativoReceita
-        FROM MesAtual a, MesAnterior b;
-        
-        """, nativeQuery = true)
+                WITH MesAtual AS (
+                SELECT COALESCE(SUM(valor_servico), 0) AS totalReceita
+                FROM agendamento
+                         JOIN servico ON agendamento.fk_servico = servico.id_servico
+                WHERE fk_empresa = ?1
+                  AND status_agendamento = 'REALIZADO'
+                  AND MONTH(data_hora) = ?2
+            ),
+            MesAnterior AS (
+                SELECT COALESCE(SUM(valor_servico), 0) AS totalValorAnterior
+                FROM agendamento
+                         JOIN servico ON agendamento.fk_servico = servico.id_servico
+                WHERE fk_empresa = ?1
+                  AND status_agendamento = 'REALIZADO'
+                  AND MONTH(data_hora) = (?2) - 1
+            )
+            SELECT
+                a.totalReceita,
+                CASE
+                    WHEN b.totalValorAnterior = 0 THEN 0
+                    ELSE ((a.totalReceita - b.totalValorAnterior) / b.totalValorAnterior) * 100
+                END AS comparativoReceita
+            FROM MesAtual a, MesAnterior b;
+                    
+            """, nativeQuery = true)
     List<Object[]> ReceitaMensal(Integer idEmpresa, Integer mesAtual);
 
     @Query(value = """
-        WITH MesAtual AS (
-            SELECT COUNT(id_servico) AS totalServicos
-            FROM agendamento
-                     JOIN servico ON agendamento.fk_servico = servico.id_servico
-            WHERE fk_empresa = ?1
-              AND status_agendamento = 'REALIZADO'
-              AND MONTH(data_hora) = ?2
-        ),
-             MesAnterior AS (
-                 SELECT COUNT(id_servico) AS totalServicosAnterior
-                 FROM agendamento
-                          JOIN servico ON agendamento.fk_servico = servico.id_servico
-                 WHERE fk_empresa = ?1
-                   AND status_agendamento = 'REALIZADO'
-                   AND MONTH(data_hora) = (?2) - 1
-             )
-            SELECT
-            a.totalServicos,
-            CASE
-                WHEN b.totalServicosAnterior IS NULL OR b.totalServicosAnterior = 0 THEN 0
-                ELSE ((a.totalServicos - b.totalServicosAnterior) / b.totalServicosAnterior) * 100
-            END AS comparativoServicos
-            FROM MesAtual a
-            LEFT JOIN MesAnterior b ON 1=1;
-        """, nativeQuery = true)
+            WITH MesAtual AS (
+                SELECT COUNT(id_servico) AS totalServicos
+                FROM agendamento
+                         JOIN servico ON agendamento.fk_servico = servico.id_servico
+                WHERE fk_empresa = ?1
+                  AND status_agendamento = 'REALIZADO'
+                  AND MONTH(data_hora) = ?2
+            ),
+                 MesAnterior AS (
+                     SELECT COUNT(id_servico) AS totalServicosAnterior
+                     FROM agendamento
+                              JOIN servico ON agendamento.fk_servico = servico.id_servico
+                     WHERE fk_empresa = ?1
+                       AND status_agendamento = 'REALIZADO'
+                       AND MONTH(data_hora) = (?2) - 1
+                 )
+                SELECT
+                a.totalServicos,
+                CASE
+                    WHEN b.totalServicosAnterior IS NULL OR b.totalServicosAnterior = 0 THEN 0
+                    ELSE ((a.totalServicos - b.totalServicosAnterior) / b.totalServicosAnterior) * 100
+                END AS comparativoServicos
+                FROM MesAtual a
+                LEFT JOIN MesAnterior b ON 1=1;
+            """, nativeQuery = true)
     List<Object[]> ServicoMensal(Integer idEmpresa, Integer mesAtual);
 
-  @Query(value = """
-SELECT AVG(s.valor_servico)
-FROM servico AS s
-WHERE fk_empresa = ?1;
-        """, nativeQuery = true)
+    @Query(value = """
+            SELECT AVG(s.valor_servico)
+            FROM servico AS s
+            WHERE fk_empresa = ?1;
+                    """, nativeQuery = true)
     Double TicketMedio(Integer idEmpresa);
+
 
   @Query(value ="""
 SELECT
@@ -165,16 +161,17 @@ WHERE DATE(agendamento.data_hora) = DATE(NOW())
   AND agendamento.status_agendamento = 'AGENDADO'
   AND s.fk_empresa = ?1;
     """, nativeQuery = true)
+
     List<Object[]> findNextAgendamentoByEmpresa(Integer idEmpresa);
 
 
     @Query(value = """
-SELECT SUM(servico.valor_servico) AS aReceber
-FROM agendamento
-JOIN servico ON agendamento.fk_servico = servico.id_servico
-WHERE fk_empresa = ?1
-AND status_agendamento = 'AGENDADO';
-""", nativeQuery = true)
+            SELECT SUM(servico.valor_servico) AS aReceber
+            FROM agendamento
+            JOIN servico ON agendamento.fk_servico = servico.id_servico
+            WHERE fk_empresa = ?1
+            AND status_agendamento = 'AGENDADO';
+            """, nativeQuery = true)
     Double buscarValorAReceber(Integer idEmpresa);
 
     @Query(value ="""
@@ -221,5 +218,6 @@ SELECT
 FROM MesAtual a
 LEFT JOIN MesAnterior b ON 1=1;
     """, nativeQuery = true)
+
     List<Object[]> ClientesMensal(Integer idEmpresa);
 }
