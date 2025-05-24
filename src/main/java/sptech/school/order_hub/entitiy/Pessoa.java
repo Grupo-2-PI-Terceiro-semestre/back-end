@@ -23,23 +23,28 @@ import java.time.LocalDate;
 public abstract class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pessoa")
     private Integer idPessoa;
 
     @NotNull
     @NotBlank
+    @Column(name = "nome_pessoa")
     private String nomePessoa;
 
     @NotNull
     @NotBlank
     @Email
+    @Column(name = "email_pessoa")
     private String emailPessoa;
 
 //    private LocalDate dataNascimento;
 //
 //    private String genero;
 
+    @Column(name = "data_criacao")
     private LocalDate dataCriacao;
 
+    @Column(name = "numero_telefone")
     private String numeroTelefone;
 
     @ManyToOne
@@ -48,6 +53,7 @@ public abstract class Pessoa {
     private Empresa empresa;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status_atividade")
     private StatusAtividade statusAtividade;
 
     public Pessoa(String email) {
