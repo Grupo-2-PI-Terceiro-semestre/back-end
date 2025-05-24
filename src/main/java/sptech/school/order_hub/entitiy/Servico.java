@@ -25,7 +25,7 @@ public class Servico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_servico")
-    private Integer id;
+    private Integer idServico;
 
     @Column(name = "duracao")
     private LocalTime duracao;
