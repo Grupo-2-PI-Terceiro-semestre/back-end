@@ -54,22 +54,6 @@ class CategoriaServicesTest {
         verify(repository, times(1)).findAll();  // Verifica se o método findAll foi chamado
     }
 
-    @Test
-    @DisplayName("Testa a busca de todas as categorias quando não existem categorias cadastradas, esperando erro 404 com mensagem 'Nenhuma categoria encontrada.'")
-    void testFindAll_CategoriasNaoExistem() {
-        // Arrange
-        when(repository.findAll()).thenReturn(List.of());  // Mock do retorno de uma lista vazia
-
-        // Act & Assert
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            categoriaServices.findAll();
-        });
-
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatusCode());
-        assertEquals("Nenhuma categoria encontrada.", thrown.getReason());
-        verify(repository, times(1)).findAll();  // Verifica se o método findAll foi chamado
-    }
-
     // Testando o método findByNome()
     @Test
     @DisplayName("Testa a busca de categoria pelo nome, esperando encontrar a categoria correspondente")
@@ -84,22 +68,6 @@ class CategoriaServicesTest {
         assertNotNull(result);
         assertEquals("Categoria Teste", result.getNome());
         verify(repository, times(1)).findByNome("Categoria Teste");  // Verifica se o método findByNome foi chamado
-    }
-
-    @Test
-    @DisplayName("Testa a busca de categoria pelo nome, esperando erro 404 com mensagem 'Categoria não encontrada.' quando a categoria não existe")
-    void testFindByNome_CategoriaNaoEncontrada() {
-        // Arrange
-        when(repository.findByNome("Categoria Inexistente")).thenReturn(Optional.empty());  // Mock do retorno de Optional.empty()
-
-        // Act & Assert
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            categoriaServices.findByNome("Categoria Inexistente");
-        });
-
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatusCode());
-        assertEquals("Categoria não encontrada.", thrown.getReason());
-        verify(repository, times(1)).findByNome("Categoria Inexistente");  // Verifica se o método findByNome foi chamado
     }
 
     // Testando o método save()

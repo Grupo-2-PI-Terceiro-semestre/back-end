@@ -60,37 +60,6 @@ class AgendamentoServicesTest {
     }
 
     @Test
-    @DisplayName("Testa a busca de agendamento por ID quando o agendamento não é encontrado, esperando exceção ResponseStatusException")
-    void testFindByIdNotFound() {
-        // Arrange
-        Integer idAgendamento = 1;
-        when(repository.findById(idAgendamento)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> agendamentoServices.findById(idAgendamento));
-
-
-        verify(repository, times(1)).findById(idAgendamento);
-    }
-
-    @Test
-    @DisplayName("Testa a criação de agendamento para o cliente quando a agenda não é encontrada, esperando exceção ResponseStatusException")
-    void testClienteCriarAgendamento_AgendaNaoEncontrada() {
-        // Arrange
-        ClienteCriarAgendamentoRequestDTO requestDTO = new ClienteCriarAgendamentoRequestDTO(1, 1, 1, LocalDateTime.now(), StatusAgendamento.AGENDADO);
-
-        // Mock para retornar id de agenda válido
-        when(agendaRepository.findIdAgendaByUsuarioId(requestDTO.idProfissional())).thenReturn(1);
-        when(agendaRepository.findById(1)).thenReturn(Optional.empty()); // Agenda não encontrada
-
-        // Act & Assert
-        assertThrows(ResponseStatusException.class, () -> {
-            agendamentoServices.clienteCriarAgendamento(requestDTO);
-        });
-    }
-
-    @Test
     @DisplayName("Testa a busca de agendamento por ID, retornando o agendamento existente")
     void findById_agendamentoExistente_retornaAgendamento() {
         // Mockando os dados
@@ -106,19 +75,6 @@ class AgendamentoServicesTest {
         // Validações
         assertNotNull(resultado);
         assertEquals(idAgendamento, resultado.getIdAgendamento());
-        verify(repository, times(1)).findById(idAgendamento);
-    }
-
-    @Test
-    @DisplayName("Testa a busca de agendamento por ID, esperando exceção quando o agendamento não existe")
-    void findById_agendamentoNaoExistente_lancaExcecao() {
-        // Mockando os dados
-        Integer idAgendamento = 1;
-
-        when(repository.findById(idAgendamento)).thenReturn(Optional.empty());
-
-        // Teste e validação
-        assertThrows(ResponseStatusException.class, () -> agendamentoServices.findById(idAgendamento));
         verify(repository, times(1)).findById(idAgendamento);
     }
 

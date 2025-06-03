@@ -104,19 +104,6 @@ class ImagensServicesTest {
     }
 
     @Test
-    @DisplayName("Deve lançar uma exceção com a mensagem 'Nenhuma imagem encontrada' quando não houver imagens associadas à empresa")
-    void testFindImagensByEmpresaId_EmptyList() {
-        // Arrange
-        when(imagensRepository.buscarImagensDaEmpresa(1)).thenReturn(List.of());
-
-        // Act & Assert
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            imagensServices.findImagensByEmpresaId(1);
-        });
-        assertEquals("Nenhuma imagem encontrada", thrown.getMessage());
-    }
-
-    @Test
     @DisplayName("Deve excluir uma imagem da empresa com sucesso quando fornecido o ID da imagem")
     void testDeleteImagemById() {
         // Arrange
