@@ -130,8 +130,6 @@ public class AgendamentoServices extends Subject {
 
         Agendamento agendamentoAtualizado = repository.save(agendamento);
 
-        //tigerEvent(agendamentoAtualizado);
-
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
@@ -208,8 +206,6 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoAtualizado = repository.save(agendamento);
 
-        //tigerEvent(agendamentoAtualizado);
-
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
@@ -221,12 +217,6 @@ public class AgendamentoServices extends Subject {
         agendamento.setStatusAgendamento(status);
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
-
-        final var empresa = agendaRepository.findIdEnterpriseByAgenda(agendamento.getAgenda().getUsuario().getEmpresa().getIdEmpresa());
-
-        if (agendamentoCancelado.getStatusAgendamento().equals("CANCELADO")) {
-            notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCancelado));
-        }
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
@@ -390,19 +380,19 @@ public class AgendamentoServices extends Subject {
     }
 
     public List<ServicoDiaSemanaResponseDTO> buscarServicoDiaSemana(Integer idEmpresa) {
+
         try {
-            List<Object[]> resultados = repository.ServicoPorDiaDaSemana(idEmpresa);
-            return resultados.stream()
+            return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
                     .map(result -> new ServicoDiaSemanaResponseDTO(
                             (Integer) result[0],
-                            ((Number) result[1]).intValue()
+                            (Integer) result[1]
                     )).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new SemConteudoException("Erro ao buscar serviços por dia da semana.");
+            throw new SemConteudoException("");
         }
-    }
 
+
+    }
 
     public List<ReceitaPorServicoResponseDTO> buscarReceitaPorServico(Integer idEmpresa) {
 
@@ -425,9 +415,11 @@ public class AgendamentoServices extends Subject {
 
         agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
 
-        Agendamento agendamentoCancelado = repository.save(agendamento);
+        final var empresa = agendaRepository.findIdEnterpriseByAgenda(agendamento.getAgenda().getUsuario().getIdPessoa());
 
-        //tigerEvent(agendamentoCancelado);
+        final var agendamentoCancelado = repository.save(agendamento);
+
+        notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCancelado));
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
