@@ -76,9 +76,9 @@ jobs:
       - name: Push Docker Image
         run: docker push jonathancarvalho039/api-order-hub:latest
 
-  deploy:
-    name: Deploy
-    runs-on: self-hosted
+  deploy-a:
+    name: Instace-a
+    runs-on: [self-hosted, instace-a]
     needs: push
 
     steps:
@@ -86,4 +86,32 @@ jobs:
         run: |
           sudo docker ps -aq | xargs -r sudo docker stop
           sudo docker ps -aq | xargs -r sudo docker rm
-          sudo docker run --name back-end -p 8080:8080 -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_REGION=us-east-1 -e QUEUE_NAME=notification-orderhub -e DATA_BASE_URL="jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC" -e DATA_BASE_USERNAME=orderhub -e DATA_BASE_PASSWORD=orderhub jonathancarvalho039/api-order-hub
+          sudo docker run --name back-end-dev -p 8080:8080 \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION=us-east-1 \
+            -e QUEUE_NAME=notification-orderhub \
+            -e DATA_BASE_URL="jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC" \
+            -e DATA_BASE_USERNAME=orderhub \
+            -e DATA_BASE_PASSWORD=orderhub \
+            jonathancarvalho039/api-order-hub
+
+  deploy-b:
+    name: Instace-b
+    runs-on: [self-hosted, instace-b]
+    needs: push
+
+    steps:
+      - name: Pull latest image and restart container
+        run: |
+          sudo docker ps -aq | xargs -r sudo docker stop
+          sudo docker ps -aq | xargs -r sudo docker rm
+          sudo docker run --name back-end-prod -p 8081:8080 \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION=us-east-1 \
+            -e QUEUE_NAME=notification-orderhub \
+            -e DATA_BASE_URL="jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC" \
+            -e DATA_BASE_USERNAME=orderhub \
+            -e DATA_BASE_PASSWORD=orderhub \
+            jonathancarvalho039/api-order-hub
