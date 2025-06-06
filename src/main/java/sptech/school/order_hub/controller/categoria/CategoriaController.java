@@ -27,7 +27,7 @@ public class CategoriaController {
     @GetMapping
     public ResponseEntity<List<CategoriasResponseDTO>> findAll() {
 
-        services.envioEmail("jtecgalhardo@gmail.com", "Teste de envio de email", "Teste de envio de email","orderhub059@gmail.com");
+//        services.envioEmail("jtecgalhardo@gmail.com", "Teste de envio de email", "Teste de envio de email","orderhub059@gmail.com");
 
         return ResponseEntity.ok(services.findAll());
     }

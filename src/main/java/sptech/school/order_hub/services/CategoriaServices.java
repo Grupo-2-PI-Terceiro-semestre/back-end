@@ -43,7 +43,7 @@ public class CategoriaServices {
         return repository.save(categoria);
     }
 
-    public void envioEmail(String para, String assunto, String texto, String from) {
-        emailServices.enviarEmail(para, assunto, texto,from);
-    }
+//    public void envioEmail(String para, String assunto, String texto, String from) {
+//        emailServices.enviarEmail(para, assunto, texto,from);
+//    }
 }
