@@ -91,7 +91,8 @@ public class ImagensServices {
                         .build(),
                 software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
 
-        String urlImagem = urlPadrao + "/" + enderecoImagem;
+        String region = "us-east-1";
+        String urlImagem = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, enderecoImagem);
 
         return Imagem.builder()
                 .urlImagem(urlImagem)
