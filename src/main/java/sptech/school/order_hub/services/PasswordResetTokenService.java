@@ -48,7 +48,7 @@ public class PasswordResetTokenService {
     }
 
 
-    public boolean validarToken(String tokenInformado) {
+    public Boolean validarToken(String tokenInformado) {
         return tokenRepository.findByToken(tokenInformado)
                 .filter(token -> token.getDataExpiracao().isAfter(LocalDateTime.now()))
                 .isPresent();

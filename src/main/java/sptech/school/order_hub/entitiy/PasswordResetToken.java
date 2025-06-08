@@ -39,7 +39,7 @@ public class PasswordResetToken {
     }
 
     private String generateSimpleToken(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String chars = "0123456789";
         StringBuilder sb = new StringBuilder();
         Random rnd = new Random();
         for (int i = 0; i < length; i++) {

@@ -2,10 +2,7 @@ package sptech.school.order_hub.controller.passwordReset;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sptech.school.order_hub.controller.passwordReset.request.RecuperarSenhaRequest;
 import sptech.school.order_hub.controller.passwordReset.request.RedefinirSenhaRequest;
 import sptech.school.order_hub.controller.passwordReset.request.ValidarTokenRequest;
@@ -14,7 +11,7 @@ import sptech.school.order_hub.services.PasswordResetTokenService;
 
 @Tag(name = "Password Reset", description = "Endpoints for password reset functionality")
 @RestController
-@RequestMapping("/api/password-reset")
+@RequestMapping("/api/v1/password-reset")
 public class PasswordResetTokenController {
 
     private final PasswordResetTokenService tokenService;
@@ -25,7 +22,7 @@ public class PasswordResetTokenController {
 
 
 
-    @PostMapping
+    @PostMapping("/solicitar")
     public ResponseEntity<String> solicitarRecuperacao(@RequestBody RecuperarSenhaRequest request) {
         var tokenOpt = tokenService.gerarTokenParaEmail(request.email());
 
@@ -38,15 +35,11 @@ public class PasswordResetTokenController {
     }
 
     @PostMapping("/validar")
-    public ResponseEntity<String> validarToken(@RequestBody ValidarTokenRequest request) {
-        boolean valido = tokenService.validarToken(request.token());
-        if (!valido) {
-            return ResponseEntity.badRequest().body("Token inválido ou expirado");
-        }
-        return ResponseEntity.ok("Token válido");
+    public ResponseEntity<Boolean> validarToken(@RequestBody ValidarTokenRequest request) {
+        return ResponseEntity.ok(tokenService.validarToken(request.token()));
     }
 
-    @PostMapping("/redefinir")
+    @PutMapping("/redefinir")
     public ResponseEntity<String> redefinirSenha(@RequestBody RedefinirSenhaRequest request) {
         boolean sucesso = tokenService.redefinirSenha(request.token(), request.novaSenha());
         if (!sucesso) {
