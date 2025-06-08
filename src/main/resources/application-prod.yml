@@ -30,6 +30,19 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_SMTP:orderhub059@gmail.com}
+    password: ${PASSWORD_SMTP}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: true
+
 jwt:
   secret: ${JWT_SECRET:orderhub}  # Corrigi o nome da variável para JWT_SECRET
   expiration-hour: ${EXPIRATION_TOKEN:168}

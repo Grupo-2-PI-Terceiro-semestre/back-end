@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sptech.school.order_hub.controller.categoria.response.CategoriasResponseDTO;
 import sptech.school.order_hub.services.CategoriaServices;
+import sptech.school.order_hub.services.EmailServices;
 
 import java.util.List;
 
@@ -18,7 +19,6 @@ import java.util.List;
 @RequestMapping("api/v1/categorias")
 public class CategoriaController {
 
-
     @Autowired
     private CategoriaServices services;
 
@@ -26,6 +26,9 @@ public class CategoriaController {
     @ApiResponse(responseCode = "200", description = "Categorias listadas com sucesso")
     @GetMapping
     public ResponseEntity<List<CategoriasResponseDTO>> findAll() {
+
+//        services.envioEmail("jtecgalhardo@gmail.com", "Teste de envio de email", "Teste de envio de email","orderhub059@gmail.com");
+
         return ResponseEntity.ok(services.findAll());
     }
 }
