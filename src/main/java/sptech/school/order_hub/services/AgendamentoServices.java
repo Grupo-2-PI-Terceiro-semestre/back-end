@@ -1,10 +1,13 @@
 package sptech.school.order_hub.services;
 
 
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sptech.school.order_hub.config_exception.exceptions.ParametrosInvalidosException;
+import sptech.school.order_hub.config_exception.exceptions.RecursoNaoEncontradoException;
+import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoParcialRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
@@ -25,12 +28,15 @@ import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class AgendamentoServices extends Subject {
 
 
@@ -38,21 +44,14 @@ public class AgendamentoServices extends Subject {
     private final AgendaRepository agendaRepository;
     private final ServicoServices servicoServices;
     private final ClienteServices clienteServices;
+    private final NotificationService notificationService;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
 
-    public AgendamentoServices(AgendamentoRepository repository, AgendaRepository agendaRepository, ServicoServices servicoServices, ClienteServices clienteServices) {
-        this.repository = repository;
-        this.agendaRepository = agendaRepository;
-        this.servicoServices = servicoServices;
-        this.clienteServices = clienteServices;
-    }
-
-
     public List<AgendamentoDTO> buscaAgendamento(BuscarAgendamentoRequestDTO request, Integer idAgenda, Boolean dadosCompletos) {
         if (request.dataAgendamento() == null) {
-            throw new IllegalArgumentException("A data do agendamento não pode ser nula.");
+            throw new ParametrosInvalidosException("A data não pode ser nula");
         }
 
         LocalDateTime startOfDay = request.dataAgendamento().atStartOfDay();
@@ -72,27 +71,40 @@ public class AgendamentoServices extends Subject {
 
 
     public List<AgendamentosClienteResponseDTO> buscarAgendamentosCliente(Integer idCliente) {
-        return repository.buscarAgendamentosDeUmCliente(idCliente).stream()
-                .map(result -> new AgendamentosClienteResponseDTO(
-                        (Integer) result[0],
-                        (String) result[1],
-                        (String) result[2],
-                        ((java.sql.Timestamp) result[3]).toLocalDateTime(),
-                        (String) result[4],
-                        (String) result[5]
-                )).collect(Collectors.toList());
+
+        var result = repository.buscarAgendamentosDeUmCliente(idCliente);
+
+        log.info("Agendamentos encontrados: {}", result.size());
+        log.info("Agendamentos encontrados: {}", result);
+
+        return result
+                .stream()
+                .map(AgendamentosClienteResponseDTO::from)
+                .collect(Collectors.toList());
     }
 
     public List<ProximosAgendamentosResponseDTO> buscarAgendamentos(Integer idEmpresa) {
-        return repository.findNextAgendamentoByEmpresa(idEmpresa).stream()
-                .map(result -> new ProximosAgendamentosResponseDTO(
-                        (String) result[0],
-                        (String) result[1],
-                        (String) result[2],
-                        (String) result[3],
-                        (String) result[4]
-                )).collect(Collectors.toList());
+        try {
+            List<Object[]> resultados = repository.findNextAgendamentoByEmpresa(idEmpresa);
+
+            System.out.println("Resultados findNextAgendamentoByEmpresa: " + resultados);
+
+            return resultados.stream()
+                    .map(result -> new ProximosAgendamentosResponseDTO(
+                            result[0] != null ? result[0].toString() : "",
+                            result[1] != null ? result[1].toString() : "",
+                            result[2] != null ? result[2].toString() : "",
+                            result[3] != null ? result[3].toString() : "",
+                            result[4] != null ? result[4].toString() : ""
+                    ))
+                    .collect(Collectors.toList());
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new SemConteudoException("Erro ao buscar próximos agendamentos.");
+        }
     }
+
 
 
     public Agendamento findById(Integer idAgendamento) {
@@ -100,18 +112,16 @@ public class AgendamentoServices extends Subject {
         if (agendamento.isPresent()) {
             return agendamento.get();
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento não encontrado.");
+        throw new SemConteudoException("Agenda não encontrada");
     }
 
 
     public AgendamentoDTO atualizarAgendamentoParcial(AtualizarAgendamentoParcialRequestDTO requestDTO) {
         Agendamento agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+                .orElseThrow(() -> new SemConteudoException("Agenda não encontrada"));
 
         Agenda agenda = agendaRepository.findById(requestDTO.idAgenda())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+                .orElseThrow(() -> new SemConteudoException("Agenda não encontrada"));
 
         Optional.ofNullable(requestDTO.horaAgendamento())
                 .ifPresent(agendamento::setDataHora);
@@ -119,8 +129,6 @@ public class AgendamentoServices extends Subject {
         agendamento.setAgenda(agenda);
 
         Agendamento agendamentoAtualizado = repository.save(agendamento);
-
-        //tigerEvent(agendamentoAtualizado);
 
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
@@ -132,8 +140,7 @@ public class AgendamentoServices extends Subject {
 
         final var agendamento = new Agendamento();
         final var agenda = agendaRepository.findById(idAgenda)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+                .orElseThrow(() -> new SemConteudoException("Agenda não encontrada"));
 
         final var servico = servicoServices.findById(requestDTO.idServico());
         final var cliente = clienteServices.findById(requestDTO.idCliente());
@@ -146,21 +153,45 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoCriado = repository.save(agendamento);
 
+        final var empresa = agendaRepository.findIdEnterpriseByAgenda(requestDTO.idProfissional());
 
-        //tigerEvent(agendamentoCriado);
+        notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCriado));
 
         return AgendamentoDTO.from(agendamentoCriado);
     }
 
+    private String gerarMensagemNotificacao(Agendamento agendamento) {
+        String status = agendamento.getStatusAgendamento();
+        String nomeCliente = agendamento.getCliente().getNomePessoa();
+        String nomeServico = agendamento.getServico().getNomeServico();
+        String nomeProfissional = agendamento.getAgenda().getUsuario().getNomePessoa();
+        String dataHoraFormatada = agendamento.getDataHora()
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
+
+        switch (status) {
+            case "PENDENTE":
+                return String.format(
+                        "<b style=\\\"font-size:12px;\\\">Novo agendamento pendente</b><br>%s agendou um serviço de %s com o profissional %s para o dia %s.<br><b>Clique para verificar.</b>",
+                        nomeCliente, nomeServico, nomeProfissional, dataHoraFormatada
+                );
+            case "CANCELADO":
+                return String.format(
+                        "<b style=\\\"font-size:12px;\\\">Agendamento cancelado</b><br>%s cancelou o serviço de %s com o profissional %s do dia %s.<br><b>Clique para verificar.</b>",
+                        nomeCliente, nomeServico, nomeProfissional, dataHoraFormatada
+                );
+            default:
+                return "Você tem uma atualização na agenda. Atualize para mais detalhes.";
+        }
+    }
+
+
     public AgendamentoDTO atualizarAgendamento(AtualizarAgendamentoRequestDTO requestDTO) {
 
         final var agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+                .orElseThrow(() -> new SemConteudoException("Agendamento não encontrado"));
 
         final var agenda = agendaRepository.findById(requestDTO.idAgenda())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+                .orElseThrow(() -> new SemConteudoException("Agenda não encontrada"));
 
         final var servico = servicoServices.findById(requestDTO.idServico());
         final var cliente = clienteServices.findById(requestDTO.idCliente());
@@ -175,22 +206,17 @@ public class AgendamentoServices extends Subject {
 
         final var agendamentoAtualizado = repository.save(agendamento);
 
-        //tigerEvent(agendamentoAtualizado);
-
         return AgendamentoDTO.from(agendamentoAtualizado);
     }
 
     public AgendamentoDTO updateStatusAgendamento(final Integer idAgendamento, final StatusAgendamento status) {
 
         Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
 
         agendamento.setStatusAgendamento(status);
 
         Agendamento agendamentoCancelado = repository.save(agendamento);
-
-        //tigerEvent(agendamentoCancelado);
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }
@@ -199,7 +225,7 @@ public class AgendamentoServices extends Subject {
         List<Object[]> result = repository.ReceitaMensal(idEmpresa, mes);
 
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita não encontrada");
+            throw new SemConteudoException("");
         }
 
         Object[] row = result.get(0);
@@ -210,18 +236,26 @@ public class AgendamentoServices extends Subject {
     }
 
     public ServicoMensalResponseDTO buscarServicoMensal(Integer idEmpresa, Integer mes) {
-        List<Object[]> result = repository.ServicoMensal(idEmpresa, mes);
 
-        Integer totalServicos = 0;
-        Double comparativoServicos = 0.0;
 
-        if (!result.isEmpty()) {
-            Object[] row = result.get(0);
-            totalServicos = row[0] != null ? ((Number) row[0]).intValue() : 0;
-            comparativoServicos = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+        try {
+            List<Object[]> result = repository.ServicoMensal(idEmpresa, mes);
+
+            Integer totalServicos = 0;
+            Double comparativoServicos = 0.0;
+
+            if (!result.isEmpty()) {
+                Object[] row = result.get(0);
+                totalServicos = row[0] != null ? ((Number) row[0]).intValue() : 0;
+                comparativoServicos = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+            }
+
+            return new ServicoMensalResponseDTO(totalServicos, comparativoServicos);
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
         }
 
-        return new ServicoMensalResponseDTO(totalServicos, comparativoServicos);
+
     }
 
     public TicketMedioResponseDTO buscarTicketMedio(Integer idEmpresa) {
@@ -233,8 +267,7 @@ public class AgendamentoServices extends Subject {
     public AgendamentoDTO criarAgendamento(CriarAgendamentoRequestDTO requestDTO) {
         Agendamento agendamento = new Agendamento();
         Agenda agenda = agendaRepository.findById(requestDTO.idAgenda())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agenda não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agenda não encontrada"));
 
         Servico servico = servicoServices.findById(requestDTO.idServico());
         Cliente cliente = clienteServices.findById(requestDTO.idCliente());
@@ -302,65 +335,91 @@ public class AgendamentoServices extends Subject {
     }
 
     public List<ReceitaPorFuncionarioResponseDTO> buscarReceitaPorFuncionario(Integer idEmpresa) {
-        return repository.ReceitaPorFuncionario(idEmpresa).stream()
-                .map(result -> new ReceitaPorFuncionarioResponseDTO(
-                        (String) result[0],
-                        (Double) result[1]
-                )).collect(Collectors.toList());
+
+        try {
+            return repository.ReceitaPorFuncionario(idEmpresa).stream()
+                    .map(result -> new ReceitaPorFuncionarioResponseDTO(
+                            (String) result[0],
+                            (Double) result[1]
+                    )).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
+        }
     }
 
     public ClientesMensaisResponseDTO buscarClientesMensais(Integer idEmpresa) {
-        List<Object[]> result = repository.ClientesMensal(idEmpresa);
 
-        if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clientes não encontrados");
+        try {
+            Object[] row = repository.ClientesMensal(idEmpresa).get(0);
+            Integer totalClientes = ((Number) row[0]).intValue();
+            Double comparativoClientes = ((Number) row[1]).doubleValue();
+
+            return new ClientesMensaisResponseDTO(totalClientes, comparativoClientes);
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
         }
 
-        Object[] row = result.get(0);
-        Integer totalClientes = ((Number) row[0]).intValue();
-        Double comparativoClientes = ((Number) row[1]).doubleValue(); // Conversão explícita
-
-        return new ClientesMensaisResponseDTO(totalClientes, comparativoClientes);
     }
 
     public List<ReceitaPorMesDTO> buscarReceitaPorMes(Integer idEmpresa) {
-        return repository.ReceitaPorMes(idEmpresa).stream()
-                .map(result -> {
-                    String anoMes = result[0] instanceof String
-                            ? (String) result[0]
-                            : result[0].toString();
-                    Double receita = (Double) result[1];
-                    return new ReceitaPorMesDTO(anoMes, receita);
-                }).collect(Collectors.toList());
+
+        try {
+            return repository.ReceitaPorMes(idEmpresa).stream()
+                    .map(result -> {
+                        String anoMes = result[0] instanceof String
+                                ? (String) result[0]
+                                : result[0].toString();
+                        Double receita = (Double) result[1];
+                        return new ReceitaPorMesDTO(anoMes, receita);
+                    }).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
+        }
+
+
     }
 
     public List<ServicoDiaSemanaResponseDTO> buscarServicoDiaSemana(Integer idEmpresa) {
-        return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
-                .map(result -> new ServicoDiaSemanaResponseDTO(
-                        (Integer) result[0],
-                        (Integer) result[1]
-                )).collect(Collectors.toList());
+
+        try {
+            return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
+                    .map(result -> new ServicoDiaSemanaResponseDTO(
+                            (Integer) result[0],
+                            (Integer) result[1]
+                    )).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
+        }
+
+
     }
 
     public List<ReceitaPorServicoResponseDTO> buscarReceitaPorServico(Integer idEmpresa) {
-        return repository.ReceitaPorServico(idEmpresa).stream()
-                .map(result -> new ReceitaPorServicoResponseDTO(
-                        (String) result[0],
-                        (Double) result[1]
-                )).collect(Collectors.toList());
+
+
+        try {
+            return repository.ReceitaPorServico(idEmpresa).stream()
+                    .map(result -> new ReceitaPorServicoResponseDTO(
+                            (String) result[0],
+                            (Double) result[1]
+                    )).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new SemConteudoException("");
+        }
     }
 
 
     public AgendamentoDTO cancelaAgendamento(Integer idAgendamento) {
         Agendamento agendamento = repository.findByIdAgendamento(idAgendamento)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado"));
 
         agendamento.setStatusAgendamento(StatusAgendamento.CANCELADO);
 
-        Agendamento agendamentoCancelado = repository.save(agendamento);
+        final var empresa = agendaRepository.findIdEnterpriseByAgenda(agendamento.getAgenda().getUsuario().getIdPessoa());
 
-        //tigerEvent(agendamentoCancelado);
+        final var agendamentoCancelado = repository.save(agendamento);
+
+        notificationService.sendNotificationToEmpresa(empresa, gerarMensagemNotificacao(agendamentoCancelado));
 
         return AgendamentoDTO.from(agendamentoCancelado);
     }

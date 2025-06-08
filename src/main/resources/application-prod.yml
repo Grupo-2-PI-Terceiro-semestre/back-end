@@ -14,9 +14,9 @@ spring:
   application:
     name: order-hub
   datasource:
-    url: jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC
-    username: orderhub
-    password: orderhub
+    url: ${DATA_BASE_URL}
+    username: ${DATA_BASE_USERNAME}
+    password: ${DATA_BASE_PASSWORD}
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -35,8 +35,11 @@ jwt:
   expiration-hour: ${EXPIRATION_TOKEN:168}
 
 aws:
-  access-key: "AKIA5J4"
-  secret-key: "5J4"
-  region: "us-east-2"
-  endpoint: https://image-order-hub.s3.amazonaws.com
-  bucket: image-order-hub
+  bucket:
+    endpoint: https://image-order-hub.s3.amazonaws.com
+    bucket: ordehub-image
+
+  region: ${AWS_REGION:us-east-1}
+  access-key-id: ${AWS_ACCESS_KEY_ID:AKIA3FRRJEMNRYCSBOW3}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+

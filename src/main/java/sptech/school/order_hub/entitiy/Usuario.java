@@ -34,6 +34,7 @@ public class Usuario extends Pessoa implements UserDetails {
     @OneToOne(mappedBy = "usuario")
     private Agenda agenda;
 
+    @Column(name = "tipos_de_usuario")
     private TipoUsuario tiposDeUsuario;
 
     private Boolean representante;
@@ -86,6 +87,10 @@ public class Usuario extends Pessoa implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public boolean isPresent() {
+        return this != null;
     }
 }
 

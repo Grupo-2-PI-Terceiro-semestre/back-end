@@ -16,13 +16,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name = "AGENDAMENTO")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idAgendamento")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id_agendamento")
 public class Agendamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idAgendamento;
 
+    @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
     @JoinColumn(name = "fk_agenda")

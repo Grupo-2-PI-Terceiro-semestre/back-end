@@ -13,7 +13,19 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: orderhub059@gmail.com
+    password: gysr rbmv uubw rvif
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: true
 
   # Configuração de e-mail
 #  mail:
@@ -31,8 +43,4 @@ spring:
 
 # Configuração do servidor
 server:
-  address: 0.0.0.0
-
-
-
-
+  address: 0.0.0.0

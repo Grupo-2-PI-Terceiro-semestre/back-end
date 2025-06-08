@@ -44,24 +44,31 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console()).disable())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(toH2Console())
+                        .ignoringRequestMatchers("/ws-notifications/**")
+                        .disable()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/ws-notifications/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/clientes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/clientes/{idCliente}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/clientes/atualizar-completo").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/clientes/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/agendamentos/cliente").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/agendamentos/cliente").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/agendamentos/app/cliente").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categorias").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/perfil/{idEmpresa}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/geolocalizacao").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/empresas/buscar/categoria/{categoria}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/agendas/horarios-indisponiveis/empresa/{idEmpresa}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/agendamentos/cliente/{idCliente}").permitAll()
-                        .requestMatchers("/api/v1/agendamentos/sse").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/agendamentos/cancelaAgendamento/{idAgendamento}").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception

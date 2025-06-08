@@ -5,16 +5,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
+import sptech.school.order_hub.controller.response.Paginacao;
 import sptech.school.order_hub.controller.servico.request.AtualizarServicoRequestDTO;
 import sptech.school.order_hub.controller.servico.request.BuscarServicoPaginadoDTO;
 import sptech.school.order_hub.controller.servico.response.BuscarServicosDTO;
-import sptech.school.order_hub.dtos.ClienteDTO;
 import sptech.school.order_hub.dtos.ServicoAddDTO;
 import sptech.school.order_hub.dtos.ServicoDTO;
-import sptech.school.order_hub.entitiy.Cliente;
 import sptech.school.order_hub.entitiy.Empresa;
-import sptech.school.order_hub.entitiy.Paginacao;
 import sptech.school.order_hub.entitiy.Servico;
 import sptech.school.order_hub.enuns.StatusAtividade;
 import sptech.school.order_hub.repository.EmpresaRepository;
@@ -89,9 +86,6 @@ public class ServicoServices {
 
     public List<BuscarServicosDTO> buscarServicosDaEmpresa(int idEmpresa) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
-
         List<Servico> servicos = servicoRepository.findyServicoByEmpresaId(idEmpresa);
 
         if (servicos.isEmpty()) {
@@ -101,6 +95,11 @@ public class ServicoServices {
         return servicos.stream()
                 .map(BuscarServicosDTO::from)
                 .toList();
+    }
+
+    public Empresa buscarEmpresaPorId(int idEmpresa) {
+        return empresaRepository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
     }
 
 

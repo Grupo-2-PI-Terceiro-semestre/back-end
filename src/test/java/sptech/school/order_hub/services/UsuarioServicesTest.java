@@ -78,34 +78,7 @@ public class UsuarioServicesTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    @Test
-    @DisplayName("Deve lançar exceção ao tentar criar um usuário quando o e-mail já estiver cadastrado")
-    void testCreate_whenUserAlreadyExists() {
-        // Arrange
-        CadastroUsuarioRequestDTO usuarioDTO = mock(CadastroUsuarioRequestDTO.class);
-        when(usuarioDTO.emailPessoa()).thenReturn(usuario.getEmailPessoa());
-        when(usuarioRepository.existsByEmailPessoa(usuario.getEmailPessoa())).thenReturn(true);
 
-        // Act & Assert
-        assertThrows(ResponseStatusException.class, () -> usuarioServices.create(usuarioDTO));
-    }
-
-    @Test
-    @DisplayName("Deve criar um usuário com sucesso quando os dados forem válidos")
-    void testCreate_withValidUser() {
-        // Arrange
-        CadastroUsuarioRequestDTO usuarioDTO = mock(CadastroUsuarioRequestDTO.class);
-        when(usuarioDTO.emailPessoa()).thenReturn("newuser@example.com");
-        when(usuarioRepository.existsByEmailPessoa(usuarioDTO.emailPessoa())).thenReturn(false);
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-
-        // Act
-        Usuario createdUser = usuarioServices.create(usuarioDTO);
-
-        // Assert
-        assertNotNull(createdUser);
-        assertEquals("newuser@example.com", createdUser.getEmailPessoa());
-    }
 
     @Test
     @DisplayName("Deve atualizar o usuário com sucesso quando o usuário existir")

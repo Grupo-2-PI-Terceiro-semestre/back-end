@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sptech.school.order_hub.config_exception.exceptions.RecursoNaoEncontradoException;
 import sptech.school.order_hub.controller.empresa.request.BuscarEmpresaRequestDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaResponseDTO;
 import sptech.school.order_hub.controller.empresa.response.BuscarEmpresaServicoResponseDTO;
@@ -48,8 +49,7 @@ public class EmpresaServices {
 
     public Empresa updateById(Integer idEmpresa, Empresa empresaParaAtualizar) {
 
-        Empresa empresaExistente = this.repository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresaExistente = buscarEmpresa(idEmpresa);
 
         empresaParaAtualizar.setIdEmpresa(idEmpresa);
         empresaExistente.setNomeEmpresa(empresaParaAtualizar.getNomeEmpresa());
@@ -60,18 +60,21 @@ public class EmpresaServices {
         return this.repository.save(empresaExistente);
     }
 
+    private Empresa buscarEmpresa(Integer idEmpresa) {
+        return repository.findById(idEmpresa)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+    }
+
     public void deleteById(Integer idEmpresa) {
     }
 
     public BuscarEmpresaResponseDTO findById(Integer idEmpresa) {
-        Empresa empresa = repository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = buscarEmpresa(idEmpresa);
         return BuscarEmpresaResponseDTO.from(empresa);
     }
 
     public Empresa buscarEmpresaEFuncionarios(Integer idEmpresa) {
-        return repository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        return buscarEmpresa(idEmpresa);
     }
 
 
@@ -145,8 +148,7 @@ public class EmpresaServices {
 
     public EnderecoDTO findEnderecoById(Integer idEmpresa) {
 
-        var empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        var empresa = buscarEmpresa(idEmpresa);
 
         return EnderecoDTO.fromEntity(empresa.getEndereco());
 
@@ -154,8 +156,7 @@ public class EmpresaServices {
 
     public EnderecoDTO updateEnderecoById(Integer idEmpresa, EnderecoDTO enderecoDTO) {
 
-        var empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        var empresa = buscarEmpresa(idEmpresa);
 
         Endereco enderecoCriado;
 
@@ -198,8 +199,7 @@ public class EmpresaServices {
 
     public NotificacaoDTO findNotificacaoById(Integer idEmpresa) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = buscarEmpresa(idEmpresa);
 
         return NotificacaoDTO.fromEntity(empresa.getNotificacao());
     }
@@ -208,8 +208,7 @@ public class EmpresaServices {
     @Transactional
     public NotificacaoDTO createNotificacao(Integer idEmpresa, Notificacao notificacao) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = buscarEmpresa(idEmpresa);
 
         if (notificacao.getIdNotificacao() != null) {
             Notificacao notificacaoExistente = empresa.getNotificacao();
@@ -218,7 +217,7 @@ public class EmpresaServices {
                 notificacaoExistente.setMensagemAgendamento(notificacao.getMensagemAgendamento());
                 empresa.setNotificacao(notificacaoExistente);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notificação não encontrada para atualização.");
+                throw new RecursoNaoEncontradoException("Notificação não encontrada.");
             }
         } else {
             Notificacao notificacaoCriada = notificacaoRepository.save(notificacao);
@@ -232,8 +231,7 @@ public class EmpresaServices {
 
     public BuscarPerfilEmpresaResponseDTO buscarPerfilEmpresa(Integer idEmpresa) {
 
-        Empresa empresa = empresaRepository.findById(idEmpresa)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não encontrada."));
+        Empresa empresa = buscarEmpresa(idEmpresa);
 
         var imagens = empresa.getImagens().stream()
                 .map(BuscarPerfilEmpresaResponseDTO.ImagemSimplificadaDTO::from)

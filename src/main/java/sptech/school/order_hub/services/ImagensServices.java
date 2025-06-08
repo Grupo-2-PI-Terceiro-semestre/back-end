@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import sptech.school.order_hub.config_exception.exceptions.SemConteudoException;
 import sptech.school.order_hub.controller.empresa.response.BuscarImagensDTO;
 import sptech.school.order_hub.entitiy.Empresa;
 import sptech.school.order_hub.entitiy.Imagem;
@@ -25,7 +26,7 @@ public class ImagensServices {
     private final EmpresaRepository empresaRepository;
     private final ImagensRepository imagensRepository;
 
-    @Value("${aws.bucket}")
+    @Value("${aws.bucket.bucket}")
     private String bucket;
 
     public ImagensServices(
@@ -67,7 +68,7 @@ public class ImagensServices {
         List<Imagem> imagens = imagensRepository.buscarImagensDaEmpresa(idEmpresa);
 
         if (imagens.isEmpty()) {
-            throw new IllegalArgumentException("Nenhuma imagem encontrada");
+            throw new SemConteudoException("Nenhuma imagem encontrada");
         }
 
         return imagens.stream()
@@ -90,7 +91,8 @@ public class ImagensServices {
                         .build(),
                 software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
 
-        String urlImagem = urlPadrao + "/" + enderecoImagem;
+        String region = "us-east-1";
+        String urlImagem = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, enderecoImagem);
 
         return Imagem.builder()
                 .urlImagem(urlImagem)
