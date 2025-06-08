@@ -16,10 +16,12 @@ import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamen
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
 import sptech.school.order_hub.services.NotificationService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Agendamento", description = "Controller de agendamentos")
@@ -77,6 +79,47 @@ public class AgendamentoController {
     public ResponseEntity<List<AgendamentosClienteResponseDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosCliente(idCliente));
     }
+
+    @GetMapping("/app/cliente/{idCliente}")
+    public ResponseEntity<List<AgendamentosClienteAppResponseDTO>> buscarAgendamentosAppCliente(@PathVariable Integer idCliente) {
+
+        // Mock de proficionais da empresa
+        UsuarioDTO usuario1 = new UsuarioDTO(
+                1,
+                "Maria Oliveira",
+                "11999999999",
+                "123.456.789-00",
+                "1990-05-10",
+                "FEMININO",
+                "END123"
+        );
+
+        UsuarioDTO usuario2 = new UsuarioDTO(
+                2,
+                "João Pereira",
+                "11888888888",
+                "987.654.321-00",
+                "1985-12-20",
+                "MASCULINO",
+                "END456"
+        );
+
+        List<UsuarioDTO> proficionais = List.of(usuario1, usuario2);
+
+        // Mock do agendamento
+        AgendamentosClienteAppResponseDTO agendamentoMock = AgendamentosClienteAppResponseDTO.builder()
+                .idAgendamento(101)
+                .nomeServico("Corte de Cabelo")
+                .nomeEmpresa("Barbearia do João")
+                .dataHora(LocalDateTime.of(2025, 6, 8, 14, 30))
+                .status("CONFIRMADO")
+                .atendente("Carlos Silva")
+                .proficionaisDaEmpresa(proficionais)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(List.of(agendamentoMock));
+    }
+
 
     @PutMapping("/notificacao/{idEmpresa}")
     public ResponseEntity<Void> buscarNotificacao(@PathVariable Integer idEmpresa) {
