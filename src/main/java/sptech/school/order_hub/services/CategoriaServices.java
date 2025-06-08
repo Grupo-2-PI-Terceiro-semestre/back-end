@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 public class CategoriaServices {
 
     @Autowired
+    private EmailServices emailServices;
+
+    @Autowired
     private CategoriaRepository repository;
 
     public List<CategoriasResponseDTO> findAll() {
@@ -40,4 +43,8 @@ public class CategoriaServices {
     public Categoria save(Categoria categoria) {
         return repository.save(categoria);
     }
+
+//    public void envioEmail(String para, String assunto, String texto, String from) {
+//        emailServices.enviarEmail(para, assunto, texto,from);
+//    }
 }
