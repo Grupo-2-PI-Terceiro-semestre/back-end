@@ -17,15 +17,18 @@ public class PasswordResetTokenService {
     private final PasswordResetTokenRepository tokenRepository;
     private final ClienteRepository clienteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailServices emailServices;
 
     public PasswordResetTokenService(
             PasswordResetTokenRepository tokenRepository,
             ClienteRepository clienteRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            EmailServices emailServices // <- recebido aqui
     ) {
         this.tokenRepository = tokenRepository;
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailServices = emailServices;
     }
 
     public Optional<PasswordResetToken> gerarTokenParaEmail(String emailCliente) {
@@ -33,9 +36,17 @@ public class PasswordResetTokenService {
                 .map(cliente -> {
                     PasswordResetToken token = new PasswordResetToken(cliente);
                     tokenRepository.save(token);
+
+                    emailServices.enviarEmail(
+                            cliente.getEmailPessoa(),
+                            "Recuperação de Senha - OrderHub",
+                            "Use este token para redefinir sua senha: " + token.getToken()
+                    );
+
                     return token;
                 });
     }
+
 
     public boolean validarToken(String tokenInformado) {
         return tokenRepository.findByToken(tokenInformado)

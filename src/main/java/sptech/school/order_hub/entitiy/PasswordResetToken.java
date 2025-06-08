@@ -3,11 +3,9 @@ package sptech.school.order_hub.entitiy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import sptech.school.order_hub.entitiy.Cliente;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -16,7 +14,7 @@ import java.util.Random;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass
+@Entity
 @SuperBuilder
 public class PasswordResetToken {
 
