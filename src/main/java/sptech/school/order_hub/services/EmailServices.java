@@ -1,25 +1,55 @@
 package sptech.school.order_hub.services;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.model.*;
 
 @Service
 public class EmailServices {
 
-    private final JavaMailSender mailSender;
+    private final SesClient sesClient;
 
-    public EmailServices(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${aws.ses.source-email}")
+    private String sourceEmail;
+
+    public EmailServices(SesClient sesClient) {
+        this.sesClient = sesClient;
     }
 
     public void enviarEmail(String para, String assunto, String texto) {
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setTo(para);
-        mensagem.setSubject(assunto);
-        mensagem.setText(texto);
-        mensagem.setFrom("orderhub059@gmail.com");
+        Destination destination = Destination.builder()
+                .toAddresses(para)
+                .build();
 
-        mailSender.send(mensagem);
+        Content subject = Content.builder()
+                .data(assunto)
+                .build();
+
+        Content bodyText = Content.builder()
+                .data(texto)
+                .build();
+
+        Body body = Body.builder()
+                .text(bodyText)
+                .build();
+
+        Message message = Message.builder()
+                .subject(subject)
+                .body(body)
+                .build();
+
+        SendEmailRequest request = SendEmailRequest.builder()
+                .destination(destination)
+                .message(message)
+                .source(sourceEmail)
+                .build();
+
+        try {
+            sesClient.sendEmail(request);
+            System.out.println("Email enviado com sucesso!");
+        } catch (SesException e) {
+            System.err.println("Erro ao enviar email: " + e.awsErrorDetails().errorMessage());
+        }
     }
 }

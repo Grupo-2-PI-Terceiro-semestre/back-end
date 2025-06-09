@@ -52,6 +52,12 @@ aws:
     endpoint: https://image-order-hub.s3.amazonaws.com
     bucket: ordehub-image
 
+  ses:
+    region: ${AWS_REGION:sa-east-1}
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    source-email: ${MAIL_SMTP:orderhub059@gmail.com}
+
   region: ${AWS_REGION:us-east-1}
   access-key-id: ${AWS_ACCESS_KEY_ID:AKIA3FRRJEMNRYCSBOW3}
   secret-access-key: ${AWS_SECRET_ACCESS_KEY}
