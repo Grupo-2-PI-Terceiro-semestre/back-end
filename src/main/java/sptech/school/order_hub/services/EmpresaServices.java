@@ -242,8 +242,10 @@ public class EmpresaServices {
                 .collect(Collectors.toList());
 
         var usuarios = empresa.getUsuarios().stream()
+                .filter(usuario -> !usuario.getRepresentante())
                 .map(BuscarPerfilEmpresaResponseDTO.UsuarioSimplificadoDTO::from)
                 .collect(Collectors.toList());
+
 
         return new BuscarPerfilEmpresaResponseDTO(
                 empresa.getNomeEmpresa(),

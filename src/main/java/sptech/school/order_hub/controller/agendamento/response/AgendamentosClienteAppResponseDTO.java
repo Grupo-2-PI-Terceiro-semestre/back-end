@@ -1,7 +1,7 @@
 package sptech.school.order_hub.controller.agendamento.response;
 
 import lombok.Builder;
-import sptech.school.order_hub.dtos.UsuarioDTO;
+import sptech.school.order_hub.dtos.ProficionalDTO;
 import sptech.school.order_hub.entitiy.Agendamento;
 
 import java.time.LocalDateTime;
@@ -15,9 +15,9 @@ public record AgendamentosClienteAppResponseDTO(
         LocalDateTime dataHora,
         String status,
         String atendente,
-        List<UsuarioDTO> proficionaisDaEmpresa
+        List<ProficionalDTO> proficionaisDaEmpresa
 ) {
-    public static AgendamentosClienteAppResponseDTO from(Agendamento agendamento, List<UsuarioDTO> usuarios) {
+    public static AgendamentosClienteAppResponseDTO from(Agendamento agendamento, List<ProficionalDTO> proficionals) {
         return AgendamentosClienteAppResponseDTO.builder()
                 .idAgendamento(agendamento
                         .getIdAgendamento()
@@ -41,7 +41,7 @@ public record AgendamentosClienteAppResponseDTO(
                                 .getUsuario()
                                 .getNomePessoa()
                 )
-                .proficionaisDaEmpresa(usuarios)
+                .proficionaisDaEmpresa(proficionals)
                 .build();
     }
 }

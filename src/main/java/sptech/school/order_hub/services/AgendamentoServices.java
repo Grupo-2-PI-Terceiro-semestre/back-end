@@ -13,6 +13,7 @@ import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamen
 import sptech.school.order_hub.controller.agendamento.request.BuscarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.ProficionalDTO;
 import sptech.school.order_hub.entitiy.Agenda;
 import sptech.school.order_hub.entitiy.Agendamento;
 import sptech.school.order_hub.entitiy.Cliente;
@@ -22,6 +23,7 @@ import sptech.school.order_hub.observer.NotificacaoObserver;
 import sptech.school.order_hub.observer.Subject;
 import sptech.school.order_hub.repository.AgendaRepository;
 import sptech.school.order_hub.repository.AgendamentoRepository;
+import sptech.school.order_hub.repository.UsuarioRepository;
 import sptech.school.order_hub.sender.implementation.EmailSenderImple;
 import sptech.school.order_hub.sender.implementation.SmsSenderImple;
 
@@ -45,6 +47,7 @@ public class AgendamentoServices extends Subject {
     private final ServicoServices servicoServices;
     private final ClienteServices clienteServices;
     private final NotificationService notificationService;
+    private final UsuarioRepository usuarioRepository;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
@@ -74,12 +77,32 @@ public class AgendamentoServices extends Subject {
 
         var result = repository.buscarAgendamentosDeUmCliente(idCliente);
 
-        log.info("Agendamentos encontrados: {}", result.size());
-        log.info("Agendamentos encontrados: {}", result);
-
         return result
                 .stream()
                 .map(AgendamentosClienteResponseDTO::from)
+                .collect(Collectors.toList());
+    }
+
+    public List<AgendamentosClienteAppResponseDTO> buscarAgendamentosClienteApp(Integer idCliente) {
+
+        var result = repository.buscarAgendamentosDeUmCliente(idCliente);
+
+        if (result.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Não há agendamentos para este cliente.");
+        }
+
+        var proficionais = usuarioRepository.findAllByEmpresa(
+                result.get(0).getAgenda().getUsuario().getEmpresa()
+        ).stream()
+                .map(ProficionalDTO::from)
+                .collect(Collectors.toList());
+
+        return result
+                .stream()
+                .map(agendamento -> AgendamentosClienteAppResponseDTO.from(
+                        agendamento,
+                        proficionais
+                ))
                 .collect(Collectors.toList());
     }
 

@@ -33,4 +33,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByIdPessoa(Integer idPessoa);
 
     Page<Usuario> findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(Empresa empresa, StatusAtividade statusAtividade, PageRequest pagina);
+
+    List<Usuario> findAllByEmpresa(Empresa empresa);
 }
