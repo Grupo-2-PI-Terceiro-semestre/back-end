@@ -27,11 +27,11 @@ public class PasswordResetTokenController {
         var tokenOpt = tokenService.gerarTokenParaEmail(request.email());
 
         if (tokenOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
 
         PasswordResetToken token = tokenOpt.get();
-        return ResponseEntity.ok("Token gerado: " + token.getToken());
+        return ResponseEntity.ok(token.getToken());
     }
 
     @PostMapping("/validar")
@@ -40,11 +40,11 @@ public class PasswordResetTokenController {
     }
 
     @PutMapping("/redefinir")
-    public ResponseEntity<String> redefinirSenha(@RequestBody RedefinirSenhaRequest request) {
+    public ResponseEntity<Void> redefinirSenha(@RequestBody RedefinirSenhaRequest request) {
         boolean sucesso = tokenService.redefinirSenha(request.token(), request.novaSenha());
         if (!sucesso) {
-            return ResponseEntity.badRequest().body("Token inválido ou expirado");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok("Senha alterada com sucesso");
+        return ResponseEntity.ok().build();
     }
 }

@@ -106,11 +106,7 @@ public class UsuarioServices {
                 usuario.setFirebaseUid(passwordEncoder.encode(usuario.getFirebaseUid()));
             }
 
-            Agenda agenda = agendaRepository.save(new Agenda());
-
-            agenda.setUsuario(usuario);
-
-            usuario.setAgenda(agenda);
+            usuario.setRepresentante(true);
 
             repository.save(usuario);
             return CadastroUsuarioResponseDTO.toEntity(usuario);
@@ -312,6 +308,7 @@ public class UsuarioServices {
 
         usuario.setEmpresa(empresa);
         usuario.setFuncao(funcao);
+        usuario.setRepresentante(false);
 
         Agenda agenda = agendaRepository.save(new Agenda());
 

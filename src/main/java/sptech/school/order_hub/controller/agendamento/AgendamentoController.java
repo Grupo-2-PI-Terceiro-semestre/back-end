@@ -16,10 +16,12 @@ import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamen
 import sptech.school.order_hub.controller.agendamento.request.AtualizarAgendamentoRequestDTO;
 import sptech.school.order_hub.controller.agendamento.response.*;
 import sptech.school.order_hub.dtos.AgendamentoDTO;
+import sptech.school.order_hub.dtos.UsuarioDTO;
 import sptech.school.order_hub.enuns.StatusAgendamento;
 import sptech.school.order_hub.services.AgendamentoServices;
 import sptech.school.order_hub.services.NotificationService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Agendamento", description = "Controller de agendamentos")
@@ -77,6 +79,12 @@ public class AgendamentoController {
     public ResponseEntity<List<AgendamentosClienteResponseDTO>> buscarAgendamentosCliente(@PathVariable Integer idCliente) {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosCliente(idCliente));
     }
+
+    @GetMapping("/app/cliente/{idCliente}")
+    public ResponseEntity<List<AgendamentosClienteAppResponseDTO>> buscarAgendamentosAppCliente(@PathVariable Integer idCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoServices.buscarAgendamentosClienteApp(idCliente));
+    }
+
 
     @PutMapping("/notificacao/{idEmpresa}")
     public ResponseEntity<Void> buscarNotificacao(@PathVariable Integer idEmpresa) {
