@@ -58,7 +58,7 @@ public class PasswordResetTokenService {
         return token.getDataExpiracao().isBefore(LocalDateTime.now());
     }
 
-    public boolean redefinirSenha(String tokenInformado, String novaSenha) {
+    public Boolean redefinirSenha(String tokenInformado, String novaSenha) {
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByToken(tokenInformado);
 
         if (tokenOpt.isEmpty() || tokenExpirado(tokenOpt.get())) {

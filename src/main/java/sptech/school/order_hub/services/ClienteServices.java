@@ -12,10 +12,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import sptech.school.order_hub.config_exception.exceptions.ConflitoAoCadastrarRecursoException;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteCompletoRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.AtualizarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.request.BuscarClienteRequestDto;
-import sptech.school.order_hub.controller.cliente.request.CriarClienteRequestDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClienteResponseDTO;
 import sptech.school.order_hub.controller.cliente.response.BuscarClientesResponseDTO;
 import sptech.school.order_hub.controller.response.Paginacao;
@@ -270,6 +270,18 @@ public class ClienteServices {
     }
 
     public ClienteDTO criarClienteSemEmpresa(Cliente cliente) {
+
+        if (cliente.getSenha() == null || cliente.getSenha().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Senha não pode ser nula ou vazia.");
+        }
+
+        if (cliente.getEmailPessoa() == null || cliente.getEmailPessoa().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email não pode ser nulo ou vazio.");
+        }
+
+        if (clienteRepository.existsByEmailPessoa(cliente.getEmailPessoa())) {
+            throw new ConflitoAoCadastrarRecursoException("Já existe um cliente cadastrado com este email.");
+        }
 
         cliente.setStatusAtividade(StatusAtividade.ATIVO);
 
