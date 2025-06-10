@@ -407,9 +407,10 @@ public class AgendamentoServices extends Subject {
         try {
             return repository.ServicoPorDiaDaSemana(idEmpresa).stream()
                     .map(result -> new ServicoDiaSemanaResponseDTO(
-                            (Integer) result[0],
-                            (Integer) result[1]
-                    )).collect(Collectors.toList());
+                            ((Number) result[0]).intValue(),
+                            ((Number) result[1]).intValue()
+                    ))
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new SemConteudoException("");
         }

@@ -89,14 +89,14 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
                     ELSE ((a.totalServicos - b.totalServicosAnterior) / b.totalServicosAnterior) * 100
                 END AS comparativoServicos
                 FROM MesAtual a
-                LEFT JOIN MesAnterior b ON 1=1;
+                LEFT JOIN MesAnterior b ON 1=1
             """, nativeQuery = true)
     List<Object[]> ServicoMensal(Integer idEmpresa, Integer mesAtual);
 
     @Query(value = """
             SELECT AVG(s.valor_servico)
             FROM servico AS s
-            WHERE fk_empresa = ?1;
+            WHERE fk_empresa = ?1
                     """, nativeQuery = true)
     Double TicketMedio(Integer idEmpresa);
 
@@ -128,7 +128,7 @@ WHERE
   AND s.fk_empresa = ?1
   AND a.status_agendamento = 'REALIZADO'
 GROUP BY DAYOFWEEK(a.data_hora)
-ORDER BY dia_semana;
+ORDER BY dia_semana
   """, nativeQuery = true)
   List<Object[]> ServicoPorDiaDaSemana(Integer idEmpresa);
 
@@ -141,7 +141,7 @@ where
     AND s.fk_empresa = ?1
     AND a.status_agendamento = 'REALIZADO'
 group by s.nome_servico
-order by totalReceita desc;
+order by totalReceita desc
     """, nativeQuery = true)
     List<Object[]> ReceitaPorServico(Integer idEmpresa);
 
@@ -149,17 +149,17 @@ order by totalReceita desc;
 SELECT
     c.nome_pessoa AS Cliente,
     s.nome_servico AS Servico,
-    DATE(agendamento.data_hora) AS Dia,    
-    TIME(agendamento.data_hora) AS Hora,    
+    DATE_FORMAT(agendamento.data_hora, '%d/%m/%Y') AS Dia,
+    TIME(agendamento.data_hora) AS Hora,
     u.nome_pessoa AS Atendente
 FROM agendamento
 JOIN cliente AS c ON agendamento.fk_cliente = c.id_pessoa
 JOIN agenda AS a ON agendamento.fk_agenda = a.id_agenda
 JOIN usuarios AS u ON a.fk_usuario = u.id_pessoa
 JOIN servico AS s ON agendamento.fk_servico = s.id_servico
-WHERE DATE(agendamento.data_hora) = DATE(NOW())
+WHERE DATE(agendamento.data_hora) >= NOW()
   AND agendamento.status_agendamento = 'AGENDADO'
-  AND s.fk_empresa = ?1;
+  AND s.fk_empresa = ?1 Order By agendamento.data_hora ASC
     """, nativeQuery = true)
 
     List<Object[]> findNextAgendamentoByEmpresa(Integer idEmpresa);
@@ -170,7 +170,7 @@ WHERE DATE(agendamento.data_hora) = DATE(NOW())
             FROM agendamento
             JOIN servico ON agendamento.fk_servico = servico.id_servico
             WHERE fk_empresa = ?1
-            AND status_agendamento = 'AGENDADO';
+            AND status_agendamento = 'AGENDADO'
             """, nativeQuery = true)
     Double buscarValorAReceber(Integer idEmpresa);
 
@@ -187,7 +187,7 @@ WHERE s.fk_empresa = ?1\s
   AND YEAR(data_hora) = YEAR(NOW())
   AND a.status_agendamento = 'REALIZADO'
 GROUP BY u.nome_pessoa
-ORDER BY Receita DESC;
+ORDER BY Receita DESC
     """, nativeQuery = true)
     List<Object[]> ReceitaPorFuncionario(Integer idEmpresa);
 
@@ -204,8 +204,8 @@ MesAnterior AS (
     SELECT COUNT(id_pessoa) AS totalClientesAnterior
     FROM cliente
     WHERE fk_empresa = ?1
-      AND data_criacao >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01') -- Primeiro dia do mês anterior
-      AND data_criacao < DATE_FORMAT(NOW(), '%Y-%m-01') -- Primeiro dia do mês atual
+      AND data_criacao >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+      AND data_criacao < DATE_FORMAT(NOW(), '%Y-%m-01')
       AND cliente.status_atividade = 'ATIVO'
 )
 SELECT
@@ -216,7 +216,7 @@ SELECT
         ELSE ((a.totalClientes - b.totalClientesAnterior) / b.totalClientesAnterior) * 100
     END AS comparativoClientes
 FROM MesAtual a
-LEFT JOIN MesAnterior b ON 1=1;
+LEFT JOIN MesAnterior b ON 1=1
     """, nativeQuery = true)
 
     List<Object[]> ClientesMensal(Integer idEmpresa);
