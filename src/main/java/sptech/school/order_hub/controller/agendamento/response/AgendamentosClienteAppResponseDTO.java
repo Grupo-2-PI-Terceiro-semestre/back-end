@@ -11,7 +11,9 @@ import java.util.List;
 public record AgendamentosClienteAppResponseDTO(
         Integer idAgendamento,
         String nomeServico,
+        Integer idServico,
         String nomeEmpresa,
+        Integer idEmpresa,
         LocalDateTime dataHora,
         String status,
         String atendente,
@@ -26,11 +28,21 @@ public record AgendamentosClienteAppResponseDTO(
                         agendamento.getServico()
                                 .getNomeServico()
                 )
+                .idServico(
+                        agendamento.getServico()
+                                .getIdServico()
+                )
                 .nomeEmpresa(
                         agendamento.getAgenda()
                                 .getUsuario()
                                 .getEmpresa()
                                 .getNomeEmpresa()
+                )
+                .idEmpresa(
+                        agendamento.getAgenda()
+                                .getUsuario()
+                                .getEmpresa()
+                                .getIdEmpresa()
                 )
                 .dataHora(agendamento.getDataHora())
                 .status(agendamento
