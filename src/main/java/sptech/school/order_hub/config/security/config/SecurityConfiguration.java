@@ -69,6 +69,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/agendamentos/cliente/{idCliente}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/agendamentos/app/cliente/{idCliente}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/agendamentos/cancelaAgendamento/{idAgendamento}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/agendamentos").permitAll()
                         .requestMatchers("/api/v1/password-reset/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(WHITE_LIST_URL).permitAll()
