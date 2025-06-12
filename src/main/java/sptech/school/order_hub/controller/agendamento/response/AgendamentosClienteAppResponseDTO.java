@@ -12,6 +12,7 @@ public record AgendamentosClienteAppResponseDTO(
         Integer idAgendamento,
         String nomeServico,
         Integer idServico,
+        String valorServico,
         String nomeEmpresa,
         Integer idEmpresa,
         LocalDateTime dataHora,
@@ -31,6 +32,11 @@ public record AgendamentosClienteAppResponseDTO(
                 .idServico(
                         agendamento.getServico()
                                 .getIdServico()
+                )
+                .valorServico(
+                        agendamento.getServico()
+                                .getValorServico()
+                                .toString()
                 )
                 .nomeEmpresa(
                         agendamento.getAgenda()

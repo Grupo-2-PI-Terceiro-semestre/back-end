@@ -91,6 +91,8 @@ jobs:
           sudo docker run --name back-end -d -p 8080:8080 \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e PASSWORD_SMTP=${{secrets.PASSWORD_SMTP}} \
+            -e MAIL_SMTP=orderhub059@gmail.com \
             -e AWS_REGION=us-east-1 \
             -e QUEUE_NAME=notification-orderhub \
             -e DATA_BASE_URL="jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC" \
@@ -112,7 +114,8 @@ jobs:
           sudo docker pull jonathancarvalho039/api-order-hub
           sudo docker run --name back-end -d -p 8080:8080 \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e PASSWORD_SMTP=${{secrets.PASSWORD_SMTP}} \
+            -e MAIL_SMTP=orderhub059@gmail.com \
             -e AWS_REGION=us-east-1 \
             -e QUEUE_NAME=notification-orderhub \
             -e DATA_BASE_URL="jdbc:mysql://order-hub-db.cy356uxitvhj.us-east-1.rds.amazonaws.com:3306/order_hub?allowPublicKeyRetrieval=true&sslMode=DISABLED&serverTimezone=UTC" \
