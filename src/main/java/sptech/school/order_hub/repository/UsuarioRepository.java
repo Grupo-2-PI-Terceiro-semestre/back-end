@@ -22,7 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     @Query(value = """
             select u.* from
-                           empresa join usuarios as u on empresa.id_empresa = u.fk_empresa where u.status_atividade = 'ATIVO' and empresa.id_empresa = ?1
+                           empresa join usuarios as u on empresa.id_empresa = u.fk_empresa where u.status_atividade = 'ATIVO' and empresa.id_empresa = ?1 AND u.representante = 0
             """, nativeQuery = true)
     List<Usuario> buscarColaborador(Integer idEmpresa);
 
@@ -32,7 +32,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByIdPessoa(Integer idPessoa);
 
-    Page<Usuario> findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(Empresa empresa, StatusAtividade statusAtividade, PageRequest pagina);
+    @Query("""
+            SELECT u FROM Usuario u
+            WHERE u.empresa = :empresa
+            AND u.statusAtividade = :statusAtividade
+            AND u.representante = false
+            ORDER BY u.idPessoa ASC
+            """)
+    Page<Usuario> findAllByEmpresaAndStatusAtividadeAndRepresentanteOrderByIdPessoaAsc(Empresa empresa, StatusAtividade statusAtividade, PageRequest pagina);
 
     List<Usuario> findAllByEmpresa(Empresa empresa);
 }

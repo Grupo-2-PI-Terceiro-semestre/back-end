@@ -296,7 +296,7 @@ public class UsuarioServices {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empresa não existe"));
 
 //        final var page = repository.findAllByEmpresaOrderByIdPessoaAsc(empresa, pagina);
-        final var page = repository.findAllByEmpresaAndStatusAtividadeOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
+        final var page = repository.findAllByEmpresaAndStatusAtividadeAndRepresentanteOrderByIdPessoaAsc(empresa, StatusAtividade.ATIVO, pagina);
 
         return Paginacao.of(page.getContent(), page.getTotalElements(), page.isLast());
     }

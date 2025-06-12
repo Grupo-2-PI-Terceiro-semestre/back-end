@@ -16,6 +16,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
                 WHERE a.agenda.idAgenda = :idAgenda
                     AND a.dataHora BETWEEN :startOfDay AND :endOfDay
                     AND a.statusAgendamento <> 'CANCELADO'
+                    AND a.agenda.usuario.representante <> true
             """)
     List<Agendamento> BuscarAgendamento(Integer idAgenda, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
@@ -158,6 +159,7 @@ JOIN agenda AS a ON agendamento.fk_agenda = a.id_agenda
 JOIN usuarios AS u ON a.fk_usuario = u.id_pessoa
 JOIN servico AS s ON agendamento.fk_servico = s.id_servico
 WHERE DATE(agendamento.data_hora) >= NOW()
+  AND u.representante = 0
   AND agendamento.status_agendamento = 'AGENDADO'
   AND s.fk_empresa = ?1 Order By agendamento.data_hora ASC
     """, nativeQuery = true)
