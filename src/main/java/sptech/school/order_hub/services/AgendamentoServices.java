@@ -210,10 +210,27 @@ public class AgendamentoServices extends Subject {
 
     public AgendamentoDTO atualizarAgendamento(AtualizarAgendamentoRequestDTO requestDTO) {
 
+        Integer idAgenda = requestDTO.idAgenda();
+//        Agendamento agendamentoParaAgenda = findById(requestDTO.idAgendamento());
+//        idAgenda = agendamentoParaAgenda.getAgenda().getIdAgenda();
+
+        if (idAgenda == null) {
+            try {
+                Agendamento agendamentoParaAgenda = findById(requestDTO.idAgendamento());
+                idAgenda = agendamentoParaAgenda.getAgenda().getIdAgenda();
+
+//                idAgenda = agendaRepository.findIdAgendaByUsuarioId(requestDTO.idCliente());
+                System.out.println("ID da agenda recuperado do banco: " + idAgenda);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
         final var agendamento = repository.findByIdAgendamento(requestDTO.idAgendamento())
                 .orElseThrow(() -> new SemConteudoException("Agendamento não encontrado"));
 
-        final var agenda = agendaRepository.findById(requestDTO.idAgenda())
+        final var agenda = agendaRepository.findById(idAgenda)
                 .orElseThrow(() -> new SemConteudoException("Agenda não encontrada"));
 
         final var servico = servicoServices.findById(requestDTO.idServico());
